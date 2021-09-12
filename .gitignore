@@ -34,3 +34,8 @@ vignettes/*.pdf
 
 # Shiny token, see https://shiny.rstudio.com/articles/shinyapps.html
 rsconnect/
+
+# Bookdown; gh-pages
+docs/*.md
+_main.rds
+_bookdown_files/
