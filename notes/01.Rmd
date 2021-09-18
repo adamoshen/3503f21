@@ -1,0 +1,183 @@
+```{r, include=FALSE}
+knitr::opts_chunk$set(
+  echo=TRUE, warning=FALSE, message=FALSE, fig.align="center", fig.retina=3
+)
+```
+
+# Lab 1 &mdash; September 20
+
+## Question 1
+
+### Load the tidyverse
+
+```{r}
+library(tidyverse)
+theme_set(theme_bw())
+```
+
+### Read in the data
+
+```{r}
+weather <- read_csv("./data/ottawa-all-monthly.csv")
+
+head(weather)
+```
+
+### Inspect the data
+
+```{r}
+dim(weather)
+nrow(weather)
+ncol(weather)
+names(weather)
+length(names(weather))
+```
+
+### September
+
+```{r}
+September <- weather %>%
+  filter(Month == "09")
+```
+
+### Re-create plots
+
+#### Plot 1
+
+```{r}
+ggplot(September, aes(x=Date.Time, y=Mean.Max.Temp.C.))+
+  geom_point()
+```
+
+#### Plot 2
+
+```{r}
+ggplot(September, aes(x=Date.Time, y=Mean.Max.Temp.C.))+
+  geom_point()+
+  geom_smooth(method = "loess", formula = y ~ x)
+```
+
+#### Plot 3
+
+```{r}
+ggplot(September, aes(x=Date.Time, y=Mean.Max.Temp.C.))+
+  geom_point()+
+  geom_line(aes(colour=Year))
+```
+
+#### Plot 4
+
+```{r}
+ggplot(September, aes(x=Date.Time, y=Mean.Max.Temp.C.))+
+  geom_point()+
+  geom_line(aes(colour=Year))+
+  geom_smooth(method = "loess" ,formula = y ~ x)
+```
+
+
+## Question 2
+
+### October
+
+```{r}
+October <- weather %>%
+  filter(Month == "10")
+```
+
+### Combine September and October
+
+```{r}
+SeptOct <- bind_rows(September, October)
+
+dim(SeptOct)
+```
+
+### Select columns
+
+```{r}
+SeptOct <- SeptOct %>%
+  select(Year, Month, Mean.Max.Temp.C., Mean.Min.Temp.C., Total.Rain.mm., Total.Snow.cm.)
+```
+
+### Make new variable
+
+```{r}
+SeptOctnew <- SeptOct %>%
+  mutate(Total.precip = Total.Rain.mm. + Total.Snow.cm.*10)
+```
+
+### Make plots
+
+#### Plot 1
+
+```{r}
+ggplot(SeptOctnew, aes(x=Year, y=Total.precip))+
+  geom_point()
+```
+
+#### Plot 2
+
+```{r}
+ggplot(SeptOctnew, aes(x=Year, y=Total.precip))+
+  geom_point()+
+  geom_smooth(method = "loess", formula = y ~ x)
+```
+
+#### Plot 3
+
+```{r}
+ggplot(SeptOctnew, aes(x=Year, y=Total.precip))+
+  geom_point()+
+  geom_line(aes(colour=Year))
+```
+
+#### Plot 4
+
+```{r}
+ggplot(SeptOctnew, aes(x=Year, y=Total.precip))+
+  geom_point()+
+  geom_line(aes(colour=Year))+
+  geom_smooth(method = "loess", formula = y ~ x)
+```
+
+### New plot
+
+```{r}
+ggplot(SeptOctnew, aes(x=Total.precip, y=Mean.Max.Temp.C.))+
+  geom_point()+
+  geom_smooth(method = "loess", formula = y ~ x)
+```
+
+### Fix that code
+
+```{r}
+ggplot(SeptOctnew, aes(x=Year, y=Total.precip), colour=Month)+
+  geom_point()+
+  geom_smooth(method = "loess", formula = y ~ x)
+```
+
+```{r}
+ggplot(SeptOctnew, aes(x=Year, y=Total.precip, colour=Month))+
+  geom_point()+
+  geom_smooth(method = "loess", formula = y ~ x)
+```
+
+
+### Facetting
+
+```{r}
+weather %>%
+  filter(Month %in% c("09", "10", "11")) %>%
+  mutate(Precipitation = Total.Rain.mm. + 25 * Total.Snow.cm.) %>%
+  ggplot(aes(x=Year, y=Precipitation))+
+  geom_line(aes(colour=Month))+
+  geom_smooth(method = "loess", formula = y ~ x)+
+  facet_wrap(~Month)
+```
+
+
+
+
+
+
+
