@@ -36,6 +36,6 @@ vignettes/*.pdf
 rsconnect/
 
 # Bookdown; gh-pages
-docs/*.md
-_main.rds
-_bookdown_files/
+docs/notes/*.md
+notes/_main.rds
+notes/_bookdown_files/
