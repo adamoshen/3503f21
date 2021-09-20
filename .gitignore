@@ -39,3 +39,8 @@ rsconnect/
 docs/notes/*.md
 notes/_main.rds
 notes/_bookdown_files/
+
+# Outer lab files
+Lab */*.pdf
+Lab */*.html
+Lab */slides_files/
