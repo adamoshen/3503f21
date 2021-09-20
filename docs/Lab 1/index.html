@@ -38,6 +38,11 @@ library(tidyverse)
 theme_set(theme_bw())
 ```
 
+- I am calling `theme_set(theme_bw())` so that my plots will have a white background, rather than
+the default gray background
+- See [here](https://ggplot2.tidyverse.org/reference/ggtheme.html#examples) for ggplot2's built-in
+themes and previews of these themes
+
 ---
 
 # Read in the data
@@ -62,7 +67,7 @@ weather &lt;- read_csv("./data/ottawa-all-monthly.csv")
 ## )
 &lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
 
-- Take note that `Month` was read in as a character!
+- Take note that `Month` was read in as a column of type character!
 
 ---
 
@@ -165,7 +170,7 @@ ggplot(September, aes(x=Date.Time, y=Mean.Max.Temp.C.))+
 
 .pull-right[
 
-&lt;img src="slides_files/figure-html/unnamed-chunk-8-1.png" width="504" style="display: block; margin: auto;" /&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-8-1.png" width="504" style="display: block; margin: auto;" /&gt;
 
 ]
 
@@ -189,7 +194,7 @@ that this is what is used
 
 .pull-right[
 
-&lt;img src="slides_files/figure-html/unnamed-chunk-10-1.png" width="504" style="display: block; margin: auto;" /&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-10-1.png" width="504" style="display: block; margin: auto;" /&gt;
 
 ]
 
@@ -210,7 +215,7 @@ ggplot(September, aes(x=Date.Time, y=Mean.Max.Temp.C.))+
 
 .pull-right[
 
-&lt;img src="slides_files/figure-html/unnamed-chunk-12-1.png" width="504" style="display: block; margin: auto;" /&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-12-1.png" width="504" style="display: block; margin: auto;" /&gt;
 
 ]
 
@@ -235,7 +240,7 @@ that this is what is used
 
 .pull-right[
 
-&lt;img src="slides_files/figure-html/unnamed-chunk-14-1.png" width="504" style="display: block; margin: auto;" /&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-14-1.png" width="504" style="display: block; margin: auto;" /&gt;
 
 ]
 
@@ -302,7 +307,7 @@ ggplot(SeptOctnew, aes(x=Year, y=Total.precip))+
 
 .pull-right[
 
-&lt;img src="slides_files/figure-html/unnamed-chunk-20-1.png" width="504" style="display: block; margin: auto;" /&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-20-1.png" width="504" style="display: block; margin: auto;" /&gt;
 
 ]
 
@@ -326,7 +331,7 @@ that this is what is used
 
 .pull-right[
 
-&lt;img src="slides_files/figure-html/unnamed-chunk-22-1.png" width="504" style="display: block; margin: auto;" /&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-22-1.png" width="504" style="display: block; margin: auto;" /&gt;
 
 ]
 
@@ -347,7 +352,7 @@ ggplot(SeptOctnew, aes(x=Year, y=Total.precip))+
 
 .pull-right[
 
-&lt;img src="slides_files/figure-html/unnamed-chunk-24-1.png" width="504" style="display: block; margin: auto;" /&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-24-1.png" width="504" style="display: block; margin: auto;" /&gt;
 
 ]
 
@@ -372,7 +377,7 @@ that this is what is used
 
 .pull-right[
 
-&lt;img src="slides_files/figure-html/unnamed-chunk-26-1.png" width="504" style="display: block; margin: auto;" /&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-26-1.png" width="504" style="display: block; margin: auto;" /&gt;
 
 ]
 
@@ -396,7 +401,7 @@ that this is what is used
 
 .pull-right[
 
-&lt;img src="slides_files/figure-html/unnamed-chunk-28-1.png" width="504" style="display: block; margin: auto;" /&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-28-1.png" width="504" style="display: block; margin: auto;" /&gt;
 
 ]
 
@@ -421,7 +426,7 @@ that this is what is used
 
 .pull-right[
 
-&lt;img src="slides_files/figure-html/unnamed-chunk-30-1.png" width="504" style="display: block; margin: auto;" /&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-30-1.png" width="504" style="display: block; margin: auto;" /&gt;
 
 ]
 
@@ -446,7 +451,7 @@ that this is what is used
 
 .pull-right[
 
-&lt;img src="slides_files/figure-html/unnamed-chunk-32-1.png" width="504" style="display: block; margin: auto;" /&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-32-1.png" width="504" style="display: block; margin: auto;" /&gt;
 
 ]
 
@@ -474,7 +479,7 @@ that this is what is used
 
 .pull-right[
 
-&lt;img src="slides_files/figure-html/unnamed-chunk-34-1.png" width="504" style="display: block; margin: auto;" /&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-34-1.png" width="504" style="display: block; margin: auto;" /&gt;
 
 ]
 
@@ -507,7 +512,7 @@ that this is what is used
 
 .pull-right[
 
-&lt;img src="slides_files/figure-html/unnamed-chunk-36-1.png" width="504" style="display: block; margin: auto;" /&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-36-1.png" width="504" style="display: block; margin: auto;" /&gt;
 
 ]
     </textarea>
