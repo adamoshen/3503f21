@@ -87,6 +87,11 @@ library(tidyverse)
 theme_set(theme_bw())
 ```
 
+- I am calling `theme_set(theme_bw())` so that my plots will have a white background, rather than
+the default gray background
+- See [here](https://ggplot2.tidyverse.org/reference/ggtheme.html#examples) for ggplot2's built-in
+themes and previews of these themes
+
 ---
 
 # Read in the data
@@ -95,7 +100,7 @@ theme_set(theme_bw())
 weather <- read_csv("./data/ottawa-all-monthly.csv")
 ```
 
-- Take note that `Month` was read in as a character!
+- Take note that `Month` was read in as a column of type character!
 
 ---
 
