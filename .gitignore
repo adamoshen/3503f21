@@ -44,3 +44,4 @@ notes/_bookdown_files/
 Lab */*.pdf
 Lab */*.html
 Lab */slides_files/
+Lab */data/
