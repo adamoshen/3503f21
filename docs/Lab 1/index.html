@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Lab 1, Stat 3503 Fall 2021</title>
+    <meta charset="utf-8" />
+    <script src="libs/header-attrs-2.9/header-attrs.js"></script>
+    <script src="libs/clipboard-2.0.6/clipboard.min.js"></script>
+    <link href="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"<ion-icon name=\"clipboard-outline\"><\/ion-icon>","success":"<ion-icon name=\"checkmark-outline\" style=\"color: #90BE6D\"><\/ion-icon>","error":"<ion-icon name=\"close-outline\" style=\"color: #F94144\"><\/ion-icon>"})</script>
+    <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view-0.2.6/tile-view.js"></script>
+    <link rel="stylesheet" href="css/xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="css/extra.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+
+
+
+
+
+
+
+# Lab 1 &amp;mdash; September 20
+
+## Question 1
+
+### Load the tidyverse
+
+
+```r
+library(tidyverse)
+theme_set(theme_bw())
+```
+
+---
+
+# Read in the data
+
+
+```r
+weather &lt;- read_csv("./data/ottawa-all-monthly.csv")
+```
+
+&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## 
+## &lt;span style='color: #00BBBB;'&gt;--&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Column specification&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #00BBBB;'&gt;--------------------------------------------------------&lt;/span&gt;&lt;span&gt;
+## cols(
+##   Date.Time = &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;col_date(format = "")&lt;/span&gt;&lt;span&gt;,
+##   Year = &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;col_double()&lt;/span&gt;&lt;span&gt;,
+##   Month = &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;col_character()&lt;/span&gt;&lt;span&gt;,
+##   Mean.Max.Temp.C. = &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;col_double()&lt;/span&gt;&lt;span&gt;,
+##   Mean.Min.Temp.C. = &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;col_double()&lt;/span&gt;&lt;span&gt;,
+##   Mean.Temp.C. = &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;col_double()&lt;/span&gt;&lt;span&gt;,
+##   Total.Rain.mm. = &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;col_double()&lt;/span&gt;&lt;span&gt;,
+##   Total.Snow.cm. = &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;col_double()&lt;/span&gt;&lt;span&gt;,
+##   Total.Precip.mm. = &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;col_double()&lt;/span&gt;&lt;span&gt;
+## )
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+- Take note that `Month` was read in as a character!
+
+---
+
+# Preview the data
+
+
+```r
+head(weather)
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 6 x 9&lt;/span&gt;&lt;span&gt;
+##   Date.Time   Year Month Mean.Max.Temp.C. Mean.Min.Temp.C. Mean.Temp.C.
+##   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;date&amp;gt;&lt;/span&gt;&lt;span&gt;     &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;            &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;            &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;        &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt; 1889-11-01  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;889 11                 4.6             -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;2.2&lt;/span&gt;&lt;span&gt;          1.2
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;2&lt;/span&gt;&lt;span&gt; 1889-12-01  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;889 12                -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1.7&lt;/span&gt;&lt;span&gt;             -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;9.6&lt;/span&gt;&lt;span&gt;         -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;5.7&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;3&lt;/span&gt;&lt;span&gt; 1890-01-01  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;890 01                -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;4.2&lt;/span&gt;&lt;span&gt;            -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;15.5&lt;/span&gt;&lt;span&gt;         -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;9.9&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;4&lt;/span&gt;&lt;span&gt; 1890-02-01  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;890 02                -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;3.7&lt;/span&gt;&lt;span&gt;            -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;13.9&lt;/span&gt;&lt;span&gt;         -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;8.8&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;5&lt;/span&gt;&lt;span&gt; 1890-03-01  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;890 03                -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.3&lt;/span&gt;&lt;span&gt;             -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;9.3&lt;/span&gt;&lt;span&gt;         -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;4.8&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;6&lt;/span&gt;&lt;span&gt; 1890-04-01  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;890 04                 9.9             -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1.2&lt;/span&gt;&lt;span&gt;          4.4
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 3 more variables: Total.Rain.mm. &amp;lt;dbl&amp;gt;, Total.Snow.cm. &amp;lt;dbl&amp;gt;,&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;#   Total.Precip.mm. &amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+---
+
+# Inspect the data
+
+
+```r
+dim(weather)
+```
+
+```
+## [1] 1405    9
+```
+
+```r
+nrow(weather)
+```
+
+```
+## [1] 1405
+```
+
+```r
+ncol(weather)
+```
+
+```
+## [1] 9
+```
+
+---
+count: false
+
+# Inspect the data
+
+
+```r
+names(weather)
+```
+
+```
+## [1] "Date.Time"        "Year"             "Month"            "Mean.Max.Temp.C."
+## [5] "Mean.Min.Temp.C." "Mean.Temp.C."     "Total.Rain.mm."   "Total.Snow.cm."  
+## [9] "Total.Precip.mm."
+```
+
+```r
+length(names(weather))
+```
+
+```
+## [1] 9
+```
+
+---
+
+# September
+
+
+```r
+September &lt;- weather %&gt;%
+  filter(Month == "09")
+```
+
+---
+
+# Plot 1
+
+.pull-left[
+
+
+```r
+ggplot(September, aes(x=Date.Time, y=Mean.Max.Temp.C.))+
+  geom_point()
+```
+
+]
+
+.pull-right[
+
+&lt;img src="slides_files/figure-html/unnamed-chunk-8-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+
+# Plot 2
+
+.pull-left[
+
+
+```r
+ggplot(September, aes(x=Date.Time, y=Mean.Max.Temp.C.))+
+  geom_point()+
+  geom_smooth(method = "loess", formula = y ~ x)
+```
+
+- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a warning will be shown
+that this is what is used
+
+]
+
+.pull-right[
+
+&lt;img src="slides_files/figure-html/unnamed-chunk-10-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+
+# Plot 3
+
+.pull-left[
+
+
+```r
+ggplot(September, aes(x=Date.Time, y=Mean.Max.Temp.C.))+
+  geom_point()+
+  geom_line(aes(colour=Year))
+```
+
+]
+
+.pull-right[
+
+&lt;img src="slides_files/figure-html/unnamed-chunk-12-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+
+# Plot 4
+
+.pull-left[
+
+
+```r
+ggplot(September, aes(x=Date.Time, y=Mean.Max.Temp.C.))+
+  geom_point()+
+  geom_line(aes(colour=Year))+
+  geom_smooth(method = "loess" ,formula = y ~ x)
+```
+
+- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a warning will be shown
+that this is what is used
+
+]
+
+.pull-right[
+
+&lt;img src="slides_files/figure-html/unnamed-chunk-14-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+
+# Question 2
+
+## October
+
+
+```r
+October &lt;- weather %&gt;%
+  filter(Month == "10")
+```
+
+---
+
+# Combine September and October
+
+
+```r
+SeptOct &lt;- bind_rows(September, October)
+
+dim(SeptOct)
+```
+
+```
+## [1] 234   9
+```
+
+---
+
+# Select columns
+
+
+```r
+SeptOct &lt;- SeptOct %&gt;%
+  select(Year, Month, Mean.Max.Temp.C., Mean.Min.Temp.C., Total.Rain.mm., Total.Snow.cm.)
+```
+
+---
+
+# Make new variable
+
+
+```r
+SeptOctnew &lt;- SeptOct %&gt;%
+  mutate(Total.precip = Total.Rain.mm. + Total.Snow.cm. * 10)
+```
+
+---
+
+# Plot 1
+
+.pull-left[
+
+
+```r
+ggplot(SeptOctnew, aes(x=Year, y=Total.precip))+
+  geom_point()
+```
+
+]
+
+.pull-right[
+
+&lt;img src="slides_files/figure-html/unnamed-chunk-20-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+
+# Plot 2
+
+.pull-left[
+
+
+```r
+ggplot(SeptOctnew, aes(x=Year, y=Total.precip))+
+  geom_point()+
+  geom_smooth(method = "loess", formula = y ~ x)
+```
+
+- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a warning will be shown
+that this is what is used
+
+]
+
+.pull-right[
+
+&lt;img src="slides_files/figure-html/unnamed-chunk-22-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+
+# Plot 3
+
+.pull-left[
+
+
+```r
+ggplot(SeptOctnew, aes(x=Year, y=Total.precip))+
+  geom_point()+
+  geom_line(aes(colour=Year))
+```
+
+]
+
+.pull-right[
+
+&lt;img src="slides_files/figure-html/unnamed-chunk-24-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+
+# Plot 4
+
+.pull-left[
+
+
+```r
+ggplot(SeptOctnew, aes(x=Year, y=Total.precip))+
+  geom_point()+
+  geom_line(aes(colour=Year))+
+  geom_smooth(method = "loess", formula = y ~ x)
+```
+
+- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a warning will be shown
+that this is what is used
+
+]
+
+.pull-right[
+
+&lt;img src="slides_files/figure-html/unnamed-chunk-26-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+
+# New plot
+
+.pull-left[
+
+
+```r
+ggplot(SeptOctnew, aes(x=Total.precip, y=Mean.Max.Temp.C.))+
+  geom_point()+
+  geom_smooth(method = "loess", formula = y ~ x)
+```
+
+- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a warning will be shown
+that this is what is used
+
+]
+
+.pull-right[
+
+&lt;img src="slides_files/figure-html/unnamed-chunk-28-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+
+# Fix that code
+
+.pull-left[
+
+
+```r
+ggplot(SeptOctnew, aes(x=Year, y=Total.precip), colour=Month)+
+  geom_point()+
+  geom_smooth(method = "loess", formula = y ~ x)
+```
+
+- Colour should be defined within the aesthetics
+- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a warning will be shown
+that this is what is used
+
+]
+
+.pull-right[
+
+&lt;img src="slides_files/figure-html/unnamed-chunk-30-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+]
+
+
+---
+
+# Fix that code
+
+.pull-left[
+
+
+```r
+ggplot(SeptOctnew, aes(x=Year, y=Total.precip, colour=Month))+
+  geom_point()+
+  geom_smooth(method = "loess", formula = y ~ x)
+```
+
+- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a warning will be shown
+that this is what is used
+
+]
+
+.pull-right[
+
+&lt;img src="slides_files/figure-html/unnamed-chunk-32-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+
+# Facetting
+
+.pull-left[
+
+
+```r
+weather %&gt;%
+  filter(Month == "09" | Month == "10" | Month == "11") %&gt;%
+  mutate(Precipitation = Total.Rain.mm. + 25 * Total.Snow.cm.) %&gt;%
+  ggplot(aes(x=Year, y=Precipitation))+
+  geom_line(aes(colour=Month))+
+  geom_smooth(method = "loess", formula = y ~ x)+
+  facet_wrap(~Month)
+```
+
+- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a warning will be shown
+that this is what is used
+
+]
+
+.pull-right[
+
+&lt;img src="slides_files/figure-html/unnamed-chunk-34-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+
+# Better facetting
+
+.pull-left[
+
+
+```r
+weather %&gt;%
+  filter(Month %in% c("09", "10", "11")) %&gt;%
+  mutate(Precipitation = Total.Rain.mm. + 25 * Total.Snow.cm.) %&gt;%
+  ggplot(aes(x=Year, y=Precipitation))+
+  geom_line()+
+  geom_smooth(method = "loess", formula = y ~ x)+
+  facet_wrap(~Month, nrow=3, labeller="label_both")
+```
+
+- Can filter the months using less typing
+- Don't need to colour by month anymore since we are facetting by month
+- Clarify that the variable being facetted is `Month` using `labeller = "label_both"`, though
+an even better option would be to use the full month names, e.g. September, October, November
+- Change dimensions to 3x1 since time data is usually wide
+- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a warning will be shown
+that this is what is used
+
+]
+
+.pull-right[
+
+&lt;img src="slides_files/figure-html/unnamed-chunk-36-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+]
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "atom-one-light",
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();</script>
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
