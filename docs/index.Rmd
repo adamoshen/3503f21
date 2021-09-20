@@ -1,0 +1,12 @@
+---
+output:
+  github_document:
+    includes:
+      in_header: header.html
+    md_extensions: "-smart"
+    keep_html: true
+---
+
+# Stat 3503: Regression Modelling, Fall 2021
+
+[Lab 1: Week of September 20](./Lab 1/)
