@@ -4,4 +4,8 @@
 
 # Stat 3503: Regression Modelling, Fall 2021
 
+**Tip:** Slides can be exported to pdf in Chrome/Edge by going to
+`Print -> Save as PDF` and setting the page margins to "None". Untested
+with other browsers.
+
 [Lab 1: Week of September 20](./Lab%201/)
