@@ -439,28 +439,21 @@ ggplot(SeptOctnew, aes(x=Total.precip, y=Mean.Max.Temp.C.))+
 
 .pull-left[
 
-```{r, eval=FALSE}
+```{r, error=TRUE}
 ggplot(SeptOctnew, aes(x=Year, y=Total.precip), colour=Month)+
   geom_point()+
-  geom_smooth(method = "loess", formula = y ~ x)
+  geom_smooth(y ~ x)
 ```
-
-- Colour should be defined within the aesthetics
-- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a warning will be shown
-that this is what is used
 
 ]
 
 .pull-right[
 
-```{r, echo=FALSE}
-ggplot(SeptOctnew, aes(x=Year, y=Total.precip), colour=Month)+
-  geom_point()+
-  geom_smooth(method = "loess", formula = y ~ x)
-```
+- Colour should be defined within the aesthetics
+- `y ~ x` should be passed to the `formula` argument
+- The `y ~ x` is currently being passed to the `mapping` argument
 
 ]
-
 
 ---
 
@@ -473,9 +466,6 @@ ggplot(SeptOctnew, aes(x=Year, y=Total.precip, colour=Month))+
   geom_point()+
   geom_smooth(method = "loess", formula = y ~ x)
 ```
-
-- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a warning will be shown
-that this is what is used
 
 ]
 
