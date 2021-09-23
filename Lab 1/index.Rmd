@@ -114,7 +114,7 @@ all eight)
 - The functions that you will be using for your analyses will be contained in these eight packages,
 not in the `tidyverse` package itself
 
-- The function to be used to read in csv files is `read_csv`
+- The function to be used to read in csv files is `read_csv`, found in the `readr` package
 - The corresponding documentation can be accessed using either:
 
 ```{r, eval=FALSE}
@@ -130,7 +130,11 @@ help(read_csv, package="readr")
 weather <- read_csv("./data/ottawa-all-monthly.csv")
 ```
 
-- Take note that `Month` was read in as a column of type character!
+- I do not recommend setting `show_col_types = FALSE`
+- If any columns were not read in as the correct type, you should deal with them immediately (or at
+least be aware)
+
+- Example: notice that `Month` was read in as a column of type character!
 
 ---
 
@@ -202,7 +206,7 @@ ggplot(September, aes(x=Date.Time, y=Mean.Max.Temp.C.))+
   geom_smooth(method = "loess", formula = y ~ x)
 ```
 
-- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a warning will be shown
+- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a message will be shown
 that this is what is used
 
 ]
@@ -254,7 +258,7 @@ ggplot(September, aes(x=Date.Time, y=Mean.Max.Temp.C.))+
   geom_smooth(method = "loess" ,formula = y ~ x)
 ```
 
-- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a warning will be shown
+- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a message will be shown
 that this is what is used
 
 ]
@@ -343,7 +347,7 @@ ggplot(SeptOctnew, aes(x=Year, y=Total.precip))+
   geom_smooth(method = "loess", formula = y ~ x)
 ```
 
-- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a warning will be shown
+- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a message will be shown
 that this is what is used
 
 ]
@@ -395,7 +399,7 @@ ggplot(SeptOctnew, aes(x=Year, y=Total.precip))+
   geom_smooth(method = "loess", formula = y ~ x)
 ```
 
-- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a warning will be shown
+- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a message will be shown
 that this is what is used
 
 ]
@@ -423,7 +427,7 @@ ggplot(SeptOctnew, aes(x=Total.precip, y=Mean.Max.Temp.C.))+
   geom_smooth(method = "loess", formula = y ~ x)
 ```
 
-- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a warning will be shown
+- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a message will be shown
 that this is what is used
 
 ]
@@ -500,7 +504,7 @@ weather %>%
   facet_wrap(~Month)
 ```
 
-- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a warning will be shown
+- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a message will be shown
 that this is what is used
 
 ]
@@ -540,7 +544,7 @@ weather %>%
 - Clarify that the variable being facetted is `Month` using `labeller = "label_both"`, though
 an even better option would be to use the full month names, e.g. September, October, November
 - Change dimensions to 3x1 since time data is usually wide
-- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a warning will be shown
+- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a message will be shown
 that this is what is used
 
 ]

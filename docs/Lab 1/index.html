@@ -41,7 +41,7 @@ library(tidyverse)
 &lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;ggplot2&lt;/span&gt;&lt;span&gt; 3.3.3     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;purrr  &lt;/span&gt;&lt;span&gt; 0.3.4
 ## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;tibble &lt;/span&gt;&lt;span&gt; 3.1.0     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;dplyr  &lt;/span&gt;&lt;span&gt; 1.0.5
 ## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;tidyr  &lt;/span&gt;&lt;span&gt; 1.1.3     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;stringr&lt;/span&gt;&lt;span&gt; 1.4.0
-## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;readr  &lt;/span&gt;&lt;span&gt; 1.4.0     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;forcats&lt;/span&gt;&lt;span&gt; 0.5.1
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;readr  &lt;/span&gt;&lt;span&gt; 2.0.1     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;forcats&lt;/span&gt;&lt;span&gt; 0.5.1
 &lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## -- &lt;span style='font-weight: bold;'&gt;Conflicts&lt;/span&gt;&lt;span&gt; ------------------------------------------ tidyverse_conflicts() --
 ## &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;x&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;dplyr&lt;/span&gt;&lt;span&gt;::&lt;/span&gt;&lt;span style='color: #00BB00;'&gt;filter()&lt;/span&gt;&lt;span&gt; masks &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;stats&lt;/span&gt;&lt;span&gt;::filter()
 ## &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;x&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;dplyr&lt;/span&gt;&lt;span&gt;::&lt;/span&gt;&lt;span style='color: #00BB00;'&gt;lag()&lt;/span&gt;&lt;span&gt;    masks &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;stats&lt;/span&gt;&lt;span&gt;::lag()
@@ -71,7 +71,7 @@ all eight)
 - The functions that you will be using for your analyses will be contained in these eight packages,
 not in the `tidyverse` package itself
 
-- The function to be used to read in csv files is `read_csv`
+- The function to be used to read in csv files is `read_csv`, found in the `readr` package
 - The corresponding documentation can be accessed using either:
 
 
@@ -89,22 +89,22 @@ help(read_csv, package="readr")
 weather &lt;- read_csv("./data/ottawa-all-monthly.csv")
 ```
 
-&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## 
-## &lt;span style='color: #00BBBB;'&gt;--&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Column specification&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #00BBBB;'&gt;--------------------------------------------------------&lt;/span&gt;&lt;span&gt;
-## cols(
-##   Date.Time = &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;col_date(format = "")&lt;/span&gt;&lt;span&gt;,
-##   Year = &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;col_double()&lt;/span&gt;&lt;span&gt;,
-##   Month = &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;col_character()&lt;/span&gt;&lt;span&gt;,
-##   Mean.Max.Temp.C. = &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;col_double()&lt;/span&gt;&lt;span&gt;,
-##   Mean.Min.Temp.C. = &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;col_double()&lt;/span&gt;&lt;span&gt;,
-##   Mean.Temp.C. = &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;col_double()&lt;/span&gt;&lt;span&gt;,
-##   Total.Rain.mm. = &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;col_double()&lt;/span&gt;&lt;span&gt;,
-##   Total.Snow.cm. = &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;col_double()&lt;/span&gt;&lt;span&gt;,
-##   Total.Precip.mm. = &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;col_double()&lt;/span&gt;&lt;span&gt;
-## )
+&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='font-weight: bold;'&gt;Rows: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;1405&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Columns: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;9&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='color: #00BBBB;'&gt;--&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Column specification&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #00BBBB;'&gt;--------------------------------------------------------&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Delimiter:&lt;/span&gt;&lt;span&gt; ","
+## &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;chr&lt;/span&gt;&lt;span&gt;  (1): Month
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;dbl&lt;/span&gt;&lt;span&gt;  (7): Year, Mean.Max.Temp.C., Mean.Min.Temp.C., Mean.Temp.C., Total.Rain...
+## &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;date&lt;/span&gt;&lt;span&gt; (1): Date.Time
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## 
+## &lt;span style='color: #00BBBB;'&gt;i&lt;/span&gt;&lt;span&gt; Use &lt;/span&gt;&lt;span style='color: #555555;background-color: #000000;'&gt;`spec()`&lt;/span&gt;&lt;span&gt; to retrieve the full column specification for this data.
+## &lt;/span&gt;&lt;span style='color: #00BBBB;'&gt;i&lt;/span&gt;&lt;span&gt; Specify the column types or set &lt;/span&gt;&lt;span style='color: #555555;background-color: #000000;'&gt;`show_col_types = FALSE`&lt;/span&gt;&lt;span&gt; to quiet this message.
 &lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
 
-- Take note that `Month` was read in as a column of type character!
+- I do not recommend setting `show_col_types = FALSE`
+- If any columns were not read in as the correct type, you should deal with them immediately (or at
+least be aware)
+
+- Example: notice that `Month` was read in as a column of type character!
 
 ---
 
@@ -223,7 +223,7 @@ ggplot(September, aes(x=Date.Time, y=Mean.Max.Temp.C.))+
   geom_smooth(method = "loess", formula = y ~ x)
 ```
 
-- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a warning will be shown
+- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a message will be shown
 that this is what is used
 
 ]
@@ -269,7 +269,7 @@ ggplot(September, aes(x=Date.Time, y=Mean.Max.Temp.C.))+
   geom_smooth(method = "loess" ,formula = y ~ x)
 ```
 
-- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a warning will be shown
+- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a message will be shown
 that this is what is used
 
 ]
@@ -360,7 +360,7 @@ ggplot(SeptOctnew, aes(x=Year, y=Total.precip))+
   geom_smooth(method = "loess", formula = y ~ x)
 ```
 
-- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a warning will be shown
+- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a message will be shown
 that this is what is used
 
 ]
@@ -406,7 +406,7 @@ ggplot(SeptOctnew, aes(x=Year, y=Total.precip))+
   geom_smooth(method = "loess", formula = y ~ x)
 ```
 
-- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a warning will be shown
+- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a message will be shown
 that this is what is used
 
 ]
@@ -430,7 +430,7 @@ ggplot(SeptOctnew, aes(x=Total.precip, y=Mean.Max.Temp.C.))+
   geom_smooth(method = "loess", formula = y ~ x)
 ```
 
-- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a warning will be shown
+- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a message will be shown
 that this is what is used
 
 ]
@@ -506,7 +506,7 @@ weather %&gt;%
   facet_wrap(~Month)
 ```
 
-- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a warning will be shown
+- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a message will be shown
 that this is what is used
 
 ]
@@ -539,7 +539,7 @@ weather %&gt;%
 - Clarify that the variable being facetted is `Month` using `labeller = "label_both"`, though
 an even better option would be to use the full month names, e.g. September, October, November
 - Change dimensions to 3x1 since time data is usually wide
-- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a warning will be shown
+- Specifying `method = "loess"` and `formula = y ~ x` are optional, but a message will be shown
 that this is what is used
 
 ]
