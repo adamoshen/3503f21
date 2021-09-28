@@ -13,3 +13,5 @@ output:
 the page margins to "None". Untested with other browsers.
 
 [Lab 1: Week of September 20](./Lab 1/)
+
+[Lab 2: Week of September 27](./Lab 2/)

@@ -9,3 +9,5 @@
 with other browsers.
 
 [Lab 1: Week of September 20](./Lab%201/)
+
+[Lab 2: Week of September 27](./Lab%202/)
