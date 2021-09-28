@@ -146,9 +146,9 @@ ggplot(can_flower_sales, aes(x=year, y=VALUE, group=type, colour=type))+
 # Improve the plot &amp;mdash; modify `type` values
 
 We will modify the values in the `type` column of the original data set. Alternatively, you can
-create a copy of the data set and modify the copy instead. Then we re-obtain the required data for
-this question. The functions `str_remove` and `str_to_sentence` are found in the
-[stringr](https://stringr.tidyverse.org/) package.
+create a copy of the data set and modify the copy instead. The functions `str_remove` and 
+`str_to_sentence` are found in the [stringr](https://stringr.tidyverse.org/) package. Finally, we
+can re-obtain the required data for this question. 
 
 .pull-left[
 
@@ -325,10 +325,10 @@ clutter
 
 - Consistent capitalisation of axis names
 - Scale `VALUE` so that there is no scientific notation
-- Depending on the size of the output plot, the `type` labels may end up overlapping; try flipping
-the axes
-- Notice that the `type` axis is sorted by alphabetical order; reorder the bars so that they go from
-largest to smallest instead
+- Depending on the size of the output plot, the `type` labels may end up overlapping; flip the axes
+so that this won't happen
+- Notice that the `type` axis is sorted by alphabetical order; reorder the bars so that they appear
+"in order"
 - Give a more descriptive label for `VALUE` and add a title to the plot
 
 ]
@@ -345,7 +345,7 @@ largest to smallest instead
 
 .pull-left[
 
-Flip the axes. Since [ggplot2](https://ggplot2.tidyverse.org/) v.3.3.0+, we can just swap
+Flip the axes. Since [ggplot2](https://ggplot2.tidyverse.org/) v3.3.0+, we can just swap
 the aesthetic variables instead of using `coord_flip`.
 
 
@@ -364,7 +364,7 @@ ggplot(can_flower_prod, aes(x=VALUE, y=type))+
 
 ---
 
-# Improve the plot &amp;mdash; make the new plot
+# Improve the plot &amp;mdash; change scales and ordering
 
 To work around the scientific notation, change the unit of `VALUE` from a single unit to millions of
 units.
@@ -382,9 +382,14 @@ can_flower_prod &lt;- can_flower_prod %&gt;%
   )
 ```
 
-- Since we are making a horizontal bar chart, we reorder `type` by ascending value of `VALUE`
+- Since we are making a horizontal bar chart, we reorder `type` by *ascending* value of `VALUE`
 - If we had decided to stick with a vertical bar chart, we would need to reorder `type` by
-*descending* value of `VALUE` using `fct_reorder(type, VALUE, .desc=TRUE)`.
+*descending* value of `VALUE` using:
+
+
+```r
+fct_reorder(type, VALUE, .desc=TRUE)
+```
 
 ---
 
@@ -404,7 +409,7 @@ ggplot(can_flower_prod, aes(x=VALUE, y=type))+
 
 .pull-right[
 
-&lt;img src="index_files/figure-html/unnamed-chunk-26-1.png" width="504" style="display: block; margin: auto;" /&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-27-1.png" width="504" style="display: block; margin: auto;" /&gt;
 
 ]
 
@@ -432,7 +437,7 @@ ggplot(can_flower_prod, aes(x=VALUE, y=type))+
 
 .pull-right[
 
-&lt;img src="index_files/figure-html/unnamed-chunk-28-1.png" width="504" style="display: block; margin: auto;" /&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-29-1.png" width="504" style="display: block; margin: auto;" /&gt;
 
 ]
     </textarea>
