@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Lab 2, Stat 3503 Fall 2021</title>
+    <meta charset="utf-8" />
+    <script src="libs/header-attrs-2.9/header-attrs.js"></script>
+    <script src="libs/clipboard-2.0.6/clipboard.min.js"></script>
+    <link href="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"<ion-icon name=\"clipboard-outline\"><\/ion-icon>","success":"<ion-icon name=\"checkmark-outline\" style=\"color: #90BE6D\"><\/ion-icon>","error":"<ion-icon name=\"close-outline\" style=\"color: #F94144\"><\/ion-icon>"})</script>
+    <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view-0.2.6/tile-view.js"></script>
+    <link rel="stylesheet" href="css/xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="css/extra.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+
+
+
+
+
+
+# Lab 2 &amp;mdash; September 27
+
+
+```r
+library(tidyverse)
+```
+
+&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## -- &lt;span style='font-weight: bold;'&gt;Attaching packages&lt;/span&gt;&lt;span&gt; --------------------------------------- tidyverse 1.3.0 --
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;ggplot2&lt;/span&gt;&lt;span&gt; 3.3.3     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;purrr  &lt;/span&gt;&lt;span&gt; 0.3.4
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;tibble &lt;/span&gt;&lt;span&gt; 3.1.0     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;dplyr  &lt;/span&gt;&lt;span&gt; 1.0.5
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;tidyr  &lt;/span&gt;&lt;span&gt; 1.1.3     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;stringr&lt;/span&gt;&lt;span&gt; 1.4.0
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;readr  &lt;/span&gt;&lt;span&gt; 2.0.1     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;forcats&lt;/span&gt;&lt;span&gt; 0.5.1
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## -- &lt;span style='font-weight: bold;'&gt;Conflicts&lt;/span&gt;&lt;span&gt; ------------------------------------------ tidyverse_conflicts() --
+## &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;x&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;dplyr&lt;/span&gt;&lt;span&gt;::&lt;/span&gt;&lt;span style='color: #00BB00;'&gt;filter()&lt;/span&gt;&lt;span&gt; masks &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;stats&lt;/span&gt;&lt;span&gt;::filter()
+## &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;x&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;dplyr&lt;/span&gt;&lt;span&gt;::&lt;/span&gt;&lt;span style='color: #00BB00;'&gt;lag()&lt;/span&gt;&lt;span&gt;    masks &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;stats&lt;/span&gt;&lt;span&gt;::lag()
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+```r
+library(gghighlight)
+theme_set(theme_bw())
+```
+
+---
+
+# Obtaining the flowers data set
+
+
+```r
+if (!dir.exists("./data")) {
+  dir.create("./data")
+}
+
+download.file("https://www150.statcan.gc.ca/n1/tbl/csv/32100246-eng.zip", destfile="./data/flowers.zip")
+unzip("./data/flowers.zip", exdir="./data")
+```
+
+
+```r
+file.rename("./data/32100246.csv", "./data/flowers.csv")
+file.rename("./data/32100246_MetaData.csv", "./data/flowers_metadata.csv")
+```
+
+
+```r
+flowers &lt;- read_csv("./data/flowers.csv")
+```
+
+&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='font-weight: bold;'&gt;Rows: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;1540&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Columns: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;16&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='color: #00BBBB;'&gt;--&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Column specification&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #00BBBB;'&gt;--------------------------------------------------------&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Delimiter:&lt;/span&gt;&lt;span&gt; ","
+## &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;chr&lt;/span&gt;&lt;span&gt; (9): GEO, DGUID, Flowers and plants, Output, UOM, SCALAR_FACTOR, VECTOR,...
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;dbl&lt;/span&gt;&lt;span&gt; (5): REF_DATE, UOM_ID, SCALAR_ID, VALUE, DECIMALS
+## &lt;/span&gt;&lt;span style='color: #BBBB00;'&gt;lgl&lt;/span&gt;&lt;span&gt; (2): SYMBOL, TERMINATED
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## 
+## &lt;span style='color: #00BBBB;'&gt;i&lt;/span&gt;&lt;span&gt; Use &lt;/span&gt;&lt;span style='color: #555555;background-color: #000000;'&gt;`spec()`&lt;/span&gt;&lt;span&gt; to retrieve the full column specification for this data.
+## &lt;/span&gt;&lt;span style='color: #00BBBB;'&gt;i&lt;/span&gt;&lt;span&gt; Specify the column types or set &lt;/span&gt;&lt;span style='color: #555555;background-color: #000000;'&gt;`show_col_types = FALSE`&lt;/span&gt;&lt;span&gt; to quiet this message.
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+---
+
+# Cleaning up
+
+
+```r
+flowers &lt;- flowers %&gt;%
+  rename(year = REF_DATE, location = GEO, type = `Flowers and plants`)
+```
+
+- Although not asked, I am also renaming the `Flowers and plants` variable to `type`, because we
+really shouldn't have spaces in variable names
+- Variable names that violate the naming conventions can be referenced by wrapping them in backticks
+as above
+
+---
+
+# Flower sales in Canada
+
+.pull-left[
+
+
+```r
+can_flower_sales &lt;- flowers %&gt;%
+  filter(location == "Canada", Output == "Sales")
+
+ggplot(can_flower_sales, aes(x=year, y=VALUE, group=type, colour=type))+
+  geom_line()
+```
+
+]
+
+.pull-right[
+
+&lt;img src="index_files/figure-html/unnamed-chunk-7-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+
+# Why is this plot terrible?
+
+.pull-left[
+
+- Axis and legend names are not capitalised consistently: `VALUE`, `year`, `type`
+- Legend is taking up too much plotting space
+- Values in the legend contain unnecessary information
+- Unclear what the y-axis, `VALUE`, is measuring
+- Scientific notation on the y-axis requires the reader to do math
+
+]
+
+.pull-right[
+
+&lt;img src="index_files/figure-html/unnamed-chunk-8-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+
+# Improve the plot &amp;mdash; modify `type` values
+
+We will modify the values in the `type` column of the original data set. Alternatively, you can
+create a copy of the data set and modify the copy instead. Then we re-obtain the required data for
+this question. The functions `str_remove` and `str_to_sentence` are found in the
+[stringr](https://stringr.tidyverse.org/) package.
+
+.pull-left[
+
+
+```r
+flowers &lt;- flowers %&gt;%
+  mutate(
+    type = str_remove(type, pattern="Total\\s"),
+    type = str_remove(type, pattern="\\s\\[.*\\]"),
+    type = str_to_sentence(type)
+  )
+```
+
+- Remove the phrase "Total" with the space that follows, from the `type` values
+- Remove the space before the square brackets, the square brackets, and anything contained within,
+from the `type` values
+- Capitalise the first letter of each value
+
+
+```r
+can_flower_sales &lt;- flowers %&gt;%
+  filter(location == "Canada", Output == "Sales")
+```
+
+]
+
+--
+
+.pull-right[
+
+Check our modifications:
+
+
+```r
+can_flower_sales %&gt;%
+  distinct(type)
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 5 x 1&lt;/span&gt;&lt;span&gt;
+##   type                     
+##   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;                    
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt; Potted plants            
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;2&lt;/span&gt;&lt;span&gt; Cuttings                 
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;3&lt;/span&gt;&lt;span&gt; Cut flowers              
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;4&lt;/span&gt;&lt;span&gt; Ornamental bedding plants
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;5&lt;/span&gt;&lt;span&gt; Vegetable bedding plants
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+]
+
+---
+
+# Improve the plot &amp;mdash; change scale of y-axis
+
+To work around the scientific notation, change the unit of the y-axis from dollars to millions of
+dollars.
+
+
+```r
+can_flower_sales &lt;- can_flower_sales %&gt;%
+  mutate(VALUE = VALUE / 1e6)
+```
+
+---
+
+# Improve the plot &amp;mdash; make the new plot
+
+.pull-left[
+
+Starting with the base plot:
+
+
+```r
+ggplot(can_flower_sales, aes(x=year, y=VALUE, group=type, colour=type))+
+  geom_line()
+```
+
+]
+
+.pull-right[
+
+&lt;img src="index_files/figure-html/unnamed-chunk-14-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+
+# Improve the plot &amp;mdash; make the new plot
+
+.pull-left[
+
+Label the lines on the plot:
+
+
+```r
+ggplot(can_flower_sales, aes(x=year, y=VALUE, group=type, colour=type))+
+  geom_line()+
+  gghighlight(label_params = list(alpha=0.6))
+```
+
+- By default, `gghighlight::gghighlight` highlights and labels five objects
+- Coincidentally, we have exactly five lines here
+- Transparency is added to the label so that we can still see the line underneath
+
+]
+
+.pull-right[
+
+&lt;img src="index_files/figure-html/unnamed-chunk-16-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+
+# Improve the plot &amp;mdash; make the new plot
+
+.pull-left[
+
+Fix axis labels and add titles
+
+
+```r
+ggplot(can_flower_sales, aes(x=year, y=VALUE, group=type, colour=type))+
+  geom_line()+
+  gghighlight(label_params = list(alpha=0.6))+
+  labs(
+    x="Year", y="Total sales (million dollars)",
+    title="Plant sales in Canada", subtitle="2007 to 2020"
+  )
+```
+
+]
+
+.pull-right[
+
+&lt;img src="index_files/figure-html/unnamed-chunk-18-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+
+# Flower production in Canada in 2020
+
+.pull-left[
+
+
+```r
+can_flower_prod &lt;- flowers %&gt;%
+  filter(year == 2020, location == "Canada", Output == "Production (number)")
+
+ggplot(can_flower_prod, aes(x=type, y=VALUE))+
+  geom_col()
+```
+
+- Note that `geom_col` is used when the counts already exist in your data (in this case, `VALUE`)
+- `geom_bar` is used when you do not already have the counts; in this case, 
+[ggplot2](https://ggplot2.tidyverse.org/) will perform the counting
+- Recall that we had previously modified the values of the `type` variable to remove the extra
+clutter
+
+]
+
+.pull-right[
+
+&lt;img src="index_files/figure-html/unnamed-chunk-20-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+
+# How can we improve this plot?
+
+.pull-left[
+
+- Consistent capitalisation of axis names
+- Scale `VALUE` so that there is no scientific notation
+- Depending on the size of the output plot, the `type` labels may end up overlapping; try flipping
+the axes
+- Notice that the `type` axis is sorted by alphabetical order; reorder the bars so that they go from
+largest to smallest instead
+- Give a more descriptive label for `VALUE` and add a title to the plot
+
+]
+
+.pull-right[
+
+&lt;img src="index_files/figure-html/unnamed-chunk-21-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+
+# Improve the plot &amp;mdash; make the new plot
+
+.pull-left[
+
+Flip the axes. Since [ggplot2](https://ggplot2.tidyverse.org/) v.3.3.0+, we can just swap
+the aesthetic variables instead of using `coord_flip`.
+
+
+```r
+ggplot(can_flower_prod, aes(x=VALUE, y=type))+
+  geom_col()
+```
+
+]
+
+.pull-right[
+
+&lt;img src="index_files/figure-html/unnamed-chunk-23-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+
+# Improve the plot &amp;mdash; make the new plot
+
+To work around the scientific notation, change the unit of `VALUE` from a single unit to millions of
+units.
+
+At the same time, we can reorder `type` by *ascending* value of `VALUE` using `fct_reorder` from the
+[forcats](https://forcats.tidyverse.org/) package. In reordering the levels of `type`, we are
+converting it from character (text) to an ordered factor (ordered categorical variable).
+
+
+```r
+can_flower_prod &lt;- can_flower_prod %&gt;%
+  mutate(
+    VALUE = VALUE / 1e6,
+    type = fct_reorder(type, VALUE)
+  )
+```
+
+- Since we are making a horizontal bar chart, we reorder `type` by ascending value of `VALUE`
+- If we had decided to stick with a vertical bar chart, we would need to reorder `type` by
+*descending* value of `VALUE` using `fct_reorder(type, VALUE, .desc=TRUE)`.
+
+---
+
+# Improve the plot &amp;mdash; make the new plot
+
+.pull-left[
+
+Check our work by re-running the same code that produced the previous plot:
+
+
+```r
+ggplot(can_flower_prod, aes(x=VALUE, y=type))+
+  geom_col()
+```
+
+]
+
+.pull-right[
+
+&lt;img src="index_files/figure-html/unnamed-chunk-26-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+
+# Improve the plot &amp;mdash; make the new plot
+
+.pull-left[
+
+Fix the axis names and add a title.
+
+
+```r
+ggplot(can_flower_prod, aes(x=VALUE, y=type))+
+  geom_col()+
+  labs(
+    x="Number produced (millions)", y="Plant type",
+    title="Number of plants produced in Canada in 2020, by plant type"
+  )
+```
+
+- You can add some colour to this plot, but I'm not going to
+
+]
+
+.pull-right[
+
+&lt;img src="index_files/figure-html/unnamed-chunk-28-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+]
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "atom-one-light",
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();</script>
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
