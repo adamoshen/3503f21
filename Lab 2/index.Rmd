@@ -1,0 +1,489 @@
+---
+title: "Lab 2, Stat 3503 Fall 2021"
+output:
+  xaringan::moon_reader:
+    seal: false
+    lib_dir: libs
+    chakra: libs/remark-latest.min.js
+    css: [css/xaringan-themer.css, css/extra.css]
+    nature:
+      highlightStyle: atom-one-light
+      countIncrementalSlides: false
+      ratio: 16:9
+    includes:
+      after_body: utils/ionicons.html
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo=TRUE, message=FALSE, warning=FALSE,
+  fig.align="center", fig.retina=4
+)
+
+old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks)
+
+styles <- c(
+  getOption('fansi.style'),  # default style
+  "PRE.fansi CODE {background-color: transparent;}",
+  "PRE.fansi-error {background-color: #DD5555;}",
+  "PRE.fansi-warning {background-color: #DDDD55;}",
+  "PRE.fansi-message {background-color: #EEEEEE;}"
+)
+
+old.hooks <- c(
+  old_hooks,
+  fansi::set_knit_hooks(
+    knitr::knit_hooks,
+    which=c('warning', 'error', 'message'),
+    style=styles
+  )
+)
+
+options(crayon.enabled=TRUE)
+```
+
+```{r clipboard, include=FALSE}
+xaringanExtra::use_clipboard(
+  button_text = "<ion-icon name=\"clipboard-outline\"></ion-icon>",
+  success_text = "<ion-icon name=\"checkmark-outline\" style=\"color: #90BE6D\"></ion-icon>",
+  error_text = "<ion-icon name=\"close-outline\" style=\"color: #F94144\"></ion-icon>"
+)
+```
+
+```{r tile-view, include=FALSE}
+xaringanExtra::use_tile_view()
+```
+
+```{r xaringanthemer, eval=FALSE, include=FALSE}
+library(xaringanthemer)
+
+style_xaringan(
+  text_color = "#f8f8f2",
+  header_color = "#f8f8f2",
+  background_color = "#282a36",
+  link_color = "#ffb86c",
+  text_slide_number_color = "#f8f8f2",
+  code_inline_color = "#f8f8f2",
+  code_inline_background_color = "#282c34",
+  inverse_background_color = "#363428",
+  inverse_text_color = "#f8f8f2",
+  inverse_header_color = "#f8f8f2",
+  text_font_size = "0.9rem",
+  header_h1_font_size = "1.75rem",
+  header_h2_font_size = "1.50rem",
+  header_h3_font_size = "1.25rem",
+  text_font_google = google_font("IBM Plex Sans", "300", "300i"),
+  header_font_google = google_font("IBM Plex Sans", "300", "300i"),
+  code_font_google = google_font("IBM Plex Mono", "500"),
+  code_font_size = "0.6rem",
+  outfile = "css/xaringan-themer.css"
+)
+```
+
+# Lab 2 &mdash; September 27
+
+```{r, message=TRUE}
+library(tidyverse)
+library(gghighlight)
+theme_set(theme_bw())
+```
+
+---
+
+# Obtaining the flowers data set
+
+```{r, eval=FALSE}
+if (!dir.exists("./data")) {
+  dir.create("./data")
+}
+
+download.file("https://www150.statcan.gc.ca/n1/tbl/csv/32100246-eng.zip", destfile="./data/flowers.zip")
+unzip("./data/flowers.zip", exdir="./data")
+```
+
+```{r, eval=FALSE}
+file.rename("./data/32100246.csv", "./data/flowers.csv")
+file.rename("./data/32100246_MetaData.csv", "./data/flowers_metadata.csv")
+```
+
+```{r, message=TRUE}
+flowers <- read_csv("./data/flowers.csv")
+```
+
+---
+
+# Cleaning up
+
+```{r}
+flowers <- flowers %>%
+  rename(year = REF_DATE, location = GEO, type = `Flowers and plants`)
+```
+
+- Although not asked, I am also renaming the `Flowers and plants` variable to `type`, because we
+really shouldn't have spaces in variable names
+- Variable names that violate the naming conventions can be referenced by wrapping them in backticks
+as above
+
+---
+
+# Flower sales in Canada
+
+.pull-left[
+
+```{r, eval=FALSE}
+can_flower_sales <- flowers %>%
+  filter(location == "Canada", Output == "Sales")
+
+ggplot(can_flower_sales, aes(x=year, y=VALUE, group=type, colour=type))+
+  geom_line()
+```
+
+]
+
+.pull-right[
+
+```{r, echo=FALSE}
+can_flower_sales <- flowers %>%
+  filter(location == "Canada", Output == "Sales")
+
+ggplot(can_flower_sales, aes(x=year, y=VALUE, group=type, colour=type))+
+  geom_line()
+```
+
+]
+
+---
+
+# Why is this plot terrible?
+
+.pull-left[
+
+- Axis and legend names are not capitalised consistently: `VALUE`, `year`, `type`
+- Legend is taking up too much plotting space
+- Values in the legend contain unnecessary information
+- Unclear what the y-axis, `VALUE`, is measuring
+- Scientific notation on the y-axis requires the reader to do math
+
+]
+
+.pull-right[
+
+```{r, echo=FALSE}
+ggplot(can_flower_sales, aes(x=year, y=VALUE, group=type, colour=type))+
+  geom_line()
+```
+
+]
+
+---
+
+# Improve the plot &mdash; modify `type` values
+
+We will modify the values in the `type` column of the original data set. Alternatively, you can
+create a copy of the data set and modify the copy instead. Then we re-obtain the required data for
+this question. The functions `str_remove` and `str_to_sentence` are found in the
+[stringr](https://stringr.tidyverse.org/) package.
+
+.pull-left[
+
+```{r}
+flowers <- flowers %>%
+  mutate(
+    type = str_remove(type, pattern="Total\\s"),
+    type = str_remove(type, pattern="\\s\\[.*\\]"),
+    type = str_to_sentence(type)
+  )
+```
+
+- Remove the phrase "Total" with the space that follows, from the `type` values
+- Remove the space before the square brackets, the square brackets, and anything contained within,
+from the `type` values
+- Capitalise the first letter of each value
+
+```{r}
+can_flower_sales <- flowers %>%
+  filter(location == "Canada", Output == "Sales")
+```
+
+]
+
+--
+
+.pull-right[
+
+Check our modifications:
+
+```{r}
+can_flower_sales %>%
+  distinct(type)
+```
+
+]
+
+---
+
+# Improve the plot &mdash; change scale of y-axis
+
+To work around the scientific notation, change the unit of the y-axis from dollars to millions of
+dollars.
+
+```{r}
+can_flower_sales <- can_flower_sales %>%
+  mutate(VALUE = VALUE / 1e6)
+```
+
+---
+
+# Improve the plot &mdash; make the new plot
+
+.pull-left[
+
+Starting with the base plot:
+
+```{r, eval=FALSE}
+ggplot(can_flower_sales, aes(x=year, y=VALUE, group=type, colour=type))+
+  geom_line()
+```
+
+]
+
+.pull-right[
+
+```{r, echo=FALSE}
+ggplot(can_flower_sales, aes(x=year, y=VALUE, group=type, colour=type))+
+  geom_line()
+```
+
+]
+
+---
+
+# Improve the plot &mdash; make the new plot
+
+.pull-left[
+
+Label the lines on the plot:
+
+```{r, eval=FALSE}
+ggplot(can_flower_sales, aes(x=year, y=VALUE, group=type, colour=type))+
+  geom_line()+
+  gghighlight(label_params = list(alpha=0.6))
+```
+
+- By default, `gghighlight::gghighlight` highlights and labels five objects
+- Coincidentally, we have exactly five lines here
+- Transparency is added to the label so that we can still see the line underneath
+
+]
+
+.pull-right[
+
+```{r, echo=FALSE}
+ggplot(can_flower_sales, aes(x=year, y=VALUE, group=type, colour=type))+
+  geom_line()+
+  gghighlight(label_params = list(alpha=0.6))
+```
+
+]
+
+---
+
+# Improve the plot &mdash; make the new plot
+
+.pull-left[
+
+Fix axis labels and add titles
+
+```{r, eval=FALSE}
+ggplot(can_flower_sales, aes(x=year, y=VALUE, group=type, colour=type))+
+  geom_line()+
+  gghighlight(label_params = list(alpha=0.6))+
+  labs(
+    x="Year", y="Total sales (million dollars)",
+    title="Plant sales in Canada", subtitle="2007 to 2020"
+  )
+```
+
+]
+
+.pull-right[
+
+```{r, echo=FALSE}
+ggplot(can_flower_sales, aes(x=year, y=VALUE, group=type, colour=type))+
+  geom_line()+
+  gghighlight(label_params = list(alpha=0.6))+
+  labs(
+    x="Year", y="Total sales (million dollars)",
+    title="Plant sales in Canada", subtitle="2007 to 2020"
+  )
+```
+
+]
+
+---
+
+# Flower production in Canada in 2020
+
+.pull-left[
+
+```{r, eval=FALSE}
+can_flower_prod <- flowers %>%
+  filter(year == 2020, location == "Canada", Output == "Production (number)")
+
+ggplot(can_flower_prod, aes(x=type, y=VALUE))+
+  geom_col()
+```
+
+- Note that `geom_col` is used when the counts already exist in your data (in this case, `VALUE`)
+- `geom_bar` is used when you do not already have the counts; in this case, 
+[ggplot2](https://ggplot2.tidyverse.org/) will perform the counting
+- Recall that we had previously modified the values of the `type` variable to remove the extra
+clutter
+
+]
+
+.pull-right[
+
+```{r, echo=FALSE}
+can_flower_prod <- flowers %>%
+  filter(year == 2020, location == "Canada", Output == "Production (number)")
+
+ggplot(can_flower_prod, aes(x=type, y=VALUE))+
+  geom_col()
+```
+
+]
+
+---
+
+# How can we improve this plot?
+
+.pull-left[
+
+- Consistent capitalisation of axis names
+- Scale `VALUE` so that there is no scientific notation
+- Depending on the size of the output plot, the `type` labels may end up overlapping; try flipping
+the axes
+- Notice that the `type` axis is sorted by alphabetical order; reorder the bars so that they go from
+largest to smallest instead
+- Give a more descriptive label for `VALUE` and add a title to the plot
+
+]
+
+.pull-right[
+
+```{r, echo=FALSE}
+can_flower_prod <- flowers %>%
+  filter(year == 2020, location == "Canada", Output == "Production (number)")
+
+ggplot(can_flower_prod, aes(x=type, y=VALUE))+
+  geom_col()
+```
+
+]
+
+---
+
+# Improve the plot &mdash; make the new plot
+
+.pull-left[
+
+Flip the axes. Since [ggplot2](https://ggplot2.tidyverse.org/) v.3.3.0+, we can just swap
+the aesthetic variables instead of using `coord_flip`.
+
+```{r, eval=FALSE}
+ggplot(can_flower_prod, aes(x=VALUE, y=type))+
+  geom_col()
+```
+
+]
+
+.pull-right[
+
+```{r, echo=FALSE}
+ggplot(can_flower_prod, aes(x=VALUE, y=type))+
+  geom_col()
+```
+
+]
+
+---
+
+# Improve the plot &mdash; make the new plot
+
+To work around the scientific notation, change the unit of `VALUE` from a single unit to millions of
+units.
+
+At the same time, we can reorder `type` by *ascending* value of `VALUE` using `fct_reorder` from the
+[forcats](https://forcats.tidyverse.org/) package. In reordering the levels of `type`, we are
+converting it from character (text) to an ordered factor (ordered categorical variable).
+
+```{r}
+can_flower_prod <- can_flower_prod %>%
+  mutate(
+    VALUE = VALUE / 1e6,
+    type = fct_reorder(type, VALUE)
+  )
+```
+
+- Since we are making a horizontal bar chart, we reorder `type` by ascending value of `VALUE`
+- If we had decided to stick with a vertical bar chart, we would need to reorder `type` by
+*descending* value of `VALUE` using `fct_reorder(type, VALUE, .desc=TRUE)`.
+
+---
+
+# Improve the plot &mdash; make the new plot
+
+.pull-left[
+
+Check our work by re-running the same code that produced the previous plot:
+
+```{r, eval=FALSE}
+ggplot(can_flower_prod, aes(x=VALUE, y=type))+
+  geom_col()
+```
+
+]
+
+.pull-right[
+
+```{r, echo=FALSE}
+ggplot(can_flower_prod, aes(x=VALUE, y=type))+
+  geom_col()
+```
+
+]
+
+---
+
+# Improve the plot &mdash; make the new plot
+
+.pull-left[
+
+Fix the axis names and add a title.
+
+```{r, eval=FALSE}
+ggplot(can_flower_prod, aes(x=VALUE, y=type))+
+  geom_col()+
+  labs(
+    x="Number produced (millions)", y="Plant type",
+    title="Number of plants produced in Canada in 2020, by plant type"
+  )
+```
+
+- You can add some colour to this plot, but I'm not going to
+
+]
+
+.pull-right[
+
+```{r, echo=FALSE}
+ggplot(can_flower_prod, aes(x=VALUE, y=type))+
+  geom_col()+
+  labs(
+    x="Number produced (millions)", y="Plant type",
+    title="Number of plants produced in Canada in 2020, by plant type"
+  )
+```
+
+]
