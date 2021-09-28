@@ -6,7 +6,8 @@
 
 **Tip:** Slides can be exported to pdf in Chrome/Edge by going to
 `Print -> Save as PDF` and setting the page margins to "None". Untested
-with other browsers.
+with other browsers. *Note that some of the code may get cut off when
+exporting to pdf.*
 
 [Lab 1: Week of September 20](./Lab%201/)
 
