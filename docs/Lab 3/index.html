@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Lab 3, Stat 3503 Fall 2021</title>
+    <meta charset="utf-8" />
+    <script src="libs/header-attrs-2.9/header-attrs.js"></script>
+    <script src="libs/clipboard-2.0.6/clipboard.min.js"></script>
+    <link href="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"<ion-icon name=\"clipboard-outline\"><\/ion-icon>","success":"<ion-icon name=\"checkmark-outline\" style=\"color: #90BE6D\"><\/ion-icon>","error":"<ion-icon name=\"close-outline\" style=\"color: #F94144\"><\/ion-icon>"})</script>
+    <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view-0.2.6/tile-view.js"></script>
+    <link rel="stylesheet" href="css/xaringan-themer.css" type="text/css" />
+    <link rel="stylesheet" href="css/extra.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+
+
+
+
+
+
+# Lab 3 &amp;mdash; October 4
+
+
+```r
+library(tidyverse)
+```
+
+&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## -- &lt;span style='font-weight: bold;'&gt;Attaching packages&lt;/span&gt;&lt;span&gt; --------------------------------------- tidyverse 1.3.0 --
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;ggplot2&lt;/span&gt;&lt;span&gt; 3.3.3     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;purrr  &lt;/span&gt;&lt;span&gt; 0.3.4
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;tibble &lt;/span&gt;&lt;span&gt; 3.1.0     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;dplyr  &lt;/span&gt;&lt;span&gt; 1.0.5
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;tidyr  &lt;/span&gt;&lt;span&gt; 1.1.3     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;stringr&lt;/span&gt;&lt;span&gt; 1.4.0
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;readr  &lt;/span&gt;&lt;span&gt; 2.0.1     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;forcats&lt;/span&gt;&lt;span&gt; 0.5.1
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## -- &lt;span style='font-weight: bold;'&gt;Conflicts&lt;/span&gt;&lt;span&gt; ------------------------------------------ tidyverse_conflicts() --
+## &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;x&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;dplyr&lt;/span&gt;&lt;span&gt;::&lt;/span&gt;&lt;span style='color: #00BB00;'&gt;filter()&lt;/span&gt;&lt;span&gt; masks &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;stats&lt;/span&gt;&lt;span&gt;::filter()
+## &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;x&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;dplyr&lt;/span&gt;&lt;span&gt;::&lt;/span&gt;&lt;span style='color: #00BB00;'&gt;lag()&lt;/span&gt;&lt;span&gt;    masks &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;stats&lt;/span&gt;&lt;span&gt;::lag()
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+```r
+library(lubridate)
+```
+
+```
+## 
+## Attaching package: 'lubridate'
+```
+
+```
+## The following objects are masked from 'package:base':
+## 
+##     date, intersect, setdiff, union
+```
+
+```r
+theme_set(theme_bw())
+```
+
+---
+
+# Soft-drink production data
+
+- From 1950 to 1977, soft-drink production was reported on a quarterly basis
+- From 1976 to 1995, soft-drink production was reported on a monthly basis
+- We want to expand the quarterly production data by converting our monthly data into quarterly
+data, and appending it to the end of the original quarterly data
+- The final result should be a data set that ranges from 1950 to 1995 with production values being
+reported each quarter
+
+---
+
+# Obtain quarterly soft-drinks data set
+
+
+```r
+if (!dir.exists("./data")) {
+  dir.create("./data")
+}
+
+download.file("https://www150.statcan.gc.ca/n1/tbl/csv/16100100-eng.zip", destfile="./data/qdrinks.zip")
+unzip("./data/qdrinks.zip", exdir="./data")
+```
+
+
+```r
+file.rename("./data/16100100.csv", "./data/qdrinks.csv")
+```
+
+
+```r
+qdrinks &lt;- read_csv("./data/qdrinks.csv")
+```
+
+&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='font-weight: bold;'&gt;Rows: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;112&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Columns: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;15&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='color: #00BBBB;'&gt;--&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Column specification&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #00BBBB;'&gt;--------------------------------------------------------&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Delimiter:&lt;/span&gt;&lt;span&gt; ","
+## &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;chr&lt;/span&gt;&lt;span&gt; (6): REF_DATE, GEO, Standard Classification of Goods (SCG), UOM, SCALAR_...
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;dbl&lt;/span&gt;&lt;span&gt; (5): UOM_ID, SCALAR_ID, COORDINATE, VALUE, DECIMALS
+## &lt;/span&gt;&lt;span style='color: #BBBB00;'&gt;lgl&lt;/span&gt;&lt;span&gt; (4): DGUID, STATUS, SYMBOL, TERMINATED
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## 
+## &lt;span style='color: #00BBBB;'&gt;i&lt;/span&gt;&lt;span&gt; Use &lt;/span&gt;&lt;span style='color: #555555;background-color: #000000;'&gt;`spec()`&lt;/span&gt;&lt;span&gt; to retrieve the full column specification for this data.
+## &lt;/span&gt;&lt;span style='color: #00BBBB;'&gt;i&lt;/span&gt;&lt;span&gt; Specify the column types or set &lt;/span&gt;&lt;span style='color: #555555;background-color: #000000;'&gt;`show_col_types = FALSE`&lt;/span&gt;&lt;span&gt; to quiet this message.
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+---
+
+# Inspect quarterly drinks data
+
+
+```r
+qdrinks %&gt;%
+  select(REF_DATE, VALUE)
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 112 x 2&lt;/span&gt;&lt;span&gt;
+##    REF_DATE VALUE
+##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; 1950-01  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;&lt;span&gt;349
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; 1950-04  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;29&lt;/span&gt;&lt;span&gt;730
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; 1950-07  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;31&lt;/span&gt;&lt;span&gt;721
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; 1950-10  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;20&lt;/span&gt;&lt;span&gt;045
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; 1951-01  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;17&lt;/span&gt;&lt;span&gt;398
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; 1951-04  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;25&lt;/span&gt;&lt;span&gt;893
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; 1951-07  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;28&lt;/span&gt;&lt;span&gt;477
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; 1951-10  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;&lt;span&gt;923
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; 1952-01  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;&lt;span&gt;248
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; 1952-04  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;26&lt;/span&gt;&lt;span&gt;232
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 102 more rows&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+- The `REF_DATE` column is in the format yyyy-mm
+- We want to convert it to a full date format, yyyy-mm-dd
+- The lubridate package contains functions to help us parse text into dates and datetimes
+- Since our values are in the format yyyy-mm, we use the `ym()` function
+
+---
+
+# Modify quarterly drinks data
+
+
+```r
+quarterly &lt;- qdrinks %&gt;%
+  select(REF_DATE, VALUE) %&gt;%
+  rename(date = REF_DATE, quarterly_value = VALUE) %&gt;%
+  mutate(date = ym(date))
+
+quarterly
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 112 x 2&lt;/span&gt;&lt;span&gt;
+##    date       quarterly_value
+##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;date&amp;gt;&lt;/span&gt;&lt;span&gt;               &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; 1950-01-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;&lt;span&gt;349
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; 1950-04-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;29&lt;/span&gt;&lt;span&gt;730
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; 1950-07-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;31&lt;/span&gt;&lt;span&gt;721
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; 1950-10-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;20&lt;/span&gt;&lt;span&gt;045
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; 1951-01-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;17&lt;/span&gt;&lt;span&gt;398
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; 1951-04-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;25&lt;/span&gt;&lt;span&gt;893
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; 1951-07-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;28&lt;/span&gt;&lt;span&gt;477
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; 1951-10-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;&lt;span&gt;923
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; 1952-01-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;&lt;span&gt;248
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; 1952-04-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;26&lt;/span&gt;&lt;span&gt;232
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 102 more rows&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+---
+
+# Obtain monthly soft-drinks data set
+
+
+```r
+download.file("https://www150.statcan.gc.ca/n1/tbl/csv/16100099-eng.zip", destfile="./data/mdrinks.zip")
+unzip("./data/mdrinks.zip", exdir="./data")
+```
+
+
+```r
+file.rename("./data/16100099.csv", "./data/mdrinks.csv")
+```
+
+
+```r
+mdrinks &lt;- read_csv("./data/mdrinks.csv")
+```
+
+&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='font-weight: bold;'&gt;Rows: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;240&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Columns: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;15&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='color: #00BBBB;'&gt;--&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Column specification&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #00BBBB;'&gt;--------------------------------------------------------&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Delimiter:&lt;/span&gt;&lt;span&gt; ","
+## &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;chr&lt;/span&gt;&lt;span&gt; (6): REF_DATE, GEO, Standard Classification of Goods (SCG), UOM, SCALAR_...
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;dbl&lt;/span&gt;&lt;span&gt; (5): UOM_ID, SCALAR_ID, COORDINATE, VALUE, DECIMALS
+## &lt;/span&gt;&lt;span style='color: #BBBB00;'&gt;lgl&lt;/span&gt;&lt;span&gt; (4): DGUID, STATUS, SYMBOL, TERMINATED
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## 
+## &lt;span style='color: #00BBBB;'&gt;i&lt;/span&gt;&lt;span&gt; Use &lt;/span&gt;&lt;span style='color: #555555;background-color: #000000;'&gt;`spec()`&lt;/span&gt;&lt;span&gt; to retrieve the full column specification for this data.
+## &lt;/span&gt;&lt;span style='color: #00BBBB;'&gt;i&lt;/span&gt;&lt;span&gt; Specify the column types or set &lt;/span&gt;&lt;span style='color: #555555;background-color: #000000;'&gt;`show_col_types = FALSE`&lt;/span&gt;&lt;span&gt; to quiet this message.
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+---
+
+# Inspect monthly drinks data
+
+
+```r
+mdrinks %&gt;%
+  select(REF_DATE, VALUE)
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 240 x 2&lt;/span&gt;&lt;span&gt;
+##    REF_DATE VALUE
+##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; 1976-01  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;20&lt;/span&gt;&lt;span&gt;680
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; 1976-02  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;23&lt;/span&gt;&lt;span&gt;392
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; 1976-03  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;21&lt;/span&gt;&lt;span&gt;553
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; 1976-04  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;24&lt;/span&gt;&lt;span&gt;304
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; 1976-05  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;27&lt;/span&gt;&lt;span&gt;791
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; 1976-06  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;32&lt;/span&gt;&lt;span&gt;838
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; 1976-07  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;32&lt;/span&gt;&lt;span&gt;475
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; 1976-08  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;32&lt;/span&gt;&lt;span&gt;503
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; 1976-09  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;28&lt;/span&gt;&lt;span&gt;990
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; 1976-10  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;23&lt;/span&gt;&lt;span&gt;988
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 230 more rows&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+- The `REF_DATE` column is in the format yyyy-mm
+- We want to convert it to a full date format, yyyy-mm-dd
+- The lubridate package contains functions to help us parse text into dates and datetimes
+- Since our values are in the format yyyy-mm, we use the `ym()` function
+
+---
+
+# Modify monthly drinks data
+
+
+```r
+monthly &lt;- mdrinks %&gt;%
+  select(REF_DATE, VALUE) %&gt;%
+  rename(date = REF_DATE, monthly_value = VALUE) %&gt;%
+  mutate(date = ym(date))
+
+monthly
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 240 x 2&lt;/span&gt;&lt;span&gt;
+##    date       monthly_value
+##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;date&amp;gt;&lt;/span&gt;&lt;span&gt;             &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; 1976-01-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;20&lt;/span&gt;&lt;span&gt;680
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; 1976-02-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;23&lt;/span&gt;&lt;span&gt;392
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; 1976-03-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;21&lt;/span&gt;&lt;span&gt;553
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; 1976-04-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;24&lt;/span&gt;&lt;span&gt;304
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; 1976-05-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;27&lt;/span&gt;&lt;span&gt;791
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; 1976-06-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;32&lt;/span&gt;&lt;span&gt;838
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; 1976-07-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;32&lt;/span&gt;&lt;span&gt;475
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; 1976-08-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;32&lt;/span&gt;&lt;span&gt;503
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; 1976-09-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;28&lt;/span&gt;&lt;span&gt;990
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; 1976-10-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;23&lt;/span&gt;&lt;span&gt;988
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 230 more rows&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+---
+
+# Convert monthly data to quarterly data
+
+Starting with the `monthly` data set, create a new variable called `qdate` which classifies the
+`date` by its corresponding quarter.
+
+
+```r
+monthly %&gt;%
+  mutate(qdate = quarter(date, with_year = TRUE))
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 240 x 3&lt;/span&gt;&lt;span&gt;
+##    date       monthly_value qdate
+##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;date&amp;gt;&lt;/span&gt;&lt;span&gt;             &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; 1976-01-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;20&lt;/span&gt;&lt;span&gt;680 &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;976.
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; 1976-02-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;23&lt;/span&gt;&lt;span&gt;392 &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;976.
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; 1976-03-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;21&lt;/span&gt;&lt;span&gt;553 &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;976.
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; 1976-04-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;24&lt;/span&gt;&lt;span&gt;304 &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;976.
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; 1976-05-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;27&lt;/span&gt;&lt;span&gt;791 &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;976.
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; 1976-06-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;32&lt;/span&gt;&lt;span&gt;838 &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;976.
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; 1976-07-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;32&lt;/span&gt;&lt;span&gt;475 &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;976.
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; 1976-08-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;32&lt;/span&gt;&lt;span&gt;503 &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;976.
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; 1976-09-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;28&lt;/span&gt;&lt;span&gt;990 &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;976.
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; 1976-10-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;23&lt;/span&gt;&lt;span&gt;988 &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;976.
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 230 more rows&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+---
+count: false
+
+# Convert monthly data to quarterly data
+
+Group the rows by their resulting quarters and sum the monthly production values by group, resulting
+in quarterly production values.
+
+
+```r
+monthly %&gt;%
+  mutate(qdate = quarter(date, with_year = TRUE)) %&gt;%
+  group_by(qdate) %&gt;%
+  summarise(quarterly_value = sum(monthly_value))
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 80 x 2&lt;/span&gt;&lt;span&gt;
+##    qdate quarterly_value
+##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;           &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;976.           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;65&lt;/span&gt;&lt;span&gt;625
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;976.           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;84&lt;/span&gt;&lt;span&gt;933
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;976.           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;93&lt;/span&gt;&lt;span&gt;968
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;976.           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;78&lt;/span&gt;&lt;span&gt;708
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;977.           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;73&lt;/span&gt;&lt;span&gt;865
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;977.           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;92&lt;/span&gt;&lt;span&gt;938
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;977.           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;91&lt;/span&gt;&lt;span&gt;812
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;977.           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;76&lt;/span&gt;&lt;span&gt;821
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;978.           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;71&lt;/span&gt;&lt;span&gt;130
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;978.           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;92&lt;/span&gt;&lt;span&gt;965
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 70 more rows&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+We now have one row for each quarter for each year.
+
+Note that after summarising, the last grouping is automatically dropped. Since we only grouped
+on the values of one variable, the resulting data is fully ungrouped. Therefore, we do not need
+to call `ungroup()`.
+
+---
+count: false
+
+# Convert monthly data to quarterly data
+
+Finally, we convert our quarterly dates (yyyy.q) back to full dates (yyyy-mm-dd).
+
+
+```r
+monthly_to_quarterly &lt;- monthly %&gt;%
+  mutate(qdate = quarter(date, with_year = TRUE)) %&gt;%
+  group_by(qdate) %&gt;%
+  summarise(quarterly_value = sum(monthly_value)) %&gt;%
+  mutate(date = yq(qdate)) %&gt;%
+  select(date, quarterly_value)
+
+monthly_to_quarterly
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 80 x 2&lt;/span&gt;&lt;span&gt;
+##    date       quarterly_value
+##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;date&amp;gt;&lt;/span&gt;&lt;span&gt;               &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; 1976-01-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;65&lt;/span&gt;&lt;span&gt;625
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; 1976-04-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;84&lt;/span&gt;&lt;span&gt;933
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; 1976-07-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;93&lt;/span&gt;&lt;span&gt;968
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; 1976-10-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;78&lt;/span&gt;&lt;span&gt;708
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; 1977-01-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;73&lt;/span&gt;&lt;span&gt;865
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; 1977-04-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;92&lt;/span&gt;&lt;span&gt;938
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; 1977-07-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;91&lt;/span&gt;&lt;span&gt;812
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; 1977-10-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;76&lt;/span&gt;&lt;span&gt;821
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; 1978-01-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;71&lt;/span&gt;&lt;span&gt;130
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; 1978-04-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;92&lt;/span&gt;&lt;span&gt;965
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 70 more rows&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+---
+
+# Append the converted data to the quarterly data
+
+Since we are appending our converted data to the end of the original quarterly data, we need to
+make sure that the dates don't overlap (otherwise some dates will have multiple production values).
+
+
+```r
+quarterly_end_date &lt;- quarterly %&gt;%
+  slice_max(date) %&gt;%
+  pull(date)
+
+monthly_to_quarterly &lt;- monthly_to_quarterly %&gt;%
+  filter(date &gt; quarterly_end_date)
+```
+
+
+```r
+full_quarterly &lt;- bind_rows(quarterly, monthly_to_quarterly)
+
+full_quarterly
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 184 x 2&lt;/span&gt;&lt;span&gt;
+##    date       quarterly_value
+##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;date&amp;gt;&lt;/span&gt;&lt;span&gt;               &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; 1950-01-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;&lt;span&gt;349
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; 1950-04-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;29&lt;/span&gt;&lt;span&gt;730
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; 1950-07-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;31&lt;/span&gt;&lt;span&gt;721
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; 1950-10-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;20&lt;/span&gt;&lt;span&gt;045
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; 1951-01-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;17&lt;/span&gt;&lt;span&gt;398
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; 1951-04-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;25&lt;/span&gt;&lt;span&gt;893
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; 1951-07-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;28&lt;/span&gt;&lt;span&gt;477
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; 1951-10-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;&lt;span&gt;923
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; 1952-01-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;&lt;span&gt;248
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; 1952-04-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;26&lt;/span&gt;&lt;span&gt;232
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 174 more rows&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+---
+
+# Check our work
+
+Our data should range from 1950 to 1995 (46 years), with four quarters for each year. Therefore,
+we should have 46 * 4 = 184 rows.
+
+
+```r
+full_quarterly %&gt;%
+  slice_min(date)
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 1 x 2&lt;/span&gt;&lt;span&gt;
+##   date       quarterly_value
+##   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;date&amp;gt;&lt;/span&gt;&lt;span&gt;               &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt; 1950-01-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;&lt;span&gt;349
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+```r
+full_quarterly %&gt;%
+  slice_max(date)
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 1 x 2&lt;/span&gt;&lt;span&gt;
+##   date       quarterly_value
+##   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;date&amp;gt;&lt;/span&gt;&lt;span&gt;               &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt; 1995-10-01          &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;110&lt;/span&gt;&lt;span&gt;997
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+```r
+full_quarterly %&gt;%
+  distinct(date) %&gt;%
+  nrow()
+```
+
+```
+## [1] 184
+```
+
+---
+
+# Fit a simple linear regression model
+
+We want to create a simple linear regression model with `quarterly_value` as the response and
+`date` as the predictor.
+
+
+```r
+production &lt;- lm(quarterly_value ~ date, data=full_quarterly)
+```
+
+---
+
+# What are the estimated coefficients?
+
+We can get the coefficients by using either:
+
+
+```r
+coef(production)
+```
+
+```
+##  (Intercept)         date 
+## 68275.298497     7.541153
+```
+
+
+```r
+summary(production)
+```
+
+```
+## 
+## Call:
+## lm(formula = quarterly_value ~ date, data = full_quarterly)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -50506  -9466  -1279   8010  46612 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 6.828e+04  1.089e+03   62.72   &lt;2e-16 ***
+## date        7.541e+00  2.194e-01   34.38   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 14430 on 182 degrees of freedom
+## Multiple R-squared:  0.8665,	Adjusted R-squared:  0.8658 
+## F-statistic:  1182 on 1 and 182 DF,  p-value: &lt; 2.2e-16
+```
+
+---
+count: false
+
+# What are the estimated coefficients?
+
+.pull-left[
+
+
+```r
+summary(production)
+```
+
+```
+## 
+## Call:
+## lm(formula = quarterly_value ~ date, data = full_quarterly)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -50506  -9466  -1279   8010  46612 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 6.828e+04  1.089e+03   62.72   &lt;2e-16 ***
+## date        7.541e+00  2.194e-01   34.38   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 14430 on 182 degrees of freedom
+## Multiple R-squared:  0.8665,	Adjusted R-squared:  0.8658 
+## F-statistic:  1182 on 1 and 182 DF,  p-value: &lt; 2.2e-16
+```
+
+]
+
+.pull-right[
+
+- `\(\widehat{\beta}_{0} = 68275\)`
+- `\(\widehat{\beta}_{1} = 7.541\)`
+
+The equation of the fitted line is:
+
+`$$\widehat{y}_{i} \,=\, 68275 \,+\, 7.541x_{i}$$`
+
+]
+
+---
+
+# What are the standard errors of our estimates?
+
+.pull-left[
+
+
+```r
+summary(production)
+```
+
+```
+## 
+## Call:
+## lm(formula = quarterly_value ~ date, data = full_quarterly)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -50506  -9466  -1279   8010  46612 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 6.828e+04  1.089e+03   62.72   &lt;2e-16 ***
+## date        7.541e+00  2.194e-01   34.38   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 14430 on 182 degrees of freedom
+## Multiple R-squared:  0.8665,	Adjusted R-squared:  0.8658 
+## F-statistic:  1182 on 1 and 182 DF,  p-value: &lt; 2.2e-16
+```
+
+]
+
+.pull-right[
+
+- The standard error of `\(\widehat{\beta}_{0}\)` is `\(1.089 \times 10^{3}\)`
+- The standard error of `\(\widehat{\beta}_{1}\)` is `\(0.219\)`
+
+]
+
+---
+
+# What are the degrees of freedom of our model?
+
+.pull-left[
+
+
+```r
+summary(production)
+```
+
+```
+## 
+## Call:
+## lm(formula = quarterly_value ~ date, data = full_quarterly)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -50506  -9466  -1279   8010  46612 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 6.828e+04  1.089e+03   62.72   &lt;2e-16 ***
+## date        7.541e+00  2.194e-01   34.38   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 14430 on 182 degrees of freedom
+## Multiple R-squared:  0.8665,	Adjusted R-squared:  0.8658 
+## F-statistic:  1182 on 1 and 182 DF,  p-value: &lt; 2.2e-16
+```
+
+]
+
+.pull-right[
+
+The degrees of freedom of our model is 1 and 182.
+
+- The first number is the number of non-intercept parameters estimated, `\(p\)`.
+- The only non-intercept parameter estimated was `\(\beta_{1}\)`
+
+- The second number is the number of observations in our data minus the number of non-intercept
+parameters estimated minus 1, `\(n-p-1\)`.
+- There are 184 data points and one non-intercept parameter estimated.
+
+`$$184 - 1 - 1 = 182$$`
+
+]
+
+---
+
+# Confidence intervals for our estimates
+
+We can obtain confidence intervals for our estimates by wrapping our model with the `confint()`
+function. By default, the confidence level is set to 95%.
+
+
+```r
+confint(production)
+```
+
+```
+##                    2.5 %       97.5 %
+## (Intercept) 66127.423443 70423.173551
+## date            7.108313     7.973994
+```
+
+The 95% confidence interval for `\(\beta_{0}\)` is `\((66127,\, 70423)\)`.
+
+The 95% confidence interval for `\(\beta_{1}\)` is `\((7.108,\, 7.974)\)`.
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "atom-one-light",
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();</script>
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

@@ -1,0 +1,394 @@
+---
+title: "Lab 3, Stat 3503 Fall 2021"
+output:
+  xaringan::moon_reader:
+    seal: false
+    lib_dir: libs
+    chakra: libs/remark-latest.min.js
+    css: [css/xaringan-themer.css, css/extra.css]
+    nature:
+      highlightStyle: atom-one-light
+      countIncrementalSlides: false
+      ratio: 16:9
+    includes:
+      after_body: utils/ionicons.html
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo=TRUE, message=FALSE, warning=FALSE,
+  fig.align="center", fig.retina=4
+)
+
+old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks)
+
+styles <- c(
+  getOption('fansi.style'),  # default style
+  "PRE.fansi CODE {background-color: transparent;}",
+  "PRE.fansi-error {background-color: #DD5555;}",
+  "PRE.fansi-warning {background-color: #DDDD55;}",
+  "PRE.fansi-message {background-color: #EEEEEE;}"
+)
+
+old.hooks <- c(
+  old_hooks,
+  fansi::set_knit_hooks(
+    knitr::knit_hooks,
+    which=c('warning', 'error', 'message'),
+    style=styles
+  )
+)
+
+options(crayon.enabled=TRUE)
+```
+
+```{r clipboard, include=FALSE}
+xaringanExtra::use_clipboard(
+  button_text = "<ion-icon name=\"clipboard-outline\"></ion-icon>",
+  success_text = "<ion-icon name=\"checkmark-outline\" style=\"color: #90BE6D\"></ion-icon>",
+  error_text = "<ion-icon name=\"close-outline\" style=\"color: #F94144\"></ion-icon>"
+)
+```
+
+```{r tile-view, include=FALSE}
+xaringanExtra::use_tile_view()
+```
+
+```{r xaringanthemer, eval=FALSE, include=FALSE}
+library(xaringanthemer)
+
+style_xaringan(
+  text_color = "#f8f8f2",
+  header_color = "#f8f8f2",
+  background_color = "#282a36",
+  link_color = "#ffb86c",
+  text_slide_number_color = "#f8f8f2",
+  code_inline_color = "#f8f8f2",
+  code_inline_background_color = "#282c34",
+  inverse_background_color = "#363428",
+  inverse_text_color = "#f8f8f2",
+  inverse_header_color = "#f8f8f2",
+  text_font_size = "0.9rem",
+  header_h1_font_size = "1.75rem",
+  header_h2_font_size = "1.50rem",
+  header_h3_font_size = "1.25rem",
+  text_font_google = google_font("IBM Plex Sans", "300", "300i"),
+  header_font_google = google_font("IBM Plex Sans", "300", "300i"),
+  code_font_google = google_font("IBM Plex Mono", "500"),
+  code_font_size = "0.6rem",
+  outfile = "css/xaringan-themer.css"
+)
+```
+
+# Lab 3 &mdash; October 4
+
+```{r, message=TRUE}
+library(tidyverse)
+library(lubridate)
+theme_set(theme_bw())
+```
+
+---
+
+# Soft-drink production data
+
+- From 1950 to 1977, soft-drink production was reported on a quarterly basis
+- From 1976 to 1995, soft-drink production was reported on a monthly basis
+- We want to expand the quarterly production data by converting our monthly data into quarterly
+data, and appending it to the end of the original quarterly data
+- The final result should be a data set that ranges from 1950 to 1995 with production values being
+reported each quarter
+
+---
+
+# Obtain quarterly soft-drinks data set
+
+```{r, eval=FALSE}
+if (!dir.exists("./data")) {
+  dir.create("./data")
+}
+
+download.file("https://www150.statcan.gc.ca/n1/tbl/csv/16100100-eng.zip", destfile="./data/qdrinks.zip")
+unzip("./data/qdrinks.zip", exdir="./data")
+```
+
+```{r, eval=FALSE}
+file.rename("./data/16100100.csv", "./data/qdrinks.csv")
+```
+
+```{r, message=TRUE}
+qdrinks <- read_csv("./data/qdrinks.csv")
+```
+
+---
+
+# Inspect quarterly drinks data
+
+```{r}
+qdrinks %>%
+  select(REF_DATE, VALUE)
+```
+
+- The `REF_DATE` column is in the format yyyy-mm
+- We want to convert it to a full date format, yyyy-mm-dd
+- The lubridate package contains functions to help us parse text into dates and datetimes
+- Since our values are in the format yyyy-mm, we use the `ym()` function
+
+---
+
+# Modify quarterly drinks data
+
+```{r}
+quarterly <- qdrinks %>%
+  select(REF_DATE, VALUE) %>%
+  rename(date = REF_DATE, quarterly_value = VALUE) %>%
+  mutate(date = ym(date))
+
+quarterly
+```
+
+---
+
+# Obtain monthly soft-drinks data set
+
+```{r, eval=FALSE}
+download.file("https://www150.statcan.gc.ca/n1/tbl/csv/16100099-eng.zip", destfile="./data/mdrinks.zip")
+unzip("./data/mdrinks.zip", exdir="./data")
+```
+
+```{r, eval=FALSE}
+file.rename("./data/16100099.csv", "./data/mdrinks.csv")
+```
+
+```{r, message=TRUE}
+mdrinks <- read_csv("./data/mdrinks.csv")
+```
+
+---
+
+# Inspect monthly drinks data
+
+```{r}
+mdrinks %>%
+  select(REF_DATE, VALUE)
+```
+
+- The `REF_DATE` column is in the format yyyy-mm
+- We want to convert it to a full date format, yyyy-mm-dd
+- The lubridate package contains functions to help us parse text into dates and datetimes
+- Since our values are in the format yyyy-mm, we use the `ym()` function
+
+---
+
+# Modify monthly drinks data
+
+```{r}
+monthly <- mdrinks %>%
+  select(REF_DATE, VALUE) %>%
+  rename(date = REF_DATE, monthly_value = VALUE) %>%
+  mutate(date = ym(date))
+
+monthly
+```
+
+---
+
+# Convert monthly data to quarterly data
+
+Starting with the `monthly` data set, create a new variable called `qdate` which classifies the
+`date` by its corresponding quarter.
+
+```{r}
+monthly %>%
+  mutate(qdate = quarter(date, with_year = TRUE))
+```
+
+---
+count: false
+
+# Convert monthly data to quarterly data
+
+Group the rows by their resulting quarters and sum the monthly production values by group, resulting
+in quarterly production values.
+
+```{r}
+monthly %>%
+  mutate(qdate = quarter(date, with_year = TRUE)) %>%
+  group_by(qdate) %>%
+  summarise(quarterly_value = sum(monthly_value))
+```
+
+We now have one row for each quarter for each year.
+
+Note that after summarising, the last grouping is automatically dropped. Since we only grouped
+on the values of one variable, the resulting data is fully ungrouped. Therefore, we do not need
+to call `ungroup()`.
+
+---
+count: false
+
+# Convert monthly data to quarterly data
+
+Finally, we convert our quarterly dates (yyyy.q) back to full dates (yyyy-mm-dd).
+
+```{r}
+monthly_to_quarterly <- monthly %>%
+  mutate(qdate = quarter(date, with_year = TRUE)) %>%
+  group_by(qdate) %>%
+  summarise(quarterly_value = sum(monthly_value)) %>%
+  mutate(date = yq(qdate)) %>%
+  select(date, quarterly_value)
+
+monthly_to_quarterly
+```
+
+---
+
+# Append the converted data to the quarterly data
+
+Since we are appending our converted data to the end of the original quarterly data, we need to
+make sure that the dates don't overlap (otherwise some dates will have multiple production values).
+
+```{r}
+quarterly_end_date <- quarterly %>%
+  slice_max(date) %>%
+  pull(date)
+
+monthly_to_quarterly <- monthly_to_quarterly %>%
+  filter(date > quarterly_end_date)
+```
+
+```{r}
+full_quarterly <- bind_rows(quarterly, monthly_to_quarterly)
+
+full_quarterly
+```
+
+---
+
+# Check our work
+
+Our data should range from 1950 to 1995 (46 years), with four quarters for each year. Therefore,
+we should have 46 * 4 = 184 rows.
+
+```{r}
+full_quarterly %>%
+  slice_min(date)
+
+full_quarterly %>%
+  slice_max(date)
+
+full_quarterly %>%
+  distinct(date) %>%
+  nrow()
+```
+
+---
+
+# Fit a simple linear regression model
+
+We want to create a simple linear regression model with `quarterly_value` as the response and
+`date` as the predictor.
+
+```{r}
+production <- lm(quarterly_value ~ date, data=full_quarterly)
+```
+
+---
+
+# What are the estimated coefficients?
+
+We can get the coefficients by using either:
+
+```{r}
+coef(production)
+```
+
+```{r}
+summary(production)
+```
+
+---
+count: false
+
+# What are the estimated coefficients?
+
+.pull-left[
+
+```{r}
+summary(production)
+```
+
+]
+
+.pull-right[
+
+- $\widehat{\beta}_{0} = 68275$
+- $\widehat{\beta}_{1} = 7.541$
+
+The equation of the fitted line is:
+
+$$\widehat{y}_{i} \,=\, 68275 \,+\, 7.541x_{i}$$
+
+]
+
+---
+
+# What are the standard errors of our estimates?
+
+.pull-left[
+
+```{r}
+summary(production)
+```
+
+]
+
+.pull-right[
+
+- The standard error of $\widehat{\beta}_{0}$ is $1.089 \times 10^{3}$
+- The standard error of $\widehat{\beta}_{1}$ is $0.219$
+
+]
+
+---
+
+# What are the degrees of freedom of our model?
+
+.pull-left[
+
+```{r}
+summary(production)
+```
+
+]
+
+.pull-right[
+
+The degrees of freedom of our model is 1 and 182.
+
+- The first number is the number of non-intercept parameters estimated, $p$.
+- The only non-intercept parameter estimated was $\beta_{1}$
+
+- The second number is the number of observations in our data minus the number of non-intercept
+parameters estimated minus 1, $n-p-1$.
+- There are 184 data points and one non-intercept parameter estimated.
+
+$$184 - 1 - 1 = 182$$
+
+]
+
+---
+
+# Confidence intervals for our estimates
+
+We can obtain confidence intervals for our estimates by wrapping our model with the `confint()`
+function. By default, the confidence level is set to 95%.
+
+```{r}
+confint(production)
+```
+
+The 95% confidence interval for $\beta_{0}$ is $(66127,\, 70423)$.
+
+The 95% confidence interval for $\beta_{1}$ is $(7.108,\, 7.974)$.
