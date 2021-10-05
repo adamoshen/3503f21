@@ -1,0 +1,93 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[margin=0.7in]{geometry}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+%\pagenumbering{gobble}
+%\usepackage{graphicx}
+%\graphicspath{}
+%\usepackage[hidelinks]{hyperref}
+\usepackage{color}
+\usepackage[dvipsnames]{xcolor} % For additional colours
+\usepackage{parskip} % For proper spacing
+\usepackage{enumitem} % Enumerate labels
+\usepackage{titling}
+\allowdisplaybreaks
+
+\title{Lab 3 Notes}
+\author{}
+\date{Week of October 4, 2021}
+
+\newcommand{\E}[1]{\mathbf{E}\left(#1\right)}
+\newcommand{\Var}[1]{\mathbf{Var}\left(#1\right)}
+\newcommand{\Prob}[1]{\mathbf{P}\left(#1\right)}
+\newcommand{\Cov}[1]{\mathbf{Cov}\left(#1\right)}
+%\newcommand{\nh}{$H_{0}$ }
+%\newcommand{\ah}{$H_{A}$ }
+\newcommand{\blue}[1]{{\color{blue}#1}}
+\newcommand{\red}[1]{{\color{red}#1}}
+\definecolor{G1}{RGB}{0,153,0}
+\newcommand{\green}[1]{{\color{G1}#1}}
+\newcommand{\orange}[1]{{\color{orange}#1}}
+
+\begin{document}
+\maketitle
+
+\section*{\blue{Review of expectation, variance, and covariance operators}}
+
+\subsection*{\blue{Expectation}}
+
+Let $X$, $Y$ be two random variables whose expectations exist and let $a \in \mathbb{R}$.
+
+\begin{enumerate}
+\item $\E{aX} \,=\, a\E{X}$
+\item $\E{X+Y} \,=\, \E{X} \,+\, \E{Y}$
+\item $\E{a} \,=\, a$
+\end{enumerate}
+
+Through properties 1 and 2, the expectation is known as a \textit{linear operator}. If you have taken first year calculus,
+you have already seen two examples of linear operators: differentiation and integration!
+
+For example, let $\mathbf{D}(\cdot)$ be the differentiation operator. Then
+\[\mathbf{D}(3x^{2}) \,=\, 3\mathbf{D}(x^{2})\]
+\[\mathbf{D}(x^{2} \,+\, x^{3}) \,=\, \mathbf{D}(x^{2}) \,+\, \mathbf{D}(x^{3})\]
+
+You can remember the linear operator properties of expectation by recalling the linear operator properties of differentiation.
+
+
+\subsection*{\blue{Variance}}
+
+Let $X$ be a random variable with $\E{X} = \mu$.
+\begin{align*}
+\Var{X} &= \E{\left(X - \mu\right)^{2}}\\[2mm]
+&= \E{X^{2} - 2\mu X + \mu^{2}}\\[2mm]
+&= \E{X^{2}} - 2\mu\E{X} + \E{\mu^{2}}\\[2mm]
+&= \E{X^{2}} - 2\mu^{2} + \mu^{2}\\[2mm]
+&= \E{X^{2}} - \mu^{2}\\[2mm]
+&= \E{X^{2}} - \left(\E{X}\right)^{2}
+\end{align*}
+
+Let $X$ and $Y$ be two random variables whose expectations exist and let $a \in \mathbb{R}$.
+
+\begin{enumerate}
+\item $\Var{aX} \,=\, a^{2}\Var{X}$
+\item $\Var{X+Y} \,=\, \Var{X} \,+\, \Var{Y}$ for $X$, $Y$ \textbf{\red{independent}}
+\item $\Var{a} \,=\, 0$.
+\end{enumerate}
+
+
+\subsection*{\blue{Covariance}}
+
+Let $X$ and $Y$ be two random variables with $\E{X} = \mu_{X}$ and $\E{Y} = \mu_{Y}$.
+\begin{align*}
+\Cov{X,Y} &= \E{(X - \mu_{X})(Y - \mu_{Y})}\\
+&= \E{XY - \mu_{Y}X - \mu_{X}Y + \mu_{X}\mu_{Y}}\\
+&= \E{XY} \,-\, \mu_{Y}\E{X} \,-\, \mu_{X}\E{Y} \,+\, \E{\mu_{X}\mu_{Y}}\\
+&= \E{XY} - \mu_{Y}\mu_{X} - \mu_{X}\mu_{Y} + \mu_{X}\mu_{Y}\\
+&= \E{XY} - \mu_{X}\mu_{Y}\\
+&= \E{XY} - \E{X}\E{Y}
+\end{align*}
+
+Note that $\Cov{X,X} = \Var{X}$.
+
+\end{document}
