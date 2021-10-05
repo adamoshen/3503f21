@@ -13,4 +13,5 @@ exporting to pdf.*
 
 [Lab 2: Week of September 27](./Lab%202/)
 
-Lab 3: Week of October - [Slides](./Lab%203/) - Notes
+Lab 3: Week of October - [Slides](./Lab%203/) - [Review of
+operators](./Lab%203/notes.pdf)
