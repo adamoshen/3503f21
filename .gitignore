@@ -42,7 +42,7 @@ notes/_bookdown_files/
 notes/data/
 
 # Outer lab files
-Lab */*.pdf
+Lab */index.pdf
 Lab */*.html
 Lab */slides_files/
 Lab */data/
