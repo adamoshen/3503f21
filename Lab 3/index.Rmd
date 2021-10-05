@@ -85,7 +85,6 @@ style_xaringan(
 ```{r, message=TRUE}
 library(tidyverse)
 library(lubridate)
-theme_set(theme_bw())
 ```
 
 ---
