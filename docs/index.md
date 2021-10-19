@@ -14,3 +14,5 @@ exporting to pdf.*
 [Lab 2: Week of September 27](./Lab%202/)
 
 [Lab 3: Week of October 4](./Lab%203/)
+
+[Lab 4: Week of October 18](./Lab%204/)
