@@ -1,0 +1,754 @@
+---
+title: "Lab 4, Stat 3503 Fall 2021"
+output:
+  xaringan::moon_reader:
+    seal: false
+    lib_dir: libs
+    chakra: libs/remark-latest.min.js
+    css: [css/extra.css, css/xaringan-themer.css]
+    nature:
+      highlightStyle: atom-one-light
+      countIncrementalSlides: false
+      ratio: 16:9
+    includes:
+      after_body: utils/ionicons.html
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo=TRUE, message=FALSE, warning=FALSE,
+  fig.align="center", fig.retina=4
+)
+
+old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks)
+
+styles <- c(
+  getOption('fansi.style'),  # default style
+  "PRE.fansi CODE {background-color: transparent;}",
+  "PRE.fansi-error {background-color: #DD5555;}",
+  "PRE.fansi-warning {background-color: #DDDD55;}",
+  "PRE.fansi-message {background-color: #EEEEEE;}"
+)
+
+old.hooks <- c(
+  old_hooks,
+  fansi::set_knit_hooks(
+    knitr::knit_hooks,
+    which=c('warning', 'error', 'message'),
+    style=styles
+  )
+)
+
+options(crayon.enabled=TRUE)
+```
+
+```{r clipboard, include=FALSE}
+xaringanExtra::use_clipboard(
+  button_text = "<ion-icon name=\"clipboard-outline\"></ion-icon>",
+  success_text = "<ion-icon name=\"checkmark-outline\" style=\"color: #90BE6D\"></ion-icon>",
+  error_text = "<ion-icon name=\"close-outline\" style=\"color: #F94144\"></ion-icon>"
+)
+```
+
+```{r tile-view, include=FALSE}
+xaringanExtra::use_tile_view()
+```
+
+```{r xaringanthemer, eval=FALSE, include=FALSE}
+library(xaringanthemer)
+
+style_xaringan(
+  text_color = "#f8f8f2",
+  header_color = "#f8f8f2",
+  background_color = "#282a36",
+  link_color = "#ffb86c",
+  text_slide_number_color = "#f8f8f2",
+  code_inline_color = "#f8f8f2",
+  code_inline_background_color = "#282c34",
+  inverse_background_color = "#363428",
+  inverse_text_color = "#f8f8f2",
+  inverse_header_color = "#f8f8f2",
+  text_font_size = "0.9rem",
+  header_h1_font_size = "1.75rem",
+  header_h2_font_size = "1.50rem",
+  header_h3_font_size = "1.25rem",
+  text_font_google = google_font("IBM Plex Sans", "300", "300i"),
+  header_font_google = google_font("IBM Plex Sans", "300", "300i"),
+  code_font_google = google_font("IBM Plex Mono", "500"),
+  code_font_size = "0.6rem",
+  outfile = "css/xaringan-themer.css"
+)
+```
+
+# Lab 4 &mdash; October 18
+
+```{r, message=TRUE}
+library(tidyverse)
+library(fastDummies)
+library(broom)
+theme_set(theme_bw())
+```
+
+---
+
+# Black bear hunting activity and harvests
+
+From the
+[data set info page](https://data.ontario.ca/en/dataset/black-bear-hunting-activity-and-harvests):
+
+> This data breaks down estimated hunter and harvest numbers by:
+  - wildlife management unit (WMU)
+  - calendar year
+
+> Harvest and active hunter numbers are estimates based on replies received from a sample of hunters
+and are therefore subject to statistical error.
+
+- A WMU is essentially a code that identifies a hunting region
+
+---
+
+# Obtain the data set
+
+```{r, eval=FALSE}
+if (!dir.exists("./data")) {
+  dir.create("./data")
+}
+
+download.file(
+  "https://data.ontario.ca/dataset/c14b7d2b-7c42-4727-92c6-99f140ed3a57/resource/7dd6328e-74cc-4291-a041-2345cf7c6186/download/black_bear_2021.csv",
+  destfile="./data/bears.csv"
+)
+```
+
+```{r, message=TRUE}
+bears_full <- read_csv("./data/bears.csv")
+```
+
+---
+
+# Inspect the data
+
+```{r}
+head(bears_full)
+```
+
+```{r}
+bears_full %>%
+  distinct(WMU) %>%
+  pull(WMU)
+```
+
+---
+
+# Inspect the data
+
+```{r}
+tail(bears_full)
+```
+
+- It looks like the end of the data set contains annual summaries
+
+- We should separate this from the raw data that we will use for analysis
+
+---
+
+# Split the data; rename column
+
+```{r}
+bears <- bears_full %>%
+  filter(WMU != "Total") %>%
+  rename(active_hunters = `Active Hunters`)
+```
+
+---
+
+# Re-inspect the data
+
+```{r}
+bears %>%
+  distinct(WMU) %>%
+  pull(WMU)
+```
+
+There are 88 different WMUs!
+
+---
+
+# Re-inspect the data
+
+```{r}
+bears %>%
+  distinct(Year)
+```
+
+The data ranges from 2012 to 2020.
+
+---
+
+# Scatterplots
+
+.pull-left[
+
+A basic scatterplot:
+
+```{r, eval=FALSE}
+ggplot(bears, aes(x=active_hunters, y=Harvest))+
+  geom_point()+
+  labs(x="Active hunters")
+```
+
+]
+
+.pull-right[
+
+```{r, echo=FALSE}
+ggplot(bears, aes(x=active_hunters, y=Harvest))+
+  geom_point()+
+  labs(x="Active hunters")
+```
+
+]
+
+---
+
+# Scatterplots
+
+.pull-left[
+
+Scatterplot colouring by `WMU`:
+
+```{r, eval=FALSE}
+ggplot(bears, aes(x=active_hunters, y=Harvest, colour=WMU))+
+  geom_point(show.legend=FALSE)+
+  labs(x="Active hunters")
+```
+
+- You can disable the legend of one or more geom layers by setting `show.legend=FALSE`, rather than
+using `theme(legend.position="none")`
+
+- This still isnt a great plot as we saw earlier that we actually have 88 different levels for the
+`WMU` variable...
+
+- Facetting by the WMU won't help either because we'll have 88 subplots
+
+]
+
+.pull-right[
+
+```{r, echo=FALSE}
+ggplot(bears, aes(x=active_hunters, y=Harvest, colour=WMU))+
+  geom_point(show.legend=FALSE)+
+  labs(x="Active hunters")
+```
+
+]
+
+---
+
+# Subsetting the data
+
+Let us consider only the observations where the WMU ended in "A" or "B".
+
+```{r}
+bearsAB <- bears %>%
+  filter(str_ends(WMU, pattern="A|B"))
+```
+
+- `str_ends()` is a function that checks whether a string ends in a pattern
+
+- We can use this function with `filter()` because it returns a logical vector (`TRUE`, `FALSE`)
+
+Check our work:
+
+```{r}
+bearsAB %>%
+  distinct(WMU) %>%
+  pull(WMU)
+```
+
+- We still have 24 WMUs!
+
+---
+
+# Remake the scatterplot
+
+.pull-left[
+
+```{r, eval=FALSE}
+ggplot(bearsAB, aes(x=active_hunters, y=Harvest, colour=WMU))+
+  geom_point(show.legend=FALSE)+
+  labs(x="Active hunters")
+```
+
+- I wouldn't say that this plot is much of an improvement over the last...
+
+- Facetting by WMU still won't be useful since we'll end up with 24 subplots, which is still a lot
+
+]
+
+.pull-right[
+
+```{r, echo=FALSE}
+ggplot(bearsAB, aes(x=active_hunters, y=Harvest, colour=WMU))+
+  geom_point(show.legend=FALSE)+
+  labs(x="Active hunters")
+```
+
+]
+
+---
+
+# Fit a multiple linear regression model
+
+Suppose we now wish to fit the model of form
+
+$$Y \,=\, \beta_{0} \,+\, \beta_{1}X_{1} \,+\, \beta_{2}X_{2_{1}} \,+\, \beta_{3}X_{2_{2}} \,+\, \ldots + \beta_{24}X_{2_{23}} \,+\, \varepsilon$$
+
+where:
+
+- $Y$ is the harvest
+
+- $X_{1}$ is the number of active hunters
+
+- $X_{2_{j}}$ is an indicator for the $j^{\text{th}}$ WMU
+
+- WMU has 24 levels, of which, the last 23 levels will require indicator variables
+
+We will first do this with matrices, then with the `lm` function.
+
+---
+
+# The matrices
+
+We want to go from the equation on the previous page to something like this:
+
+$$\begin{bmatrix}Y_{1}\\ Y_{2}\\ \vdots\\ Y_{n} \end{bmatrix} \,=\, 
+\begin{bmatrix}1 &X_{1,\,1} &X_{2_{1},\,1} &X_{2_{2},\,1} &\cdots &X_{2_{23},\,1}\\ 1 &X_{1,\,2} &X_{2_{1},\,2} &X_{2_{2},\,2} &\cdots &X_{2_{23},\,2}\\ \vdots &\vdots &\vdots &\vdots &\ddots &\vdots\\ 1 &X_{1,\,n} &X_{2_{1},\,n} &X_{2_{2},\,n} &\cdots &X_{2_{23},\,n} \end{bmatrix}
+\begin{bmatrix}\beta_{0}\\ \beta_{1}\\ \beta_{2_{1}}\\ \beta_{2_{2}}\\ \vdots\\ \beta_{2_{23}} \end{bmatrix} \,+\,
+\begin{bmatrix}\varepsilon_{1}\\ \varepsilon_{2}\\ \vdots\\ \varepsilon_{n} \end{bmatrix}$$
+
+where:
+
+- $X_{1,\,i}$ is the number of active hunters for observation $i$
+
+- $X_{2_{j},\,i}$ is an indicator for the $j^{\text{th}}$ WMU for observation $i$
+
+- WMU has 24 levels so $24 - 1 = 23$ of these levels are included in the matrix (so that $X$ will be
+of full rank)
+
+---
+
+# Creating the response matrix
+
+.pull-left[
+
+```{r, eval=FALSE}
+Y <- bearsAB %>%
+  select(Harvest) %>%
+  as.matrix()
+
+head(Y)
+```
+
+- All we need to do is extract the response variable (`Harvest`) and convert it to a matrix
+
+]
+
+.pull-right[
+
+```{r, echo=FALSE}
+Y <- bearsAB %>%
+  select(Harvest) %>%
+  as.matrix()
+
+head(Y)
+```
+
+]
+
+---
+
+# Creating the design matrix
+
+.pull-left[
+
+```{r, eval=FALSE}
+bearsAB %>%
+  select(active_hunters, WMU) %>%
+  add_column(intercept=1, .before=1)
+```
+
+- We start by selecting the columns that we need: `active_hunters` and `WMU`
+
+- Then we add a column to the front of the data to denote the intercept.
+
+- In general, if a name-value pair of length 1 is supplied to a tidyverse-related function that
+involves adding rows/columns to data (e.g. `add_column`, `mutate`), the value is repeated. This is
+**only** applicable when the length is 1.
+
+]
+
+.pull-right[
+
+```{r, echo=FALSE}
+bearsAB %>%
+  select(active_hunters, WMU) %>%
+  add_column(intercept=1, .before=1)
+```
+
+]
+
+---
+
+# Aside: factor levels
+
+- The WMU variable is currently of type character
+
+- In order to incorporate it into our model, we need to convert it to a factor
+
+- Factor levels are assigned in numerical/alphabetical order
+
+```{r}
+factor(c("B", "A", "C"))
+```
+
+```{r}
+bearsAB %>%
+  pull(WMU) %>%
+  factor() %>%
+  head()
+```
+
+- When WMU is converted to a factor, the first level is `01A`
+
+- As such, this level will be excluded from our set of indicator variables that we need to create
+
+- `01A` will be the baseline of our resulting model
+
+---
+
+# Creating the design matrix
+
+.pull-left[
+
+```{r, eval=FALSE}
+bearsAB %>%
+  select(active_hunters, WMU) %>%
+  add_column(intercept=1, .before=1) %>%
+  dummy_cols(remove_first_dummy=TRUE, remove_selected_columns=TRUE)
+```
+
+- We use `fastDummies::dummy_cols` to create our indicator variables
+
+- By default, it creates indicators using all character/factor variables in the data set
+
+- We set `remove_first_dummy` to `TRUE` so that the design matrix will be of full rank
+
+- We also set `remove_selected_columns` to `TRUE` to drop WMU after creating its indicators
+
+]
+
+.pull-right[
+
+```{r, echo=FALSE}
+bearsAB %>%
+  select(active_hunters, WMU) %>%
+  add_column(intercept=1, .before=1) %>%
+  dummy_cols(remove_first_dummy=TRUE, remove_selected_columns=TRUE)
+```
+
+]
+
+---
+
+# Creating the design matrix
+
+.pull-left[
+
+```{r, eval=FALSE}
+X <- bearsAB %>%
+  select(active_hunters, WMU) %>%
+  add_column(intercept=1, .before=1) %>%
+  dummy_cols(remove_first_dummy=TRUE, remove_selected_columns=TRUE) %>%
+  as.matrix()
+
+X[1:6, 1:6]
+```
+
+- Finally, we convert the data into a matrix and assign it to `X`
+
+- We can take a peek at the first 6 rows and columns
+
+]
+
+.pull-right[
+
+```{r, echo=FALSE}
+X <- bearsAB %>%
+  select(active_hunters, WMU) %>%
+  add_column(intercept=1, .before=1) %>%
+  dummy_cols(remove_first_dummy=TRUE, remove_selected_columns=TRUE) %>%
+  as.matrix()
+
+X[1:6, 1:6]
+```
+
+]
+
+---
+
+# Matrix functions needed to obtain the coefficient estimates
+
+`t()` is the transpose.
+
+```{r}
+A <- matrix(c(1,2,3,4), nrow=2, ncol=2, byrow=TRUE)
+
+A
+
+t(A)
+```
+
+---
+
+# Matrix functions needed to obtain the coefficient estimates
+
+`solve()` returns the inverse of a matrix.
+
+```{r}
+A
+
+solve(A)
+```
+
+`%*%` represents matrix multiplication. We can check that
+
+$$A \,*\, A^{-1} \,=\, \mathbb{I}_{2}$$
+
+```{r, eval=FALSE}
+A %*% solve(A)
+```
+
+---
+
+# Obtaining the coefficient estimates with matrices
+
+$$\widehat{\boldsymbol{\beta}} \,=\, (X^{T}X)^{-1}X^{T}Y$$
+
+```{r}
+beta <- solve(t(X) %*% X) %*% t(X) %*% Y
+
+head(beta)
+```
+
+---
+
+# Obtaining the coefficient estimates with matrices
+
+Converting it back into a tibble:
+
+```{r}
+beta_tibble <- beta %>%
+  as_tibble(rownames="term") %>%
+  rename(estimate = Harvest)
+
+beta_tibble
+```
+
+---
+
+# Obtaining the coefficient estimates with `lm`
+
+```{r}
+bearsAB_lm <- lm(Harvest ~ active_hunters + WMU, data=bearsAB)
+```
+
+I'm using `broom::tidy.lm` to extract only the coefficient table from the `summary` output because
+the output from `summary` is going to be huge and won't fit on my slides.
+
+```{r}
+bearsAB_lm_coef <- bearsAB_lm %>%
+  tidy() %>%
+  select(term, estimate)
+
+bearsAB_lm_coef
+```
+
+---
+
+# Comparing our estimates
+
+.pull-left[
+
+```{r, eval=FALSE}
+list(
+  with_matrices = beta_tibble,
+  with_lm = bearsAB_lm_coef
+)
+```
+
+They are identical!
+
+]
+
+.pull-right[
+
+```{r, echo=FALSE}
+list(
+  with_matrices = beta_tibble,
+  with_lm = bearsAB_lm_coef
+)
+```
+
+]
+
+---
+
+# WMUs ending in B
+
+Now instead of WMUs ending in A or B, let us consider only the WMUs that end in B.
+
+```{r}
+bearsB <- bears %>%
+  filter(str_ends(WMU, pattern="B"))
+
+bearsB
+```
+
+---
+
+# Fit the new model
+
+Since the question doesn't mention anything about WMUs, WMU is not included in the model.
+
+```{r}
+bearsB_lm <- lm(Harvest ~ active_hunters, data=bearsB)
+
+summary(bearsB_lm)
+```
+
+---
+
+# Make an 80% prediction interval
+
+The formula for a $100(1 - \alpha)\%$ prediction interval for $X \,=\, x_{h}$ is:
+
+$$\widehat{y} \,\pm\, t_{1 - \frac{\alpha}{2},\, n-2} \,*\, \widehat{\sigma}\sqrt{\left(1 \,+\, \frac{1}{n} \,+\, \frac{(x_{h} - \overline{x})^{2}}{S_{xx}}\right)}$$
+
+where 
+
+$$P\left(T \,<\, t_{1 - \frac{\alpha}{2},\, n-2}\right) \,=\, 1 - \frac{\alpha}{2}$$
+
+---
+
+# Obtaining the values
+
+The value of $\widehat{y}$ when $x_{h} \,=\, 4$:
+
+```{r}
+yhat <- bearsB_lm %>%
+  augment(newdata = data.frame(active_hunters=4)) %>%
+  pull(.fitted)
+
+yhat
+```
+
+---
+
+# Obtaining the values
+
+We have $n = 99$ and $\alpha = 0.20$.
+
+```{r}
+n <- 99
+alpha <- 0.20
+```
+
+The quantile value:
+
+```{r}
+tval <- qt(1 - alpha/2, df=n-2)
+
+tval
+```
+
+---
+
+# Obtaining the values
+
+The value of $\widehat{\sigma}$ can be read off the summary output under "Residual standard
+error".
+
+```{r}
+summary(bearsB_lm)
+```
+
+---
+
+# Obtaining the values
+
+Alternatively, we can extract the value of $\widehat{\sigma}$ using `broom::glance.lm`:
+
+```{r}
+glance(bearsB_lm)
+```
+
+```{r}
+sigma <- bearsB_lm %>%
+  glance() %>%
+  pull(sigma)
+
+sigma
+```
+
+---
+
+# Obtaining the values
+
+The remaining terms in the standard error can be obtained using: 
+
+```{r}
+xh <- 4
+
+xbar <- bearsB %>%
+  pull(active_hunters) %>%
+  mean()
+
+Sxx <- bearsB %>%
+  pull(active_hunters) %>%
+  var() %>%
+  magrittr::multiply_by(n-1)
+
+big_term <- sqrt(1 + (1/n) + (xh - xbar)^2 / Sxx)
+```
+
+---
+
+# Calculating the interval
+
+```{r}
+interval <- tibble(
+  fit = yhat,
+  lower = yhat - tval * sigma * big_term,
+  upper = yhat + tval * sigma * big_term
+)
+
+interval
+```
+
+---
+
+# Check our work
+
+```{r}
+interval
+
+predict(
+  bearsB_lm,
+  newdata = data.frame(active_hunters=4),
+  interval = "prediction",
+  level = 0.80
+)
+```
+
+They're the same!

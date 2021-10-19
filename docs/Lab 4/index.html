@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Lab 4, Stat 3503 Fall 2021</title>
+    <meta charset="utf-8" />
+    <script src="libs/header-attrs-2.9/header-attrs.js"></script>
+    <script src="libs/clipboard-2.0.6/clipboard.min.js"></script>
+    <link href="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"<ion-icon name=\"clipboard-outline\"><\/ion-icon>","success":"<ion-icon name=\"checkmark-outline\" style=\"color: #90BE6D\"><\/ion-icon>","error":"<ion-icon name=\"close-outline\" style=\"color: #F94144\"><\/ion-icon>"})</script>
+    <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view-0.2.6/tile-view.js"></script>
+    <link rel="stylesheet" href="css/extra.css" type="text/css" />
+    <link rel="stylesheet" href="css/xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+
+
+
+
+
+
+# Lab 4 &amp;mdash; October 18
+
+
+```r
+library(tidyverse)
+```
+
+&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## -- &lt;span style='font-weight: bold;'&gt;Attaching packages&lt;/span&gt;&lt;span&gt; --------------------------------------- tidyverse 1.3.0 --
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;ggplot2&lt;/span&gt;&lt;span&gt; 3.3.3     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;purrr  &lt;/span&gt;&lt;span&gt; 0.3.4
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;tibble &lt;/span&gt;&lt;span&gt; 3.1.0     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;dplyr  &lt;/span&gt;&lt;span&gt; 1.0.5
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;tidyr  &lt;/span&gt;&lt;span&gt; 1.1.3     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;stringr&lt;/span&gt;&lt;span&gt; 1.4.0
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;readr  &lt;/span&gt;&lt;span&gt; 2.0.1     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;forcats&lt;/span&gt;&lt;span&gt; 0.5.1
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## -- &lt;span style='font-weight: bold;'&gt;Conflicts&lt;/span&gt;&lt;span&gt; ------------------------------------------ tidyverse_conflicts() --
+## &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;x&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;dplyr&lt;/span&gt;&lt;span&gt;::&lt;/span&gt;&lt;span style='color: #00BB00;'&gt;filter()&lt;/span&gt;&lt;span&gt; masks &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;stats&lt;/span&gt;&lt;span&gt;::filter()
+## &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;x&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;dplyr&lt;/span&gt;&lt;span&gt;::&lt;/span&gt;&lt;span style='color: #00BB00;'&gt;lag()&lt;/span&gt;&lt;span&gt;    masks &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;stats&lt;/span&gt;&lt;span&gt;::lag()
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+```r
+library(fastDummies)
+library(broom)
+theme_set(theme_bw())
+```
+
+---
+
+# Black bear hunting activity and harvests
+
+From the
+[data set info page](https://data.ontario.ca/en/dataset/black-bear-hunting-activity-and-harvests):
+
+&gt; This data breaks down estimated hunter and harvest numbers by:
+  - wildlife management unit (WMU)
+  - calendar year
+
+&gt; Harvest and active hunter numbers are estimates based on replies received from a sample of hunters
+and are therefore subject to statistical error.
+
+- A WMU is essentially a code that identifies a hunting region
+
+---
+
+# Obtain the data set
+
+
+```r
+if (!dir.exists("./data")) {
+  dir.create("./data")
+}
+
+download.file(
+  "https://data.ontario.ca/dataset/c14b7d2b-7c42-4727-92c6-99f140ed3a57/resource/7dd6328e-74cc-4291-a041-2345cf7c6186/download/black_bear_2021.csv",
+  destfile="./data/bears.csv"
+)
+```
+
+
+```r
+bears_full &lt;- read_csv("./data/bears.csv")
+```
+
+&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='font-weight: bold;'&gt;Rows: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;801&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Columns: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;4&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='color: #00BBBB;'&gt;--&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Column specification&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #00BBBB;'&gt;--------------------------------------------------------&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Delimiter:&lt;/span&gt;&lt;span&gt; ","
+## &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;chr&lt;/span&gt;&lt;span&gt; (1): WMU
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;dbl&lt;/span&gt;&lt;span&gt; (3): Year, Active Hunters, Harvest
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## 
+## &lt;span style='color: #00BBBB;'&gt;i&lt;/span&gt;&lt;span&gt; Use &lt;/span&gt;&lt;span style='color: #555555;background-color: #000000;'&gt;`spec()`&lt;/span&gt;&lt;span&gt; to retrieve the full column specification for this data.
+## &lt;/span&gt;&lt;span style='color: #00BBBB;'&gt;i&lt;/span&gt;&lt;span&gt; Specify the column types or set &lt;/span&gt;&lt;span style='color: #555555;background-color: #000000;'&gt;`show_col_types = FALSE`&lt;/span&gt;&lt;span&gt; to quiet this message.
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+---
+
+# Inspect the data
+
+
+```r
+head(bears_full)
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 6 x 4&lt;/span&gt;&lt;span&gt;
+##   WMU    Year `Active Hunters` Harvest
+##   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;            &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt; 01A    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;012                1       0
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;2&lt;/span&gt;&lt;span&gt; 01A    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;013                6       0
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;3&lt;/span&gt;&lt;span&gt; 01A    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;014                6       2
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;4&lt;/span&gt;&lt;span&gt; 01A    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;015                8       2
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;5&lt;/span&gt;&lt;span&gt; 01A    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;016                0       0
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;6&lt;/span&gt;&lt;span&gt; 01A    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;017                6       0
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+
+```r
+bears_full %&gt;%
+  distinct(WMU) %&gt;%
+  pull(WMU)
+```
+
+```
+##  [1] "01A"   "01C"   "01D"   "2"     "3"     "4"     "5"     "6"     "07A"  
+## [10] "07B"   "8"     "09A"   "09B"   "10"    "11A"   "11B"   "12A"   "12B"  
+## [19] "13"    "14"    "15A"   "15B"   "16A"   "16B"   "16C"   "17"    "18A"  
+## [28] "18B"   "19"    "21A"   "21B"   "22"    "23"    "24"    "25"    "26"   
+## [37] "27"    "28"    "29"    "30"    "31"    "32"    "33"    "34"    "35"   
+## [46] "36"    "37"    "38"    "39"    "40"    "41"    "42"    "43A"   "43B"  
+## [55] "44"    "45"    "46"    "47"    "48"    "49"    "50"    "53"    "54"   
+## [64] "55A"   "55B"   "56"    "57"    "58"    "59"    "60"    "61"    "62"   
+## [73] "63"    "64"    "66"    "67"    "68"    "69A"   "69B"   "71"    "72"   
+## [82] "73"    "74"    "75"    "76"    "82A"   "83"    "84"    "Total"
+```
+
+---
+
+# Inspect the data
+
+
+```r
+tail(bears_full)
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 6 x 4&lt;/span&gt;&lt;span&gt;
+##   WMU    Year `Active Hunters` Harvest
+##   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;            &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt; Total  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;015            &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;26&lt;/span&gt;&lt;span&gt;293    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;6&lt;/span&gt;&lt;span&gt;662
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;2&lt;/span&gt;&lt;span&gt; Total  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;016            &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;31&lt;/span&gt;&lt;span&gt;480    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;8&lt;/span&gt;&lt;span&gt;152
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;3&lt;/span&gt;&lt;span&gt; Total  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;017            &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;28&lt;/span&gt;&lt;span&gt;718    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;6&lt;/span&gt;&lt;span&gt;497
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;4&lt;/span&gt;&lt;span&gt; Total  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;018            &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;27&lt;/span&gt;&lt;span&gt;138    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;5&lt;/span&gt;&lt;span&gt;869
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;5&lt;/span&gt;&lt;span&gt; Total  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;019            &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;28&lt;/span&gt;&lt;span&gt;250    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;5&lt;/span&gt;&lt;span&gt;301
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;6&lt;/span&gt;&lt;span&gt; Total  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;020            &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;27&lt;/span&gt;&lt;span&gt;291    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;4&lt;/span&gt;&lt;span&gt;269
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+- It looks like the end of the data set contains annual summaries
+
+- We should separate this from the raw data that we will use for analysis
+
+---
+
+# Split the data; rename column
+
+
+```r
+bears &lt;- bears_full %&gt;%
+  filter(WMU != "Total") %&gt;%
+  rename(active_hunters = `Active Hunters`)
+```
+
+---
+
+# Re-inspect the data
+
+
+```r
+bears %&gt;%
+  distinct(WMU) %&gt;%
+  pull(WMU)
+```
+
+```
+##  [1] "01A" "01C" "01D" "2"   "3"   "4"   "5"   "6"   "07A" "07B" "8"   "09A"
+## [13] "09B" "10"  "11A" "11B" "12A" "12B" "13"  "14"  "15A" "15B" "16A" "16B"
+## [25] "16C" "17"  "18A" "18B" "19"  "21A" "21B" "22"  "23"  "24"  "25"  "26" 
+## [37] "27"  "28"  "29"  "30"  "31"  "32"  "33"  "34"  "35"  "36"  "37"  "38" 
+## [49] "39"  "40"  "41"  "42"  "43A" "43B" "44"  "45"  "46"  "47"  "48"  "49" 
+## [61] "50"  "53"  "54"  "55A" "55B" "56"  "57"  "58"  "59"  "60"  "61"  "62" 
+## [73] "63"  "64"  "66"  "67"  "68"  "69A" "69B" "71"  "72"  "73"  "74"  "75" 
+## [85] "76"  "82A" "83"  "84"
+```
+
+There are 88 different WMUs!
+
+---
+
+# Re-inspect the data
+
+
+```r
+bears %&gt;%
+  distinct(Year)
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 9 x 1&lt;/span&gt;&lt;span&gt;
+##    Year
+##   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;012
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;2&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;013
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;3&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;014
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;4&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;015
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;5&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;016
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;6&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;017
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;7&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;018
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;8&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;019
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;9&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;020
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+The data ranges from 2012 to 2020.
+
+---
+
+# Scatterplots
+
+.pull-left[
+
+A basic scatterplot:
+
+
+```r
+ggplot(bears, aes(x=active_hunters, y=Harvest))+
+  geom_point()+
+  labs(x="Active hunters")
+```
+
+]
+
+.pull-right[
+
+&lt;img src="index_files/figure-html/unnamed-chunk-11-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+
+# Scatterplots
+
+.pull-left[
+
+Scatterplot colouring by `WMU`:
+
+
+```r
+ggplot(bears, aes(x=active_hunters, y=Harvest, colour=WMU))+
+  geom_point(show.legend=FALSE)+
+  labs(x="Active hunters")
+```
+
+- You can disable the legend of one or more geom layers by setting `show.legend=FALSE`, rather than
+using `theme(legend.position="none")`
+
+- This still isnt a great plot as we saw earlier that we actually have 88 different levels for the
+`WMU` variable...
+
+- Facetting by the WMU won't help either because we'll have 88 subplots
+
+]
+
+.pull-right[
+
+&lt;img src="index_files/figure-html/unnamed-chunk-13-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+
+# Subsetting the data
+
+Let us consider only the observations where the WMU ended in "A" or "B".
+
+
+```r
+bearsAB &lt;- bears %&gt;%
+  filter(str_ends(WMU, pattern="A|B"))
+```
+
+- `str_ends()` is a function that checks whether a string ends in a pattern
+
+- We can use this function with `filter()` because it returns a logical vector (`TRUE`, `FALSE`)
+
+Check our work:
+
+
+```r
+bearsAB %&gt;%
+  distinct(WMU) %&gt;%
+  pull(WMU)
+```
+
+```
+##  [1] "01A" "07A" "07B" "09A" "09B" "11A" "11B" "12A" "12B" "15A" "15B" "16A"
+## [13] "16B" "18A" "18B" "21A" "21B" "43A" "43B" "55A" "55B" "69A" "69B" "82A"
+```
+
+- We still have 24 WMUs!
+
+---
+
+# Remake the scatterplot
+
+.pull-left[
+
+
+```r
+ggplot(bearsAB, aes(x=active_hunters, y=Harvest, colour=WMU))+
+  geom_point(show.legend=FALSE)+
+  labs(x="Active hunters")
+```
+
+- I wouldn't say that this plot is much of an improvement over the last...
+
+- Facetting by WMU still won't be useful since we'll end up with 24 subplots, which is still a lot
+
+]
+
+.pull-right[
+
+&lt;img src="index_files/figure-html/unnamed-chunk-17-1.png" width="504" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+
+# Fit a multiple linear regression model
+
+Suppose we now wish to fit the model of form
+
+`$$Y \,=\, \beta_{0} \,+\, \beta_{1}X_{1} \,+\, \beta_{2}X_{2_{1}} \,+\, \beta_{3}X_{2_{2}} \,+\, \ldots + \beta_{24}X_{2_{23}} \,+\, \varepsilon$$`
+
+where:
+
+- `\(Y\)` is the harvest
+
+- `\(X_{1}\)` is the number of active hunters
+
+- `\(X_{2_{j}}\)` is an indicator for the `\(j^{\text{th}}\)` WMU
+
+- WMU has 24 levels, of which, the last 23 levels will require indicator variables
+
+We will first do this with matrices, then with the `lm` function.
+
+---
+
+# The matrices
+
+We want to go from the equation on the previous page to something like this:
+
+`$$\begin{bmatrix}Y_{1}\\ Y_{2}\\ \vdots\\ Y_{n} \end{bmatrix} \,=\, 
+\begin{bmatrix}1 &amp;X_{1,\,1} &amp;X_{2_{1},\,1} &amp;X_{2_{2},\,1} &amp;\cdots &amp;X_{2_{23},\,1}\\ 1 &amp;X_{1,\,2} &amp;X_{2_{1},\,2} &amp;X_{2_{2},\,2} &amp;\cdots &amp;X_{2_{23},\,2}\\ \vdots &amp;\vdots &amp;\vdots &amp;\vdots &amp;\ddots &amp;\vdots\\ 1 &amp;X_{1,\,n} &amp;X_{2_{1},\,n} &amp;X_{2_{2},\,n} &amp;\cdots &amp;X_{2_{23},\,n} \end{bmatrix}
+\begin{bmatrix}\beta_{0}\\ \beta_{1}\\ \beta_{2_{1}}\\ \beta_{2_{2}}\\ \vdots\\ \beta_{2_{23}} \end{bmatrix} \,+\,
+\begin{bmatrix}\varepsilon_{1}\\ \varepsilon_{2}\\ \vdots\\ \varepsilon_{n} \end{bmatrix}$$`
+
+where:
+
+- `\(X_{1,\,i}\)` is the number of active hunters for observation `\(i\)`
+
+- `\(X_{2_{j},\,i}\)` is an indicator for the `\(j^{\text{th}}\)` WMU for observation `\(i\)`
+
+- WMU has 24 levels so `\(24 - 1 = 23\)` of these levels are included in the matrix (so that `\(X\)` will be
+of full rank)
+
+---
+
+# Creating the response matrix
+
+.pull-left[
+
+
+```r
+Y &lt;- bearsAB %&gt;%
+  select(Harvest) %&gt;%
+  as.matrix()
+
+head(Y)
+```
+
+- All we need to do is extract the response variable (`Harvest`) and convert it to a matrix
+
+]
+
+.pull-right[
+
+
+```
+##      Harvest
+## [1,]       0
+## [2,]       0
+## [3,]       2
+## [4,]       2
+## [5,]       0
+## [6,]       0
+```
+
+]
+
+---
+
+# Creating the design matrix
+
+.pull-left[
+
+
+```r
+bearsAB %&gt;%
+  select(active_hunters, WMU) %&gt;%
+  add_column(intercept=1, .before=1)
+```
+
+- We start by selecting the columns that we need: `active_hunters` and `WMU`
+
+- Then we add a column to the front of the data to denote the intercept.
+
+- In general, if a name-value pair of length 1 is supplied to a tidyverse-related function that
+involves adding rows/columns to data (e.g. `add_column`, `mutate`), the value is repeated. This is
+**only** applicable when the length is 1.
+
+]
+
+.pull-right[
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 216 x 3&lt;/span&gt;&lt;span&gt;
+##    intercept active_hunters WMU  
+##        &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;          &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt;         1              1 01A  
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt;         1              6 01A  
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt;         1              6 01A  
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt;         1              8 01A  
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt;         1              0 01A  
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt;         1              6 01A  
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt;         1              8 01A  
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt;         1             17 01A  
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt;         1             22 01A  
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt;         1             13 07A  
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 206 more rows&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+]
+
+---
+
+# Aside: factor levels
+
+- The WMU variable is currently of type character
+
+- In order to incorporate it into our model, we need to convert it to a factor
+
+- Factor levels are assigned in numerical/alphabetical order
+
+
+```r
+factor(c("B", "A", "C"))
+```
+
+```
+## [1] B A C
+## Levels: A B C
+```
+
+
+```r
+bearsAB %&gt;%
+  pull(WMU) %&gt;%
+  factor() %&gt;%
+  head()
+```
+
+```
+## [1] 01A 01A 01A 01A 01A 01A
+## 24 Levels: 01A 07A 07B 09A 09B 11A 11B 12A 12B 15A 15B 16A 16B 18A 18B ... 82A
+```
+
+- When WMU is converted to a factor, the first level is `01A`
+
+- As such, this level will be excluded from our set of indicator variables that we need to create
+
+- `01A` will be the baseline of our resulting model
+
+---
+
+# Creating the design matrix
+
+.pull-left[
+
+
+```r
+bearsAB %&gt;%
+  select(active_hunters, WMU) %&gt;%
+  add_column(intercept=1, .before=1) %&gt;%
+  dummy_cols(remove_first_dummy=TRUE, remove_selected_columns=TRUE)
+```
+
+- We use `fastDummies::dummy_cols` to create our indicator variables
+
+- By default, it creates indicators using all character/factor variables in the data set
+
+- We set `remove_first_dummy` to `TRUE` so that the design matrix will be of full rank
+
+- We also set `remove_selected_columns` to `TRUE` to drop WMU after creating its indicators
+
+]
+
+.pull-right[
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 216 x 25&lt;/span&gt;&lt;span&gt;
+##    intercept active_hunters WMU_07A WMU_07B WMU_09A WMU_09B WMU_11A WMU_11B
+##        &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;          &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt;         1              1       0       0       0       0       0       0
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt;         1              6       0       0       0       0       0       0
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt;         1              6       0       0       0       0       0       0
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt;         1              8       0       0       0       0       0       0
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt;         1              0       0       0       0       0       0       0
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt;         1              6       0       0       0       0       0       0
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt;         1              8       0       0       0       0       0       0
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt;         1             17       0       0       0       0       0       0
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt;         1             22       0       0       0       0       0       0
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt;         1             13       1       0       0       0       0       0
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 206 more rows, and 17 more variables: WMU_12A &amp;lt;int&amp;gt;, WMU_12B &amp;lt;int&amp;gt;,&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;#   WMU_15A &amp;lt;int&amp;gt;, WMU_15B &amp;lt;int&amp;gt;, WMU_16A &amp;lt;int&amp;gt;, WMU_16B &amp;lt;int&amp;gt;, WMU_18A &amp;lt;int&amp;gt;,&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;#   WMU_18B &amp;lt;int&amp;gt;, WMU_21A &amp;lt;int&amp;gt;, WMU_21B &amp;lt;int&amp;gt;, WMU_43A &amp;lt;int&amp;gt;, WMU_43B &amp;lt;int&amp;gt;,&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;#   WMU_55A &amp;lt;int&amp;gt;, WMU_55B &amp;lt;int&amp;gt;, WMU_69A &amp;lt;int&amp;gt;, WMU_69B &amp;lt;int&amp;gt;, WMU_82A &amp;lt;int&amp;gt;&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+]
+
+---
+
+# Creating the design matrix
+
+.pull-left[
+
+
+```r
+X &lt;- bearsAB %&gt;%
+  select(active_hunters, WMU) %&gt;%
+  add_column(intercept=1, .before=1) %&gt;%
+  dummy_cols(remove_first_dummy=TRUE, remove_selected_columns=TRUE) %&gt;%
+  as.matrix()
+
+X[1:6, 1:6]
+```
+
+- Finally, we convert the data into a matrix and assign it to `X`
+
+- We can take a peek at the first 6 rows and columns
+
+]
+
+.pull-right[
+
+
+```
+##      intercept active_hunters WMU_07A WMU_07B WMU_09A WMU_09B
+## [1,]         1              1       0       0       0       0
+## [2,]         1              6       0       0       0       0
+## [3,]         1              6       0       0       0       0
+## [4,]         1              8       0       0       0       0
+## [5,]         1              0       0       0       0       0
+## [6,]         1              6       0       0       0       0
+```
+
+]
+
+---
+
+# Matrix functions needed to obtain the coefficient estimates
+
+`t()` is the transpose.
+
+
+```r
+A &lt;- matrix(c(1,2,3,4), nrow=2, ncol=2, byrow=TRUE)
+
+A
+```
+
+```
+##      [,1] [,2]
+## [1,]    1    2
+## [2,]    3    4
+```
+
+```r
+t(A)
+```
+
+```
+##      [,1] [,2]
+## [1,]    1    3
+## [2,]    2    4
+```
+
+---
+
+# Matrix functions needed to obtain the coefficient estimates
+
+`solve()` returns the inverse of a matrix.
+
+
+```r
+A
+```
+
+```
+##      [,1] [,2]
+## [1,]    1    2
+## [2,]    3    4
+```
+
+```r
+solve(A)
+```
+
+```
+##      [,1] [,2]
+## [1,] -2.0  1.0
+## [2,]  1.5 -0.5
+```
+
+`%*%` represents matrix multiplication. We can check that
+
+`$$A \,*\, A^{-1} \,=\, \mathbb{I}_{2}$$`
+
+
+```r
+A %*% solve(A)
+```
+
+---
+
+# Obtaining the coefficient estimates with matrices
+
+`$$\widehat{\boldsymbol{\beta}} \,=\, (X^{T}X)^{-1}X^{T}Y$$`
+
+
+```r
+beta &lt;- solve(t(X) %*% X) %*% t(X) %*% Y
+
+head(beta)
+```
+
+```
+##                  Harvest
+## intercept      -2.752779
+## active_hunters  0.402365
+## WMU_07A         3.844856
+## WMU_07B        14.750428
+## WMU_09A        13.086960
+## WMU_09B        12.205280
+```
+
+---
+
+# Obtaining the coefficient estimates with matrices
+
+Converting it back into a tibble:
+
+
+```r
+beta_tibble &lt;- beta %&gt;%
+  as_tibble(rownames="term") %&gt;%
+  rename(estimate = Harvest)
+
+beta_tibble
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 25 x 2&lt;/span&gt;&lt;span&gt;
+##    term           estimate
+##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;             &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; intercept        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;2.75&lt;/span&gt;&lt;span&gt; 
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; active_hunters    0.402
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; WMU_07A           3.84 
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; WMU_07B          14.8  
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; WMU_09A          13.1  
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; WMU_09B          12.2  
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; WMU_11A           4.46 
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; WMU_11B          -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;7.34&lt;/span&gt;&lt;span&gt; 
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; WMU_12A          -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1.10&lt;/span&gt;&lt;span&gt; 
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; WMU_12B          -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;7.21&lt;/span&gt;&lt;span&gt; 
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 15 more rows&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+---
+
+# Obtaining the coefficient estimates with `lm`
+
+
+```r
+bearsAB_lm &lt;- lm(Harvest ~ active_hunters + WMU, data=bearsAB)
+```
+
+I'm using `broom::tidy.lm` to extract only the coefficient table from the `summary` output because
+the output from `summary` is going to be huge and won't fit on my slides.
+
+
+```r
+bearsAB_lm_coef &lt;- bearsAB_lm %&gt;%
+  tidy() %&gt;%
+  select(term, estimate)
+
+bearsAB_lm_coef
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 25 x 2&lt;/span&gt;&lt;span&gt;
+##    term           estimate
+##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;             &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; (Intercept)      -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;2.75&lt;/span&gt;&lt;span&gt; 
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; active_hunters    0.402
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; WMU07A            3.84 
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; WMU07B           14.8  
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; WMU09A           13.1  
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; WMU09B           12.2  
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; WMU11A            4.46 
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; WMU11B           -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;7.34&lt;/span&gt;&lt;span&gt; 
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; WMU12A           -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1.10&lt;/span&gt;&lt;span&gt; 
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; WMU12B           -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;7.21&lt;/span&gt;&lt;span&gt; 
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 15 more rows&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+---
+
+# Comparing our estimates
+
+.pull-left[
+
+
+```r
+list(
+  with_matrices = beta_tibble,
+  with_lm = bearsAB_lm_coef
+)
+```
+
+They are identical!
+
+]
+
+.pull-right[
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## $with_matrices
+## &lt;span style='color: #555555;'&gt;# A tibble: 25 x 2&lt;/span&gt;&lt;span&gt;
+##    term           estimate
+##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;             &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; intercept        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;2.75&lt;/span&gt;&lt;span&gt; 
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; active_hunters    0.402
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; WMU_07A           3.84 
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; WMU_07B          14.8  
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; WMU_09A          13.1  
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; WMU_09B          12.2  
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; WMU_11A           4.46 
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; WMU_11B          -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;7.34&lt;/span&gt;&lt;span&gt; 
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; WMU_12A          -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1.10&lt;/span&gt;&lt;span&gt; 
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; WMU_12B          -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;7.21&lt;/span&gt;&lt;span&gt; 
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 15 more rows&lt;/span&gt;&lt;span&gt;
+## 
+## $with_lm
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# A tibble: 25 x 2&lt;/span&gt;&lt;span&gt;
+##    term           estimate
+##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;             &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; (Intercept)      -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;2.75&lt;/span&gt;&lt;span&gt; 
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; active_hunters    0.402
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; WMU07A            3.84 
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; WMU07B           14.8  
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; WMU09A           13.1  
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; WMU09B           12.2  
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; WMU11A            4.46 
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; WMU11B           -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;7.34&lt;/span&gt;&lt;span&gt; 
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; WMU12A           -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1.10&lt;/span&gt;&lt;span&gt; 
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; WMU12B           -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;7.21&lt;/span&gt;&lt;span&gt; 
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 15 more rows&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+]
+
+---
+
+# WMUs ending in B
+
+Now instead of WMUs ending in A or B, let us consider only the WMUs that end in B.
+
+
+```r
+bearsB &lt;- bears %&gt;%
+  filter(str_ends(WMU, pattern="B"))
+
+bearsB
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 99 x 4&lt;/span&gt;&lt;span&gt;
+##    WMU    Year active_hunters Harvest
+##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;          &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; 07B    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;012            198     121
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; 07B    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;013            148      66
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; 07B    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;014            131      50
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; 07B    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;015            148      56
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; 07B    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;016            172      73
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; 07B    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;017            148      81
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; 07B    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;018            157      87
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; 07B    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;019            189     102
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; 07B    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;020             71      20
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; 09B    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;012            105      58
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 89 more rows&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+---
+
+# Fit the new model
+
+Since the question doesn't mention anything about WMUs, WMU is not included in the model.
+
+
+```r
+bearsB_lm &lt;- lm(Harvest ~ active_hunters, data=bearsB)
+
+summary(bearsB_lm)
+```
+
+```
+## 
+## Call:
+## lm(formula = Harvest ~ active_hunters, data = bearsB)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -81.066 -14.013  -3.305  14.675  65.839 
+## 
+## Coefficients:
+##                Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)     1.80206    3.67144   0.491    0.625    
+## active_hunters  0.26949    0.01492  18.056   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 24.58 on 97 degrees of freedom
+## Multiple R-squared:  0.7707,	Adjusted R-squared:  0.7683 
+## F-statistic:   326 on 1 and 97 DF,  p-value: &lt; 2.2e-16
+```
+
+---
+
+# Make an 80% prediction interval
+
+The formula for a `\(100(1 - \alpha)\%\)` prediction interval for `\(X \,=\, x_{h}\)` is:
+
+`$$\widehat{y} \,\pm\, t_{1 - \frac{\alpha}{2},\, n-2} \,*\, \widehat{\sigma}\sqrt{\left(1 \,+\, \frac{1}{n} \,+\, \frac{(x_{h} - \overline{x})^{2}}{S_{xx}}\right)}$$`
+
+where 
+
+`$$P\left(T \,&lt;\, t_{1 - \frac{\alpha}{2},\, n-2}\right) \,=\, 1 - \frac{\alpha}{2}$$`
+
+---
+
+# Obtaining the values
+
+The value of `\(\widehat{y}\)` when `\(x_{h} \,=\, 4\)`:
+
+
+```r
+yhat &lt;- bearsB_lm %&gt;%
+  augment(newdata = data.frame(active_hunters=4)) %&gt;%
+  pull(.fitted)
+
+yhat
+```
+
+```
+## [1] 2.880025
+```
+
+---
+
+# Obtaining the values
+
+We have `\(n = 99\)` and `\(\alpha = 0.20\)`.
+
+
+```r
+n &lt;- 99
+alpha &lt;- 0.20
+```
+
+The quantile value:
+
+
+```r
+tval &lt;- qt(1 - alpha/2, df=n-2)
+
+tval
+```
+
+```
+## [1] 1.29034
+```
+
+---
+
+# Obtaining the values
+
+The value of `\(\widehat{\sigma}\)` can be read off the summary output under "Residual standard
+error".
+
+
+```r
+summary(bearsB_lm)
+```
+
+```
+## 
+## Call:
+## lm(formula = Harvest ~ active_hunters, data = bearsB)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -81.066 -14.013  -3.305  14.675  65.839 
+## 
+## Coefficients:
+##                Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)     1.80206    3.67144   0.491    0.625    
+## active_hunters  0.26949    0.01492  18.056   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 24.58 on 97 degrees of freedom
+## Multiple R-squared:  0.7707,	Adjusted R-squared:  0.7683 
+## F-statistic:   326 on 1 and 97 DF,  p-value: &lt; 2.2e-16
+```
+
+---
+
+# Obtaining the values
+
+Alternatively, we can extract the value of `\(\widehat{\sigma}\)` using `broom::glance.lm`:
+
+
+```r
+glance(bearsB_lm)
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 1 x 12&lt;/span&gt;&lt;span&gt;
+##   r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC
+##       &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;         &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;     &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt;     0.771         0.768  24.6      326. 8.75&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-33&lt;/span&gt;&lt;span&gt;     1  -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;456.&lt;/span&gt;&lt;span&gt;  919.  927.
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 3 more variables: deviance &amp;lt;dbl&amp;gt;, df.residual &amp;lt;int&amp;gt;, nobs &amp;lt;int&amp;gt;&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+
+```r
+sigma &lt;- bearsB_lm %&gt;%
+  glance() %&gt;%
+  pull(sigma)
+
+sigma
+```
+
+```
+## [1] 24.583
+```
+
+---
+
+# Obtaining the values
+
+The remaining terms in the standard error can be obtained using: 
+
+
+```r
+xh &lt;- 4
+
+xbar &lt;- bearsB %&gt;%
+  pull(active_hunters) %&gt;%
+  mean()
+
+Sxx &lt;- bearsB %&gt;%
+  pull(active_hunters) %&gt;%
+  var() %&gt;%
+  magrittr::multiply_by(n-1)
+
+big_term &lt;- sqrt(1 + (1/n) + (xh - xbar)^2 / Sxx)
+```
+
+---
+
+# Calculating the interval
+
+
+```r
+interval &lt;- tibble(
+  fit = yhat,
+  lower = yhat - tval * sigma * big_term,
+  upper = yhat + tval * sigma * big_term
+)
+
+interval
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 1 x 3&lt;/span&gt;&lt;span&gt;
+##     fit lower upper
+##   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt;  2.88 -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;29.2&lt;/span&gt;&lt;span&gt;  34.9
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+---
+
+# Check our work
+
+
+```r
+interval
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 1 x 3&lt;/span&gt;&lt;span&gt;
+##     fit lower upper
+##   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt;  2.88 -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;29.2&lt;/span&gt;&lt;span&gt;  34.9
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+```r
+predict(
+  bearsB_lm,
+  newdata = data.frame(active_hunters=4),
+  interval = "prediction",
+  level = 0.80
+)
+```
+
+```
+##        fit       lwr      upr
+## 1 2.880025 -29.18389 34.94394
+```
+
+They're the same!
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "atom-one-light",
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();</script>
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
