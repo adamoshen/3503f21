@@ -3,3 +3,4 @@
 
 # Proper language detection
 *.Rmd linguist-detectable
+*.js linguist-vendored
