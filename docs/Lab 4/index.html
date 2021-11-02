@@ -853,7 +853,7 @@ summary(bearsB_lm)
 
 The formula for a `\(100(1 - \alpha)\%\)` prediction interval for `\(X \,=\, x_{*}\)` is:
 
-`$$\widehat{y} \,\pm\, t_{1 - \frac{\alpha}{2},\, n-2} \,*\, \widehat{\sigma}\sqrt{\left(1 \,+\, \frac{1}{n} \,+\, \frac{(x_{*} - \overline{x})^{2}}{S_{xx}}\right)}$$`
+`$$\widehat{Y} \,\pm\, t_{1 - \frac{\alpha}{2},\, n-2} \,*\, \widehat{\sigma}\sqrt{\left(1 \,+\, \frac{1}{n} \,+\, \frac{(X_{*} - \overline{X})^{2}}{S_{xx}}\right)}$$`
 
 where 
 
@@ -863,7 +863,7 @@ where
 
 # Obtaining the values
 
-The value of `\(\widehat{y}\)` when `\(x_{*} \,=\, 4\)`:
+The value of `\(\widehat{Y}\)` when `\(X_{*} \,=\, 4\)`:
 
 
 ```r
@@ -1001,14 +1001,14 @@ interval &lt;- tibble(
   upper = yhat + tval * sigma * big_term
 )
 
-interval
+interval %&gt;%
+  as.matrix() # only to see more digits
 ```
 
-&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 1 x 3&lt;/span&gt;&lt;span&gt;
-##     fit lower upper
-##   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt;  2.88 -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;29.2&lt;/span&gt;&lt;span&gt;  34.9
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+```
+##           fit     lower    upper
+## [1,] 2.880025 -29.18389 34.94394
+```
 
 ---
 

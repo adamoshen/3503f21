@@ -633,7 +633,7 @@ summary(bearsB_lm)
 
 The formula for a $100(1 - \alpha)\%$ prediction interval for $X \,=\, x_{*}$ is:
 
-$$\widehat{y} \,\pm\, t_{1 - \frac{\alpha}{2},\, n-2} \,*\, \widehat{\sigma}\sqrt{\left(1 \,+\, \frac{1}{n} \,+\, \frac{(x_{*} - \overline{x})^{2}}{S_{xx}}\right)}$$
+$$\widehat{Y} \,\pm\, t_{1 - \frac{\alpha}{2},\, n-2} \,*\, \widehat{\sigma}\sqrt{\left(1 \,+\, \frac{1}{n} \,+\, \frac{(X_{*} - \overline{X})^{2}}{S_{xx}}\right)}$$
 
 where 
 
@@ -643,7 +643,7 @@ $$P\left(T \,<\, t_{1 - \frac{\alpha}{2},\, n-2}\right) \,=\, 1 - \frac{\alpha}{
 
 # Obtaining the values
 
-The value of $\widehat{y}$ when $x_{*} \,=\, 4$:
+The value of $\widehat{Y}$ when $X_{*} \,=\, 4$:
 
 ```{r}
 yhat <- bearsB_lm %>%
@@ -733,7 +733,8 @@ interval <- tibble(
   upper = yhat + tval * sigma * big_term
 )
 
-interval
+interval %>%
+  as.matrix() # only to see more digits
 ```
 
 ---
