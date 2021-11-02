@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Lab 5, Stat 3503 Fall 2021</title>
+    <meta charset="utf-8" />
+    <script src="libs/header-attrs-2.9/header-attrs.js"></script>
+    <script src="libs/clipboard-2.0.6/clipboard.min.js"></script>
+    <link href="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"<ion-icon name=\"clipboard-outline\"><\/ion-icon>","success":"<ion-icon name=\"checkmark-outline\" style=\"color: #90BE6D\"><\/ion-icon>","error":"<ion-icon name=\"close-outline\" style=\"color: #F94144\"><\/ion-icon>"})</script>
+    <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view-0.2.6/tile-view.js"></script>
+    <link rel="stylesheet" href="css/extra.css" type="text/css" />
+    <link rel="stylesheet" href="css/xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+
+
+
+
+
+
+# Lab 5 &amp;mdash; November 1
+
+
+```r
+library(tidyverse)
+```
+
+&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## -- &lt;span style='font-weight: bold;'&gt;Attaching packages&lt;/span&gt;&lt;span&gt; --------------------------------------- tidyverse 1.3.0 --
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;ggplot2&lt;/span&gt;&lt;span&gt; 3.3.3     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;purrr  &lt;/span&gt;&lt;span&gt; 0.3.4
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;tibble &lt;/span&gt;&lt;span&gt; 3.1.0     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;dplyr  &lt;/span&gt;&lt;span&gt; 1.0.5
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;tidyr  &lt;/span&gt;&lt;span&gt; 1.1.3     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;stringr&lt;/span&gt;&lt;span&gt; 1.4.0
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;readr  &lt;/span&gt;&lt;span&gt; 2.0.1     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;forcats&lt;/span&gt;&lt;span&gt; 0.5.1
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## -- &lt;span style='font-weight: bold;'&gt;Conflicts&lt;/span&gt;&lt;span&gt; ------------------------------------------ tidyverse_conflicts() --
+## &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;x&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;dplyr&lt;/span&gt;&lt;span&gt;::&lt;/span&gt;&lt;span style='color: #00BB00;'&gt;filter()&lt;/span&gt;&lt;span&gt; masks &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;stats&lt;/span&gt;&lt;span&gt;::filter()
+## &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;x&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;dplyr&lt;/span&gt;&lt;span&gt;::&lt;/span&gt;&lt;span style='color: #00BB00;'&gt;lag()&lt;/span&gt;&lt;span&gt;    masks &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;stats&lt;/span&gt;&lt;span&gt;::lag()
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+```r
+library(broom)
+```
+
+---
+
+# Reusing the data from last time
+
+
+```r
+bears &lt;- read_csv("./data/bears.csv") %&gt;%
+  rename(active_hunters = `Active Hunters`) %&gt;%
+  filter(WMU != "Total") %&gt;%
+  filter(WMU %in% c("82A","83","84","73","74","75","76"))
+
+bears
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 63 x 4&lt;/span&gt;&lt;span&gt;
+##    WMU    Year active_hunters Harvest
+##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;          &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; 73     &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;012             58       4
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; 73     &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;013             44       0
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; 73     &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;014             52       2
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; 73     &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;015             79       7
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; 73     &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;016            111      15
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; 73     &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;017            109       7
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; 73     &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;018             99       9
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; 73     &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;019            144      21
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; 73     &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;020            148      13
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; 74     &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;012             74       9
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 53 more rows&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+---
+
+# Reusing the same linear model from last time
+
+.pull-left[
+
+
+```r
+bears_lm &lt;- lm(Harvest ~ active_hunters, data=bears)
+
+summary(bears_lm)
+```
+
+```
+## 
+## Call:
+## lm(formula = Harvest ~ active_hunters, data = bears)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -20.2036  -2.8621   0.0816   3.3201  25.6144 
+## 
+## Coefficients:
+##                 Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)    -5.048595   1.560276  -3.236  0.00196 ** 
+## active_hunters  0.188743   0.009188  20.542  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 7.749 on 61 degrees of freedom
+## Multiple R-squared:  0.8737,	Adjusted R-squared:  0.8716 
+## F-statistic:   422 on 1 and 61 DF,  p-value: &lt; 2.2e-16
+```
+
+]
+
+---
+
+# Creating a 95% confidence interval for the mean response
+
+We are interested in a 95% confidence interval for the mean harvest when the number of active
+hunters equals 150. Using the functions built into R, we can easily obtain this interval.
+
+
+```r
+predict(
+  bears_lm,
+  newdata = data.frame(active_hunters=150),
+  interval = "confidence"
+)
+```
+
+```
+##        fit      lwr      upr
+## 1 23.26288 21.28423 25.24152
+```
+
+---
+
+# Creating the interval manually
+
+The formula for a 95% confidence interval for the mean response is:
+
+`$$\widehat{Y} \,\pm\, t_{1-\frac{\alpha}{2}}\,\widehat{\sigma}\sqrt{\frac{1}{n} \,+\, \frac{(X_{*} - \overline{X})^{2}}{\sum_{i}(X_{i} - \overline{X})^{2}}}$$`
+
+Let's collect all these values and store them in individual columns in a tibble.
+
+---
+
+# More on broom
+
+- We can collected the required values by starting from the output of `broom::augment()` and
+`broom::glance()`
+- `broom::augment()` augments a model by returning the data used to fit the model and diagnostic
+information
+
+
+```r
+augment(bears_lm)
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 63 x 8&lt;/span&gt;&lt;span&gt;
+##    Harvest active_hunters .fitted  .resid   .hat .sigma    .cooksd .std.resid
+##      &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;          &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;      &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;      &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt;       4             58    5.90 -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1.90&lt;/span&gt;&lt;span&gt;   0.023&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;7&lt;/span&gt;&lt;span&gt;   7.81 0.000&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;745&lt;/span&gt;&lt;span&gt;      -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.248&lt;/span&gt;&lt;span&gt; 
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt;       0             44    3.26 -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;3.26&lt;/span&gt;&lt;span&gt;   0.026&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;9&lt;/span&gt;&lt;span&gt;   7.80 0.002&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;51&lt;/span&gt;&lt;span&gt;       -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.426&lt;/span&gt;&lt;span&gt; 
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt;       2             52    4.77 -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;2.77&lt;/span&gt;&lt;span&gt;   0.025&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;0&lt;/span&gt;&lt;span&gt;   7.81 0.001&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;67&lt;/span&gt;&lt;span&gt;       -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.361&lt;/span&gt;&lt;span&gt; 
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt;       7             79    9.86 -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;2.86&lt;/span&gt;&lt;span&gt;   0.019&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;9&lt;/span&gt;&lt;span&gt;   7.80 0.001&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;41&lt;/span&gt;&lt;span&gt;       -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.373&lt;/span&gt;&lt;span&gt; 
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt;      15            111   15.9  -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.902&lt;/span&gt;&lt;span&gt;  0.016&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;5&lt;/span&gt;&lt;span&gt;   7.81 0.000&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;116&lt;/span&gt;&lt;span&gt;      -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.117&lt;/span&gt;&lt;span&gt; 
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt;       7            109   15.5  -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;8.52&lt;/span&gt;&lt;span&gt;   0.016&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;6&lt;/span&gt;&lt;span&gt;   7.73 0.010&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;4&lt;/span&gt;&lt;span&gt;        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1.11&lt;/span&gt;&lt;span&gt;  
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt;       9             99   13.6  -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;4.64&lt;/span&gt;&lt;span&gt;   0.017&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;4&lt;/span&gt;&lt;span&gt;   7.79 0.003&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;24&lt;/span&gt;&lt;span&gt;       -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.604&lt;/span&gt;&lt;span&gt; 
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt;      21            144   22.1  -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1.13&lt;/span&gt;&lt;span&gt;   0.016&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;   7.81 0.000&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;177&lt;/span&gt;&lt;span&gt;      -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.147&lt;/span&gt;&lt;span&gt; 
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt;      13            148   22.9  -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;9.89&lt;/span&gt;&lt;span&gt;   0.016&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;   7.71 0.013&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;6&lt;/span&gt;&lt;span&gt;        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1.29&lt;/span&gt;&lt;span&gt;  
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt;       9             74    8.92  0.081&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;6&lt;/span&gt;&lt;span&gt; 0.020&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;7&lt;/span&gt;&lt;span&gt;   7.81 0.000&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;001&lt;/span&gt;&lt;span&gt;20     0.010&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;6&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 53 more rows&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+--
+
+- `broom::glance()` returns general information on the model and goodness of fit measures
+
+
+```r
+glance(bears_lm)
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 1 x 12&lt;/span&gt;&lt;span&gt;
+##   r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC deviance df.residual  nobs
+##       &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;         &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;     &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;       &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt;     0.874         0.872  7.75      422. 4.26&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-29&lt;/span&gt;&lt;span&gt;     1  -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;217.&lt;/span&gt;&lt;span&gt;  441.  447.    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;3&lt;/span&gt;&lt;span&gt;663.          61    63
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+---
+
+# Collecting the values
+
+
+```r
+augment(bears_lm) %&gt;%
+  summarise(
+    xbar = mean(active_hunters),
+    Sxx = sum((active_hunters - xbar)^2)
+  ) %&gt;%
+  bind_cols(
+    glance(bears_lm) %&gt;%
+      select(sigma, df.residual, nobs)
+  )
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 1 x 5&lt;/span&gt;&lt;span&gt;
+##    xbar     Sxx sigma df.residual  nobs
+##   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;       &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt;  132. &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;711&lt;/span&gt;&lt;span&gt;260.  7.75          61    63
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+---
+
+# Collecting the values
+
+
+```r
+augment(bears_lm) %&gt;%
+  summarise(
+    xbar = mean(active_hunters),
+    Sxx = sum((active_hunters - xbar)^2)
+  ) %&gt;%
+  bind_cols(
+    glance(bears_lm) %&gt;%
+      select(sigma, df.residual, nobs)
+  ) %&gt;%
+  mutate(
+    alpha = 0.05,
+    beta0 = coef(bears_lm)[1],
+    beta1 = coef(bears_lm)[2],
+    xstar = 150,
+    yhat = beta0 + beta1 * xstar,
+    tval = qt(1 - alpha/2, df=df.residual)
+  )
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 1 x 11&lt;/span&gt;&lt;span&gt;
+##    xbar     Sxx sigma df.residual  nobs alpha beta0 beta1 xstar  yhat  tval
+##   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;       &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt;  132. &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;711&lt;/span&gt;&lt;span&gt;260.  7.75          61    63  0.05 -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;5.05&lt;/span&gt;&lt;span&gt; 0.189   150  23.3  2.00
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+---
+
+# Collecting the values
+
+Finally, create a variable to store these values.
+
+
+```r
+values &lt;- augment(bears_lm) %&gt;%
+  summarise(
+    xbar = mean(active_hunters),
+    Sxx = sum((active_hunters - xbar)^2)
+  ) %&gt;%
+  bind_cols(
+    glance(bears_lm) %&gt;%
+      select(sigma, df.residual, nobs)
+  ) %&gt;%
+  mutate(
+    alpha = 0.05,
+    beta0 = coef(bears_lm)[1],
+    beta1 = coef(bears_lm)[2],
+    xstar = 150,
+    yhat = beta0 + beta1 * xstar,
+    tval = qt(1 - alpha/2, df=df.residual)
+  )
+```
+
+---
+
+# Calculating the interval
+
+
+```r
+values %&gt;%
+  summarise(
+    fit = beta0 + beta1 * xstar,
+    lower = fit - tval * sigma * sqrt((1 / nobs) + (xstar - xbar)^2 / Sxx),
+    upper = fit + tval * sigma * sqrt((1 / nobs) + (xstar - xbar)^2 / Sxx)
+  ) %&gt;%
+  as.matrix() # only to see more digits
+```
+
+```
+##           fit    lower    upper
+## [1,] 23.26288 21.28423 25.24152
+```
+
+Compare them to our results from `predict()`:
+
+
+```r
+predict(
+  bears_lm,
+  newdata = data.frame(active_hunters=150),
+  interval = "confidence"
+)
+```
+
+```
+##        fit      lwr      upr
+## 1 23.26288 21.28423 25.24152
+```
+
+---
+
+# Creating a 90% prediction interval for response value of a new observation
+
+We are interested in a 90% prediction interval for the response value of a new observation, where
+the number of active hunters equals 55. Using the functions built into R, we can easily obtain this
+interval.
+
+
+```r
+predict(
+  bears_lm,
+  newdata = data.frame(active_hunters=55),
+  interval = "prediction",
+  level = 0.90
+)
+```
+
+```
+##        fit       lwr      upr
+## 1 5.332277 -7.766788 18.43134
+```
+
+---
+
+# Creating the interval manually
+
+The formula for a 90% confidence interval for the response value of a new observation is:
+
+`$$\widehat{Y} \,\pm\, t_{1-\frac{\alpha}{2}}\,\widehat{\sigma}\sqrt{1 + \frac{1}{n} \,+\, \frac{(X_{*} - \overline{X})^{2}}{\sum_{i}(X_{i} - \overline{X})^{2}}}$$`
+
+We can reuse the values that we had previously collected and update:
+
+- `alpha`
+- `xstar`
+- `tval`
+
+---
+
+# Updating our values
+
+
+```r
+values2 &lt;- values %&gt;%
+  mutate(
+    alpha = 0.10,
+    xstar = 55,
+    tval = qt(1 - alpha/2, df=df.residual)
+  )
+
+values2
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 1 x 11&lt;/span&gt;&lt;span&gt;
+##    xbar     Sxx sigma df.residual  nobs alpha beta0 beta1 xstar  yhat  tval
+##   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;       &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt;  132. &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;711&lt;/span&gt;&lt;span&gt;260.  7.75          61    63   0.1 -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;5.05&lt;/span&gt;&lt;span&gt; 0.189    55  23.3  1.67
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+---
+
+# Calculating the interval
+
+The formula differs only by a `\(1 +\)` term under the square root.
+
+
+```r
+values2 %&gt;%
+  summarise(
+    fit = beta0 + beta1 * xstar,
+    lower = fit - tval * sigma * sqrt(1 + (1 / nobs) + (xstar - xbar)^2 / Sxx),
+    upper = fit + tval * sigma * sqrt(1 + (1 / nobs) + (xstar - xbar)^2 / Sxx)
+  ) %&gt;%
+  as.matrix() # only to see more digits
+```
+
+```
+##           fit     lower    upper
+## [1,] 5.332277 -7.766788 18.43134
+```
+
+Compare them to our results from `predict()`:
+
+
+```r
+predict(
+  bears_lm,
+  newdata = data.frame(active_hunters=55),
+  interval = "prediction",
+  level = 0.90
+)
+```
+
+```
+##        fit       lwr      upr
+## 1 5.332277 -7.766788 18.43134
+```
+
+---
+
+# Extracting the design matrix
+
+We can extract the design matrix, `\(X\)`, from our linear model using the `model.matrix()` function.
+
+
+```r
+X &lt;- model.matrix(bears_lm)
+
+head(X)
+```
+
+```
+##   (Intercept) active_hunters
+## 1           1             58
+## 2           1             44
+## 3           1             52
+## 4           1             79
+## 5           1            111
+## 6           1            109
+```
+
+---
+
+# Obtaining `\(X^{T}X\)`
+
+
+```r
+t(X) %*% X
+```
+
+```
+##                (Intercept) active_hunters
+## (Intercept)             63           8345
+## active_hunters        8345        1816641
+```
+
+---
+
+# Obtaining the hat matrix
+
+The hat matrix is defined as
+
+`$$H \,=\, X\,(X^{T}\,X)^{-1}\,X^{T}$$`
+
+
+```r
+H &lt;- X %*% solve(t(X) %*% X) %*% t(X)
+
+H[1:6, 1:6]
+```
+
+```
+##            1          2          3          4          5          6
+## 1 0.02366811 0.02513375 0.02429624 0.02146967 0.01811965 0.01832903
+## 2 0.02513375 0.02687494 0.02587997 0.02252195 0.01854206 0.01879081
+## 3 0.02429624 0.02587997 0.02497498 0.02192064 0.01830069 0.01852693
+## 4 0.02146967 0.02252195 0.02192064 0.01989125 0.01748603 0.01763636
+## 5 0.01811965 0.01854206 0.01830069 0.01748603 0.01652052 0.01658087
+## 6 0.01832903 0.01879081 0.01852693 0.01763636 0.01658087 0.01664684
+```
+
+---
+
+# Obtaining the variance-covariance matrix of parameter estimates
+
+The variance-covariance matrix of the parameter estimates is obtained as
+
+`$$\textbf{Var}(\widehat{\beta}) \,=\, \widehat{\sigma}^{2}(X^{T}\,X)^{-1}$$`
+
+We already have the value of `\(\widehat{\sigma}\)` from our previous collection of values, so we just
+need to remember to square it.
+
+
+```r
+var_beta &lt;- values$sigma^2 * solve(t(X) %*% X)
+
+var_beta
+```
+
+```
+##                (Intercept) active_hunters
+## (Intercept)     2.43446196  -1.118305e-02
+## active_hunters -0.01118305   8.442565e-05
+```
+
+- The diagonal elements are the variances
+- The off-diagonal elements are the covariances
+
+---
+
+# Standard errors
+
+Since the variances were along the diagonal, if we square root them we will get the standard errors.
+We can extract the diagonal elements of a matrix using `diag()`.
+
+
+```r
+se_beta &lt;- sqrt(diag(var_beta))
+
+se_beta
+```
+
+```
+##    (Intercept) active_hunters 
+##    1.560276244    0.009188343
+```
+
+Compare with the standard errors computed from `summary()` or `broom::tidy()`:
+
+
+```r
+tidy(bears_lm)
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 2 x 5&lt;/span&gt;&lt;span&gt;
+##   term           estimate std.error statistic  p.value
+##   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;             &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;     &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;     &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt; (Intercept)      -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;5.05&lt;/span&gt;&lt;span&gt;    1.56        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;3.24&lt;/span&gt;&lt;span&gt; 1.96&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;- 3&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;2&lt;/span&gt;&lt;span&gt; active_hunters    0.189   0.009&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;&lt;span&gt;     20.5  4.26&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-29&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+They're the same (as they should be)!
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "atom-one-light",
+"countIncrementalSlides": false,
+"highlightLines": true,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
