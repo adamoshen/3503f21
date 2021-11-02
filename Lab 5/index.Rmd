@@ -105,15 +105,11 @@ bears
 
 # Reusing the same linear model from last time
 
-.pull-left[
-
 ```{r}
 bears_lm <- lm(Harvest ~ active_hunters, data=bears)
 
 summary(bears_lm)
 ```
-
-]
 
 ---
 
@@ -144,7 +140,7 @@ Let's collect all these values and store them in individual columns in a tibble.
 
 # More on broom
 
-- We can collected the required values by starting from the output of `broom::augment()` and
+- We can collect the required values by starting from the output of `broom::augment()` and
 `broom::glance()`
 - `broom::augment()` augments a model by returning the data used to fit the model and diagnostic
 information
