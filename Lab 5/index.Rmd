@@ -1,0 +1,401 @@
+---
+title: "Lab 5, Stat 3503 Fall 2021"
+output:
+  xaringan::moon_reader:
+    seal: false
+    lib_dir: libs
+    chakra: libs/remark-latest.min.js
+    css: [css/extra.css, css/xaringan-themer.css]
+    nature:
+      highlightStyle: atom-one-light
+      countIncrementalSlides: false
+      highlightLines: true
+      ratio: 16:9
+    includes:
+      after_body: utils/ionicons.html
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo=TRUE, message=FALSE, warning=FALSE,
+  fig.align="center", dev="svglite"
+)
+
+old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks)
+
+styles <- c(
+  getOption('fansi.style'),  # default style
+  "PRE.fansi CODE {background-color: transparent;}",
+  "PRE.fansi-error {background-color: #DD5555;}",
+  "PRE.fansi-warning {background-color: #DDDD55;}",
+  "PRE.fansi-message {background-color: #EEEEEE;}"
+)
+
+old.hooks <- c(
+  old_hooks,
+  fansi::set_knit_hooks(
+    knitr::knit_hooks,
+    which=c('warning', 'error', 'message'),
+    style=styles
+  )
+)
+
+options(crayon.enabled=TRUE)
+```
+
+```{r clipboard, include=FALSE}
+xaringanExtra::use_clipboard(
+  button_text = "<ion-icon name=\"clipboard-outline\"></ion-icon>",
+  success_text = "<ion-icon name=\"checkmark-outline\" style=\"color: #90BE6D\"></ion-icon>",
+  error_text = "<ion-icon name=\"close-outline\" style=\"color: #F94144\"></ion-icon>"
+)
+```
+
+```{r tile-view, include=FALSE}
+xaringanExtra::use_tile_view()
+```
+
+```{r xaringanthemer, eval=FALSE, include=FALSE}
+library(xaringanthemer)
+
+style_xaringan(
+  text_color = "#f8f8f2",
+  header_color = "#f8f8f2",
+  background_color = "#282a36",
+  link_color = "#ffb86c",
+  text_slide_number_color = "#f8f8f2",
+  code_inline_color = "#f8f8f2",
+  code_inline_background_color = "#282c34",
+  inverse_background_color = "#363428",
+  inverse_text_color = "#f8f8f2",
+  inverse_header_color = "#f8f8f2",
+  text_font_size = "0.9rem",
+  header_h1_font_size = "1.75rem",
+  header_h2_font_size = "1.50rem",
+  header_h3_font_size = "1.25rem",
+  text_font_google = google_font("IBM Plex Sans", "300", "300i"),
+  header_font_google = google_font("IBM Plex Sans", "300", "300i"),
+  code_font_google = google_font("IBM Plex Mono", "500"),
+  code_font_size = "0.6rem",
+  outfile = "css/xaringan-themer.css"
+)
+```
+
+# Lab 5 &mdash; November 1
+
+```{r, message=TRUE}
+library(tidyverse)
+library(broom)
+theme_set(theme_bw())
+```
+
+---
+
+# Reusing the data from last time
+
+```{r}
+bears <- read_csv("./data/bears.csv") %>%
+  rename(active_hunters = `Active Hunters`) %>%
+  filter(WMU != "Total") %>%
+  filter(WMU %in% c("82A","83","84","73","74","75","76"))
+
+bears
+```
+
+---
+
+# Reusing the same linear model from last time
+
+.pull-left[
+
+```{r}
+bears_lm <- lm(Harvest ~ active_hunters, data=bears)
+
+summary(bears_lm)
+```
+
+]
+
+---
+
+# Creating a 95% confidence interval for the mean response
+
+We are interested in a 95% confidence interval for the mean harvest when the number of active
+hunters equals 150. Using the functions built into R, we can easily obtain this interval.
+
+```{r}
+predict(
+  bears_lm,
+  newdata = data.frame(active_hunters=150),
+  interval = "confidence"
+)
+```
+
+---
+
+# Creating the interval manually
+
+The formula for a 95% confidence interval for the mean response is:
+
+$$\widehat{Y} \,\pm\, t_{1-\frac{\alpha}{2}}\,\widehat{\sigma}\sqrt{\frac{1}{n} \,+\, \frac{(X_{*} - \overline{X})^{2}}{\sum_{i}(X_{i} - \overline{X})^{2}}}$$
+
+Let's collect all these values and store them in individual columns in a tibble.
+
+---
+
+# More on broom
+
+- We can collected the required values by starting from the output of `broom::augment()` and
+`broom::glance()`
+- `broom::augment()` augments a model by returning the data used to fit the model and diagnostic
+information
+
+```{r, R.options=list(width=300)}
+augment(bears_lm)
+```
+
+--
+
+- `broom::glance()` returns general information on the model and goodness of fit measures
+
+```{r, R.options=list(width=300)}
+glance(bears_lm)
+```
+
+---
+
+# Collecting the values
+
+```{r}
+augment(bears_lm) %>%
+  summarise(
+    xbar = mean(active_hunters),
+    Sxx = sum((active_hunters - xbar)^2)
+  ) %>%
+  bind_cols(
+    glance(bears_lm) %>%
+      select(sigma, df.residual, nobs)
+  )
+```
+
+---
+
+# Collecting the values
+
+```{r, R.options=list(width=300)}
+augment(bears_lm) %>%
+  summarise(
+    xbar = mean(active_hunters),
+    Sxx = sum((active_hunters - xbar)^2)
+  ) %>%
+  bind_cols(
+    glance(bears_lm) %>%
+      select(sigma, df.residual, nobs)
+  ) %>%
+  mutate(
+    alpha = 0.05,
+    beta0 = coef(bears_lm)[1],
+    beta1 = coef(bears_lm)[2],
+    xstar = 150,
+    yhat = beta0 + beta1 * xstar,
+    tval = qt(1 - alpha/2, df=df.residual)
+  )
+```
+
+---
+
+# Collecting the values
+
+Finally, create a variable to store these values.
+
+```{r, R.options=list(width=300)}
+values <- augment(bears_lm) %>%
+  summarise(
+    xbar = mean(active_hunters),
+    Sxx = sum((active_hunters - xbar)^2)
+  ) %>%
+  bind_cols(
+    glance(bears_lm) %>%
+      select(sigma, df.residual, nobs)
+  ) %>%
+  mutate(
+    alpha = 0.05,
+    beta0 = coef(bears_lm)[1],
+    beta1 = coef(bears_lm)[2],
+    xstar = 150,
+    yhat = beta0 + beta1 * xstar,
+    tval = qt(1 - alpha/2, df=df.residual)
+  )
+```
+
+---
+
+# Calculating the interval
+
+```{r}
+values %>%
+  summarise(
+    fit = beta0 + beta1 * xstar,
+    lower = fit - tval * sigma * sqrt((1 / nobs) + (xstar - xbar)^2 / Sxx),
+    upper = fit + tval * sigma * sqrt((1 / nobs) + (xstar - xbar)^2 / Sxx)
+  ) %>%
+  as.matrix() # only to see more digits
+```
+
+Compare them to our results from `predict()`:
+
+```{r}
+predict(
+  bears_lm,
+  newdata = data.frame(active_hunters=150),
+  interval = "confidence"
+)
+```
+
+---
+
+# Creating a 90% prediction interval for response value of a new observation
+
+We are interested in a 90% prediction interval for the response value of a new observation, where
+the number of active hunters equals 55. Using the functions built into R, we can easily obtain this
+interval.
+
+```{r}
+predict(
+  bears_lm,
+  newdata = data.frame(active_hunters=55),
+  interval = "prediction",
+  level = 0.90
+)
+```
+
+---
+
+# Creating the interval manually
+
+The formula for a 90% confidence interval for the response value of a new observation is:
+
+$$\widehat{Y} \,\pm\, t_{1-\frac{\alpha}{2}}\,\widehat{\sigma}\sqrt{1 + \frac{1}{n} \,+\, \frac{(X_{*} - \overline{X})^{2}}{\sum_{i}(X_{i} - \overline{X})^{2}}}$$
+
+We can reuse the values that we had previously collected and update:
+
+- `alpha`
+- `xstar`
+- `tval`
+
+---
+
+# Updating our values
+
+```{r, R.options=list(width=300)}
+values2 <- values %>%
+  mutate(
+    alpha = 0.10,
+    xstar = 55,
+    tval = qt(1 - alpha/2, df=df.residual)
+  )
+
+values2
+```
+
+---
+
+# Calculating the interval
+
+The formula differs only by a $1 +$ term under the square root.
+
+```{r}
+values2 %>%
+  summarise(
+    fit = beta0 + beta1 * xstar,
+    lower = fit - tval * sigma * sqrt(1 + (1 / nobs) + (xstar - xbar)^2 / Sxx),
+    upper = fit + tval * sigma * sqrt(1 + (1 / nobs) + (xstar - xbar)^2 / Sxx)
+  ) %>%
+  as.matrix() # only to see more digits
+```
+
+Compare them to our results from `predict()`:
+
+```{r}
+predict(
+  bears_lm,
+  newdata = data.frame(active_hunters=55),
+  interval = "prediction",
+  level = 0.90
+)
+```
+
+---
+
+# Extracting the design matrix
+
+We can extract the design matrix, $X$, from our linear model using the `model.matrix()` function.
+
+```{r}
+X <- model.matrix(bears_lm)
+
+head(X)
+```
+
+---
+
+# Obtaining $X^{T}X$
+
+```{r}
+t(X) %*% X
+```
+
+---
+
+# Obtaining the hat matrix
+
+The hat matrix is defined as
+
+$$H \,=\, X\,(X^{T}\,X)^{-1}\,X^{T}$$
+
+```{r}
+H <- X %*% solve(t(X) %*% X) %*% t(X)
+
+H[1:6, 1:6]
+```
+
+---
+
+# Obtaining the variance-covariance matrix of parameter estimates
+
+The variance-covariance matrix of the parameter estimates is obtained as
+
+$$\textbf{Var}(\widehat{\beta}) \,=\, \widehat{\sigma}^{2}(X^{T}\,X)^{-1}$$
+
+We already have the value of $\widehat{\sigma}$ from our previous collection of values, so we just
+need to remember to square it.
+
+```{r}
+var_beta <- values$sigma^2 * solve(t(X) %*% X)
+
+var_beta
+```
+
+- The diagonal elements are the variances
+- The off-diagonal elements are the covariances
+
+---
+
+# Standard errors
+
+Since the variances were along the diagonal, if we square root them we will get the standard errors.
+We can extract the diagonal elements of a matrix using `diag()`.
+
+```{r}
+se_beta <- sqrt(diag(var_beta))
+
+se_beta
+```
+
+Compare with the standard errors computed from `summary()` or `broom::tidy()`:
+
+```{r}
+tidy(bears_lm)
+```
+
+They're the same (as they should be)!
