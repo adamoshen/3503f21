@@ -851,9 +851,9 @@ summary(bearsB_lm)
 
 # Make an 80% prediction interval
 
-The formula for a `\(100(1 - \alpha)\%\)` prediction interval for `\(X \,=\, x_{h}\)` is:
+The formula for a `\(100(1 - \alpha)\%\)` prediction interval for `\(X \,=\, x_{*}\)` is:
 
-`$$\widehat{y} \,\pm\, t_{1 - \frac{\alpha}{2},\, n-2} \,*\, \widehat{\sigma}\sqrt{\left(1 \,+\, \frac{1}{n} \,+\, \frac{(x_{h} - \overline{x})^{2}}{S_{xx}}\right)}$$`
+`$$\widehat{y} \,\pm\, t_{1 - \frac{\alpha}{2},\, n-2} \,*\, \widehat{\sigma}\sqrt{\left(1 \,+\, \frac{1}{n} \,+\, \frac{(x_{*} - \overline{x})^{2}}{S_{xx}}\right)}$$`
 
 where 
 
@@ -863,7 +863,7 @@ where
 
 # Obtaining the values
 
-The value of `\(\widehat{y}\)` when `\(x_{h} \,=\, 4\)`:
+The value of `\(\widehat{y}\)` when `\(x_{*} \,=\, 4\)`:
 
 
 ```r
@@ -975,7 +975,7 @@ The remaining terms in the standard error can be obtained using:
 
 
 ```r
-xh &lt;- 4
+xstar &lt;- 4
 
 xbar &lt;- bearsB %&gt;%
   pull(active_hunters) %&gt;%
@@ -986,7 +986,7 @@ Sxx &lt;- bearsB %&gt;%
   var() %&gt;%
   magrittr::multiply_by(n-1)
 
-big_term &lt;- sqrt(1 + (1/n) + (xh - xbar)^2 / Sxx)
+big_term &lt;- sqrt(1 + (1/n) + (xstar - xbar)^2 / Sxx)
 ```
 
 ---
