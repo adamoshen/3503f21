@@ -633,7 +633,7 @@ summary(bearsB_lm)
 
 The formula for a $100(1 - \alpha)\%$ prediction interval for $X \,=\, x_{*}$ is:
 
-$$\widehat{Y} \,\pm\, t_{1 - \frac{\alpha}{2},\, n-2} \,*\, \widehat{\sigma}\sqrt{\left(1 \,+\, \frac{1}{n} \,+\, \frac{(X_{*} - \overline{X})^{2}}{S_{xx}}\right)}$$
+$$\widehat{Y} \,\pm\, t_{1 - \frac{\alpha}{2},\, n-2}\;\cdot\;\widehat{\sigma}\;\cdot\;\sqrt{\left(1 \,+\, \frac{1}{n} \,+\, \frac{(X_{*} - \overline{X})^{2}}{S_{xx}}\right)}$$
 
 where 
 
