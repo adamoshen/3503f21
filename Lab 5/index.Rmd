@@ -132,7 +132,7 @@ predict(
 
 The formula for a 95% confidence interval for the mean response is:
 
-$$\widehat{Y} \,\pm\, t_{1-\frac{\alpha}{2}}\,\widehat{\sigma}\sqrt{\frac{1}{n} \,+\, \frac{(X_{*} - \overline{X})^{2}}{\sum_{i}(X_{i} - \overline{X})^{2}}}$$
+$$\widehat{Y} \,\pm\, t_{1-\frac{\alpha}{2},\,\text{df}}\,\widehat{\sigma}\sqrt{\frac{1}{n} \,+\, \frac{(X_{*} - \overline{X})^{2}}{\sum_{i}(X_{i} - \overline{X})^{2}}}$$
 
 Let's collect all these values and store them in individual columns in a tibble.
 
@@ -270,7 +270,7 @@ predict(
 
 The formula for a 90% confidence interval for the response value of a new observation is:
 
-$$\widehat{Y} \,\pm\, t_{1-\frac{\alpha}{2}}\,\widehat{\sigma}\sqrt{1 + \frac{1}{n} \,+\, \frac{(X_{*} - \overline{X})^{2}}{\sum_{i}(X_{i} - \overline{X})^{2}}}$$
+$$\widehat{Y} \,\pm\, t_{1-\frac{\alpha}{2},\,\text{df}}\,\widehat{\sigma}\sqrt{1 + \frac{1}{n} \,+\, \frac{(X_{*} - \overline{X})^{2}}{\sum_{i}(X_{i} - \overline{X})^{2}}}$$
 
 We can reuse the values that we had previously collected and update:
 
