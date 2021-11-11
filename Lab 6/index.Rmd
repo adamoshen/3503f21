@@ -1,0 +1,349 @@
+---
+title: "Lab 6, Stat 3503 Fall 2021"
+output:
+  xaringan::moon_reader:
+    seal: false
+    lib_dir: libs
+    chakra: libs/remark-latest.min.js
+    css: [css/extra.css, css/xaringan-themer.css]
+    nature:
+      highlightStyle: atom-one-light
+      countIncrementalSlides: false
+      highlightLines: true
+      ratio: 16:9
+    includes:
+      after_body: utils/ionicons.html
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo=TRUE, message=FALSE, warning=FALSE,
+  fig.align="center", dev="svglite"
+)
+
+old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks)
+
+styles <- c(
+  getOption('fansi.style'),  # default style
+  "PRE.fansi CODE {background-color: transparent;}",
+  "PRE.fansi-error {background-color: #DD5555;}",
+  "PRE.fansi-warning {background-color: #DDDD55;}",
+  "PRE.fansi-message {background-color: #EEEEEE;}"
+)
+
+old.hooks <- c(
+  old_hooks,
+  fansi::set_knit_hooks(
+    knitr::knit_hooks,
+    which=c('warning', 'error', 'message'),
+    style=styles
+  )
+)
+
+options(crayon.enabled=TRUE)
+```
+
+```{r clipboard, include=FALSE}
+xaringanExtra::use_clipboard(
+  button_text = "<ion-icon name=\"clipboard-outline\"></ion-icon>",
+  success_text = "<ion-icon name=\"checkmark-outline\" style=\"color: #90BE6D\"></ion-icon>",
+  error_text = "<ion-icon name=\"close-outline\" style=\"color: #F94144\"></ion-icon>"
+)
+```
+
+```{r tile-view, include=FALSE}
+xaringanExtra::use_tile_view()
+```
+
+```{r xaringanthemer, eval=FALSE, include=FALSE}
+library(xaringanthemer)
+
+style_xaringan(
+  text_color = "#f8f8f2",
+  header_color = "#f8f8f2",
+  background_color = "#282a36",
+  link_color = "#ffb86c",
+  text_slide_number_color = "#f8f8f2",
+  code_inline_color = "#f8f8f2",
+  code_inline_background_color = "#282c34",
+  inverse_background_color = "#363428",
+  inverse_text_color = "#f8f8f2",
+  inverse_header_color = "#f8f8f2",
+  text_font_size = "0.9rem",
+  header_h1_font_size = "1.75rem",
+  header_h2_font_size = "1.50rem",
+  header_h3_font_size = "1.25rem",
+  text_font_google = google_font("IBM Plex Sans", "300", "300i"),
+  header_font_google = google_font("IBM Plex Sans", "300", "300i"),
+  code_font_google = google_font("IBM Plex Mono", "500"),
+  code_font_size = "0.6rem",
+  outfile = "css/xaringan-themer.css"
+)
+```
+
+# Lab 6 &mdash; November 8
+
+```{r, message=TRUE}
+library(tidyverse)
+library(broom)
+theme_set(theme_bw())
+```
+
+---
+
+# Diamonds data set
+
+```{r}
+data(diamonds)
+
+diamonds
+```
+
+---
+
+# Create a variable for the volume
+
+```{r}
+diamonds <- diamonds %>%
+  mutate(volume = x * y * z)
+
+diamonds
+```
+
+---
+
+# Remove zero-volume diamonds
+
+```{r}
+diamonds <- diamonds %>%
+  filter(volume > 0)
+```
+
+---
+
+# One diamond has a suspiciously high volume
+
+This is one observation with an extremely large volume.
+
+```{r}
+diamonds %>%
+  arrange(desc(volume))
+```
+
+We can extract this row using:
+
+```{r}
+diamonds %>%
+  slice_max(volume)
+```
+
+---
+
+# One diamond has a suspiciously high volume
+
+We can extract the volume value using:
+
+```{r}
+diamonds %>%
+  slice_max(volume) %>%
+  pull(volume)
+```
+
+We don't actually need the exact value to remove it from the data set. We can just use an arbitrary
+cutoff such as 3000.
+
+---
+
+# Remove this diamond from the data
+
+To remove this observation, we can use:
+
+```{r}
+diamonds <- diamonds %>%
+  filter(volume < 3000)
+```
+
+Check our work:
+
+```{r}
+diamonds %>%
+  arrange(desc(volume))
+```
+
+---
+
+# Make a scatterplot
+
+.pull-left[
+
+We wish to make a linear model to predict carat using volume. Let us check that there exists a
+linear relationship between the two variables.
+
+```{r, eval=FALSE}
+ggplot(diamonds, aes(x=volume, y=carat))+
+  geom_point()
+```
+
+There is one point that has an abnormally large volume for such a low carat value. For now, we will
+ignore this point.
+
+]
+
+.pull-right[
+
+```{r, echo=FALSE}
+ggplot(diamonds, aes(x=volume, y=carat))+
+  geom_point()
+```
+
+]
+
+---
+
+# Fit the model
+
+```{r}
+carat_lm <- lm(carat ~ volume, data=diamonds)
+
+summary(carat_lm)
+```
+
+---
+
+# Create 80% confidence intervals for the parameter estimates
+
+Produce 80% interval estimates for the intercept and effect of 1 unit change in diamond volume, i.e.
+confidence intervals for $\beta_{0}$ and $\beta_{1}$.
+
+```{r}
+confint(carat_lm, level=0.80)
+```
+
+---
+
+# Hypothesis testing
+
+Test the one sided null hypothesis that the slope is less than 0.005(?).
+
+$$H_{0}: \beta_{1} \leq 0.005, \quad H_{A}: \beta_{1} > 0.005$$
+
+The value of the test statistic is computed as:
+
+$$T \,=\, \frac{6.170*10^{-3} \,-\, 5*10^{-3}}{2.015*10^{-6}}$$
+
+```{r}
+tstat <- carat_lm %>%
+  tidy() %>%
+  filter(term == "volume") %>%
+  summarise(tstat = (estimate - 0.005) / (std.error)) %>%
+  pull(tstat)
+
+tstat
+```
+
+```{r}
+tstat_df <- glance(carat_lm) %>%
+  pull(df.residual)
+
+tstat_df
+```
+
+
+---
+
+# Hypothesis testing
+
+Since this is an upper-tailed test, the $p$-value is the area to the right of `tstat`.
+
+```{r}
+pt(tstat, df=tstat_df, lower.tail=FALSE)
+```
+
+Since the $p$-value is less than $\alpha = 0.05$, we reject the null hypothesis and conclude that
+the true value of the slope parameter is greater than 0.005.
+
+---
+
+# Test for model usefulness
+
+Test the null hypothesis that the regression model in (b) is not relevant.
+
+$$H_{0}: \beta_{1} \,=\, 0, \quad H_{A}: \beta_{1} \neq 0$$
+
+For the one parameter case, this test can be carried out via $t$-test.
+
+```{r}
+tidy(carat_lm) %>%
+  filter(term == "volume")
+```
+
+The $p$-value of this test is zero. Since the $p$-value is less than $\alpha=0.05$, we can reject
+the null hypotheis and conclude that our model is useful.
+
+---
+
+# Test for model usefulness
+
+Test the null hypothesis that the regression model in (b) is not relevant.
+
+$$H_{0}: \beta_{1} \,=\, 0, \quad H_{A}: \beta_{1} \neq 0$$
+
+For one or parameters, this test can be carried out via $F$-test.
+
+```{r}
+anova(carat_lm) %>%
+  tidy()
+```
+
+The $p$-value is zero so we can once again reject the null hypothesis and conclude that our model is
+useful.
+
+---
+
+# Test for model usefulness
+
+Test the null hypothesis that the regression model in (b) is not relevant.
+
+$$H_{0}: \beta_{1} \,=\, 0, \quad H_{A}: \beta_{1} \neq 0$$
+
+We could have actually read the results of the $F$-test from the model summary.
+
+```{r, eval=FALSE}
+Call:
+lm(formula = carat ~ volume, data = diamonds)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-4.6600 -0.0081 -0.0016  0.0056  1.0073 
+
+Coefficients:
+              Estimate Std. Error t value Pr(>|t|)    
+(Intercept) -3.324e-03  3.037e-04  -10.95   <2e-16 ***
+volume       6.170e-03  2.015e-06 3062.32   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.03582 on 53917 degrees of freedom
+Multiple R-squared:  0.9943,	Adjusted R-squared:  0.9943 
+F-statistic: 9.378e+06 on 1 and 53917 DF,  p-value: < 2.2e-16 #<<
+```
+
+---
+
+# Test for model usefulness
+
+Test the null hypothesis that the regression model in (b) is not relevant.
+
+$$H_{0}: \beta_{1} \,=\, 0, \quad H_{A}: \beta_{1} \neq 0$$
+
+Or using `broom::glance()`:
+
+```{r}
+glance(carat_lm) %>%
+  select(statistic, df, df.residual, p.value) %>%
+  rename(
+    fvalue = statistic,
+    df1 = df,
+    df2 = df.residual
+  )
+```
