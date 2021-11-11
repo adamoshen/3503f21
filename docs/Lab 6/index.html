@@ -268,6 +268,10 @@ summary(carat_lm)
 ## F-statistic: 9.378e+06 on 1 and 53917 DF,  p-value: &lt; 2.2e-16
 ```
 
+The equation of the fitted line is:
+
+`$$\widehat{Y}_{i} \,=\, -3.324*10^{-3} \,+\, 6.170*10^{-3}X_{i}$$`
+
 ---
 
 # Create 80% confidence intervals for the parameter estimates
@@ -290,7 +294,7 @@ confint(carat_lm, level=0.80)
 
 # Hypothesis testing
 
-Test the one sided null hypothesis that the slope is less than 0.005(?).
+Test the one sided null hypothesis that the slope is less than 0.005.
 
 `$$H_{0}: \beta_{1} \leq 0.005, \quad H_{A}: \beta_{1} &gt; 0.005$$`
 
