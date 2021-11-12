@@ -184,8 +184,10 @@ ggplot(diamonds, aes(x=volume, y=carat))+
   geom_point()
 ```
 
-There is one point that has an abnormally large volume for such a low carat value. For now, we will
-ignore this point.
+There are actually .red[**two**] points with identical carat and volume values where the volume is
+abnormally large for such low carat values. (See output from previous slide).
+
+For now, we will ignore these points.
 
 ]
 
