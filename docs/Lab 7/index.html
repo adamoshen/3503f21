@@ -94,7 +94,7 @@ You can install [tidymodels](https://www.tidymodels.org/packages/) using the usu
 also install just its component packages. In this lab, I introduce two additional packages from
 the [tidymodels](https://www.tidymodels.org/packages/) collection:
 
-- [rsample](https://rsample.tidymodels.org/): for producing data partitions, and data resamples
+- [rsample](https://rsample.tidymodels.org/): for producing data partitions and data resamples
 - [yardstick](https://yardstick.tidymodels.org/): for calculating model performance metrics
 
 
@@ -395,8 +395,8 @@ For this example, we will be adding all significant interactions into our main m
 .pull-left[
 
 Let us also consider quadratic effects, obtained by squaring the main predictors (can also be
-of as an interaction with oneself). We will not consider the square of `X6` since `X6` is a binary
-predictor (0-1) and squaring it would result in a variable that is identical.
+thought of as an interaction with oneself). We will not consider the square of `X6` since `X6` is a
+binary predictor (0-1) and squaring it would result in a variable that is identical.
 
 
 ```r
@@ -616,8 +616,8 @@ summary(demo_model1)
 # Creating the variables beforehand
 
 The disadvantage occurs when making predictions. When new variables are created beforehand, their
-relationships are not retained. To make a prediction with the model where I squared `X3` beforehand,
-I need to supply a value for `X3` and `X3sq`.
+relationships are not retained. To make a prediction with the model where we squared `X3`
+beforehand, we need to supply a value for `X3` and `X3sq`.
 
 
 ```r
@@ -639,8 +639,8 @@ be a tibble.
 
 # Creating the variables beforehand
 
-However, if I create the variables in the formula specification, the relationships between the
-variables are retained. When predicting, I only need to supply a value for `X3`. The value of
+However, if we create the variables in the formula specification, the relationships between the
+variables are retained. When predicting, we only need to supply a value for `X3`. The value of
 `X3^2` is automatically calculated by squaring the value of `X3`.
 
 
