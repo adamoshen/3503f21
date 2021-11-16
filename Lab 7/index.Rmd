@@ -1,0 +1,510 @@
+---
+title: "Lab 7, Stat 3503 Fall 2021"
+output:
+  xaringan::moon_reader:
+    seal: false
+    lib_dir: libs
+    chakra: libs/remark-latest.min.js
+    css: [css/extra.css, css/xaringan-themer.css]
+    nature:
+      highlightStyle: atom-one-light
+      countIncrementalSlides: false
+      highlightLines: true
+      ratio: 16:9
+    includes:
+      after_body: utils/ionicons.html
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo=TRUE, message=FALSE, warning=FALSE,
+  fig.align="center", dev="svglite"
+)
+
+old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks)
+
+styles <- c(
+  getOption('fansi.style'),  # default style
+  "PRE.fansi CODE {background-color: transparent;}",
+  "PRE.fansi-error {background-color: #DD5555;}",
+  "PRE.fansi-warning {background-color: #DDDD55;}",
+  "PRE.fansi-message {background-color: #EEEEEE;}"
+)
+
+old.hooks <- c(
+  old_hooks,
+  fansi::set_knit_hooks(
+    knitr::knit_hooks,
+    which=c('warning', 'error', 'message'),
+    style=styles
+  )
+)
+
+options(crayon.enabled=TRUE)
+```
+
+```{r clipboard, include=FALSE}
+xaringanExtra::use_clipboard(
+  button_text = "<ion-icon name=\"clipboard-outline\"></ion-icon>",
+  success_text = "<ion-icon name=\"checkmark-outline\" style=\"color: #90BE6D\"></ion-icon>",
+  error_text = "<ion-icon name=\"close-outline\" style=\"color: #F94144\"></ion-icon>"
+)
+```
+
+```{r tile-view, include=FALSE}
+xaringanExtra::use_tile_view()
+```
+
+```{r xaringanthemer, eval=FALSE, include=FALSE}
+library(xaringanthemer)
+
+style_xaringan(
+  text_color = "#f8f8f2",
+  header_color = "#f8f8f2",
+  background_color = "#282a36",
+  link_color = "#ffb86c",
+  text_slide_number_color = "#f8f8f2",
+  code_inline_color = "#f8f8f2",
+  code_inline_background_color = "#282c34",
+  inverse_background_color = "#363428",
+  inverse_text_color = "#f8f8f2",
+  inverse_header_color = "#f8f8f2",
+  text_font_size = "0.9rem",
+  header_h1_font_size = "1.75rem",
+  header_h2_font_size = "1.50rem",
+  header_h3_font_size = "1.25rem",
+  text_font_google = google_font("IBM Plex Sans", "300", "300i"),
+  header_font_google = google_font("IBM Plex Sans", "300", "300i"),
+  code_font_google = google_font("IBM Plex Mono", "500"),
+  code_font_size = "0.6rem",
+  outfile = "css/xaringan-themer.css"
+)
+```
+
+# Lab 7 &mdash; November 15
+
+```{r, message=1:3}
+library(tidyverse)
+library(GGally)
+library(broom)
+theme_set(theme_bw())
+```
+
+---
+
+# Additional packages &mdash; easystats
+
+[easystats](https://easystats.github.io/easystats/) is a collection of packages, like 
+[tidyverse](https://www.tidyverse.org/packages/). 
+[easystats](https://easystats.github.io/easystats/) is not currently on CRAN but can be installed
+using:
+
+```{r, eval=FALSE}
+install.packages("easystats", repos="https://easystats.r-universe.dev")
+```
+
+However, its component packages and dependencies can be installed from CRAN normally:
+
+```{r, eval=FALSE}
+install.packages("performance")
+install.packages("see")
+install.packages("patchwork")
+```
+
+Once installed,
+
+```{r}
+library(performance)
+# or
+# library(easystats)
+```
+
+---
+
+# Additional packages &mdash; tidymodels
+
+[tidymodels](https://www.tidymodels.org/packages/) is an extension of the
+[tidyverse](https://www.tidyverse.org/packages/) that focuses on modelling. (Recall that
+[broom](https://broom.tidymodels.org/) is actually a package from
+[tidymodels](https://www.tidymodels.org/packages/), not 
+[tidyverse](https://www.tidyverse.org/packages/)!)
+
+You can install [tidymodels](https://www.tidymodels.org/packages/) using the usual methods. You can
+also install just its component packages. In this lab, I introduce two additional packages from
+the [tidymodels](https://www.tidymodels.org/packages/) collection:
+
+- [rsample](https://rsample.tidymodels.org/): for producing data partitions, and data resamples
+- [yardstick](https://yardstick.tidymodels.org/): for calculating model performance metrics
+
+```{r}
+library(rsample)
+library(yardstick)
+```
+
+---
+
+# Load the data
+
+```{r, message=TRUE}
+t7 <- read_csv("./data/tutorial7.csv")
+
+t7
+```
+
+---
+
+# Make a scatterplot matrix
+
+```{r, fig.height=5.5, fig.width=12}
+ggpairs(t7)
+```
+
+---
+
+# Fit a linear model using all main effects
+
+```{r}
+main_model <- lm(Y ~ ., data=t7)
+
+summary(main_model)
+```
+
+---
+
+# Report the AIC of the fitted model
+
+```{r}
+AIC(main_model)
+```
+
+AIC is also reported by `broom::glance.lm()`:
+
+```{r, R.options=list(width=300)}
+glance(main_model)
+```
+
+---
+
+# Check model assumptions via diagnostic plots
+
+```{r, fig.height=5, fig.width=12}
+par(mfrow = c(2, 2)) # Create 2x2 grid
+plot(main_model, which=c(1, 2, 3, 5))
+```
+
+---
+
+# Check model assumptions via diagnostic plots
+
+`performance::check_model()` makes it easier to read and interpret the diagnostic plots.
+
+- Plots are created using [ggplot2](https://ggplot2.tidyverse.org/)
+
+- Plots are labelled to tell you what to look for
+
+```{r, eval=FALSE}
+check_model(main_model)
+```
+
+---
+
+```{r, echo=FALSE, fig.height=7, fig.width=12}
+check_model(main_model)
+```
+
+---
+
+# Adding residuals to the scatterplot matrix
+
+```{r, fig.height=5, fig.width=12}
+main_model %>%
+  augment() %>%
+  select(Y, contains("X"), .resid) %>%
+  ggpairs()
+```
+
+---
+
+# Consider adding interaction effects
+
+We wish to consider interactions between all the main effects. For example, consider the interaction
+between variables `X1` and `X2`.
+
+```{r}
+model_X1X2 <- lm(Y ~ . + X1:X2, data=t7)
+
+anova(main_model, model_X1X2)
+```
+
+This interaction is not significant so we will not add it to our model. It remains to check all
+other two-way interactions. We do not want to build all these models manually and pass each one into
+`anova()` to compare with our main model.
+
+---
+
+# Consider adding interaction effects
+
+.pull-left[
+
+Instead, we will use the `add1()` function which adds single variables to the main model and
+gives the result of the usual $F$-test from comparing two models with `anova()`.
+
+```{r, eval=FALSE}
+add1(
+  main_model, 
+  ~ .^2,
+  test = "F"
+)
+```
+
+]
+
+.pull-right[
+
+```{r, echo=FALSE}
+add1(
+  main_model, 
+  ~ .^2,
+  test = "F"
+)
+```
+
+]
+
+---
+count: false
+
+# Consider adding interaction effects
+
+.pull-left[
+
+Using a significance level of $\alpha = 0.05$, the interactions that are not significant are
+
+- `X1` with `X2`
+- `X1` with `X3`
+- `X2` with `X4`
+- `X3` with `X4`
+
+For this example, we will be adding all significant interactions into our main model.
+
+]
+
+.pull-right[
+
+```{r, echo=FALSE}
+add1(
+  main_model, 
+  ~ .^2,
+  test = "F"
+)
+```
+
+]
+
+---
+
+# Consider quadratic effects
+
+.pull-left[
+
+Let us also consider quadratic effects, obtained by squaring the main predictors (can also be
+of as an interaction with oneself). We will not consider the square of `X6` since `X6` is a binary
+predictor (0-1) and squaring it would result in a variable that is identical.
+
+```{r, eval=FALSE}
+add1(
+  main_model,
+  ~ . + I(X1^2) + I(X2^2) + I(X3^2) + I(X4^2) + I(X5^2),
+  test = "F"
+)
+```
+
+We also need to wrap the squaring by `I()` to mean literal exponentiation as `^` has a different
+meaning when used in a formula. See `?formula` for details.
+
+]
+
+.pull-right[
+
+```{r, echo=FALSE}
+add1(
+  main_model,
+  ~ . + I(X1^2) + I(X2^2) + I(X3^2) + I(X4^2) + I(X5^2),
+  test = "F"
+)
+```
+
+]
+
+---
+count: false
+
+# Consider quadratic effects
+
+.pull-left[
+
+Using a significance level of $\alpha = 0.05$, all quadratic terms are significant.
+
+For this example, we will be adding all quadratic terms into our main model.
+
+]
+
+.pull-right[
+
+```{r, echo=FALSE}
+add1(
+  main_model,
+  ~ . + I(X1^2) + I(X2^2) + I(X3^2) + I(X4^2) + I(X5^2),
+  test = "F"
+)
+```
+
+]
+
+---
+
+# Fit the new model
+
+.pull-left[
+
+```{r, eval=FALSE}
+new_formula <- Y ~ .^2 - X1:X2 - X1:X3 - X2:X4 - X3:X4 +
+  I(X1^2) + I(X2^2) + I(X3^2) + I(X4^2) + I(X5^2)
+
+new_model <- lm(new_formula, data=t7)
+
+tidy(new_model) %>%
+  print(n=23)
+```
+
+Let's use `tidy()` to print just the coefficient table.
+
+]
+
+.pull-right[
+
+```{r, echo=FALSE}
+new_formula <- Y ~ .^2 - X1:X2 - X1:X3 - X2:X4 - X3:X4 +
+  I(X1^2) + I(X2^2) + I(X3^2) + I(X4^2) + I(X5^2)
+
+new_model <- lm(new_formula, data=t7)
+
+tidy(new_model) %>%
+  print(n=23)
+```
+]
+
+---
+
+# Produce 95% confidence intervals for the betas
+
+.pull-left[
+
+We can obtain confidence intervals for the betas using `confint()` or as a tibble using `tidy()` and
+setting `conf.int=TRUE`
+
+```{r, eval=FALSE}
+# confint(new_model)
+
+tidy(new_model, conf.int=TRUE) %>%
+  select(term, contains("conf")) %>%
+  print(n=23)
+```
+
+]
+
+.pull-right[
+
+```{r, echo=FALSE}
+tidy(new_model, conf.int=TRUE) %>%
+  select(term, contains("conf")) %>%
+  print(n=23)
+```
+
+]
+
+---
+
+# Creating the variables beforehand
+
+An advantage of creating the variables beforehand is that it simplifies the formula specification
+and your model output may look a bit cleaner. Consider the simple example:
+
+```{r}
+demo_data1 <- t7 %>%
+  select(Y, X3) %>%
+  mutate(X3sq = X3^2)
+
+demo_model1 <- lm(Y ~ ., data=demo_data1)
+
+summary(demo_model1)
+```
+
+---
+
+# Creating the variables beforehand
+
+The disadvantage occurs when making predictions. When new variables are created beforehand, their
+relationships are not retained. To make a prediction with the model where I squared `X3` beforehand,
+I need to supply a value for `X3` and `X3sq`.
+
+```{r}
+predict(
+  demo_model1,
+  newdata = data.frame(X3=100, X3sq=100^2)
+)
+```
+
+Note that we could have used `broom::augment()` to obtain our predictions if we wanted our output to
+be a tibble.
+
+---
+
+# Creating the variables beforehand
+
+However, if I create the variables in the formula specification, the relationships between the
+variables are retained. When predicting, I only need to supply a value for `X3`. The value of
+`X3^2` is automatically calculated by squaring the value of `X3`.
+
+```{r}
+demo_model2 <- lm(Y ~ X3 + I(X3^2), data=demo_data1)
+
+predict(
+  demo_model2,
+  newdata = data.frame(X3=100)
+)
+```
+
+Note that we could have used `broom::augment()` to obtain our predictions if we wanted our output to
+be a tibble.
+
+---
+
+# Creating training/testing splits
+
+Oftentimes, we may want to train our model on a portion of the available data, and evaluate its
+performance on the remaining unseen data. This can be accomplished in a tidy manner using the
+[rsample](https://rsample.tidymodels.org/) and [yardstick](https://yardstick.tidymodels.org/)
+packages from the [tidymodels](https://www.tidymodels.org/packages/) collection.
+
+An example workflow:
+
+```{r}
+set.seed(100) # For reproducibility
+
+# Create an 80/20 split
+t7_split <- t7 %>%
+  initial_split(prop=0.8)
+
+t7_train <- t7_split %>%
+  training()
+
+t7_test <- t7_split %>%
+  testing()
+
+main_model <- lm(Y ~ ., data=t7_train)
+
+main_model %>%
+  augment(newdata = t7_test) %>%
+  metrics(truth=Y, estimate=.fitted)
+```

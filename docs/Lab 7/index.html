@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Lab 7, Stat 3503 Fall 2021</title>
+    <meta charset="utf-8" />
+    <script src="libs/header-attrs-2.9/header-attrs.js"></script>
+    <script src="libs/clipboard-2.0.6/clipboard.min.js"></script>
+    <link href="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"<ion-icon name=\"clipboard-outline\"><\/ion-icon>","success":"<ion-icon name=\"checkmark-outline\" style=\"color: #90BE6D\"><\/ion-icon>","error":"<ion-icon name=\"close-outline\" style=\"color: #F94144\"><\/ion-icon>"})</script>
+    <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view-0.2.6/tile-view.js"></script>
+    <link rel="stylesheet" href="css/extra.css" type="text/css" />
+    <link rel="stylesheet" href="css/xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+
+
+
+
+
+
+# Lab 7 &amp;mdash; November 15
+
+
+```r
+library(tidyverse)
+```
+
+&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## -- &lt;span style='font-weight: bold;'&gt;Attaching packages&lt;/span&gt;&lt;span&gt; --------------------------------------- tidyverse 1.3.1 --
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;ggplot2&lt;/span&gt;&lt;span&gt; 3.3.5     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;purrr  &lt;/span&gt;&lt;span&gt; 0.3.4
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;tibble &lt;/span&gt;&lt;span&gt; 3.1.6     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;dplyr  &lt;/span&gt;&lt;span&gt; 1.0.7
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;tidyr  &lt;/span&gt;&lt;span&gt; 1.1.4     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;stringr&lt;/span&gt;&lt;span&gt; 1.4.0
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;readr  &lt;/span&gt;&lt;span&gt; 2.1.0     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;forcats&lt;/span&gt;&lt;span&gt; 0.5.1
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## -- &lt;span style='font-weight: bold;'&gt;Conflicts&lt;/span&gt;&lt;span&gt; ------------------------------------------ tidyverse_conflicts() --
+## &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;x&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;dplyr&lt;/span&gt;&lt;span&gt;::&lt;/span&gt;&lt;span style='color: #00BB00;'&gt;filter()&lt;/span&gt;&lt;span&gt; masks &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;stats&lt;/span&gt;&lt;span&gt;::filter()
+## &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;x&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;dplyr&lt;/span&gt;&lt;span&gt;::&lt;/span&gt;&lt;span style='color: #00BB00;'&gt;lag()&lt;/span&gt;&lt;span&gt;    masks &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;stats&lt;/span&gt;&lt;span&gt;::lag()
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+```r
+library(GGally)
+library(broom)
+theme_set(theme_bw())
+```
+
+---
+
+# Additional packages &amp;mdash; easystats
+
+[easystats](https://easystats.github.io/easystats/) is a collection of packages, like 
+[tidyverse](https://www.tidyverse.org/packages/). 
+[easystats](https://easystats.github.io/easystats/) is not currently on CRAN but can be installed
+using:
+
+
+```r
+install.packages("easystats", repos="https://easystats.r-universe.dev")
+```
+
+However, its component packages and dependencies can be installed from CRAN normally:
+
+
+```r
+install.packages("performance")
+install.packages("see")
+install.packages("patchwork")
+```
+
+Once installed,
+
+
+```r
+library(performance)
+# or
+# library(easystats)
+```
+
+---
+
+# Additional packages &amp;mdash; tidymodels
+
+[tidymodels](https://www.tidymodels.org/packages/) is an extension of the
+[tidyverse](https://www.tidyverse.org/packages/) that focuses on modelling. (Recall that
+[broom](https://broom.tidymodels.org/) is actually a package from
+[tidymodels](https://www.tidymodels.org/packages/), not 
+[tidyverse](https://www.tidyverse.org/packages/)!)
+
+You can install [tidymodels](https://www.tidymodels.org/packages/) using the usual methods. You can
+also install just its component packages. In this lab, I introduce two additional packages from
+the [tidymodels](https://www.tidymodels.org/packages/) collection:
+
+- [rsample](https://rsample.tidymodels.org/): for producing data partitions, and data resamples
+- [yardstick](https://yardstick.tidymodels.org/): for calculating model performance metrics
+
+
+```r
+library(rsample)
+library(yardstick)
+```
+
+---
+
+# Load the data
+
+
+```r
+t7 &lt;- read_csv("./data/tutorial7.csv")
+```
+
+&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='font-weight: bold;'&gt;Rows: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;1024&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Columns: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;7&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='color: #00BBBB;'&gt;--&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Column specification&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #00BBBB;'&gt;--------------------------------------------------------&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Delimiter:&lt;/span&gt;&lt;span&gt; ","
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;dbl&lt;/span&gt;&lt;span&gt; (7): Y, X1, X2, X3, X4, X5, X6
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## 
+## &lt;span style='color: #00BBBB;'&gt;i&lt;/span&gt;&lt;span&gt; Use &lt;/span&gt;&lt;span style='color: #555555;background-color: #000000;'&gt;`spec()`&lt;/span&gt;&lt;span&gt; to retrieve the full column specification for this data.
+## &lt;/span&gt;&lt;span style='color: #00BBBB;'&gt;i&lt;/span&gt;&lt;span&gt; Specify the column types or set &lt;/span&gt;&lt;span style='color: #555555;background-color: #000000;'&gt;`show_col_types = FALSE`&lt;/span&gt;&lt;span&gt; to quiet this message.
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+```r
+t7
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 1,024 x 7&lt;/span&gt;&lt;span&gt;
+##            Y     X1      X2     X3    X4    X5    X6
+##        &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;4&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;078&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;113.&lt;/span&gt;&lt;span&gt; 0.072&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;7&lt;/span&gt;&lt;span&gt;   2.91    1.35 0.224  357.     1
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;3&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;100&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;124.&lt;/span&gt;&lt;span&gt; 0.181    8.08    2.57 0.848  311.     1
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;2&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;282&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;073.&lt;/span&gt;&lt;span&gt; 0.659  115.     77.4  1.06   269.     0
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;993&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;606.&lt;/span&gt;&lt;span&gt; 0.807   47.4    42.3  1.35   251.     0
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;569&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;783.&lt;/span&gt;&lt;span&gt; 1.24     0.785  -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1.61&lt;/span&gt;&lt;span&gt; 1.36   222.     1
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;467&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;620.&lt;/span&gt;&lt;span&gt; 2.46   103.    258.   1.55   216.     1
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;248&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;135.&lt;/span&gt;&lt;span&gt; 2.50    22.4    67.7  1.59   198.     1
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;223&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;299.&lt;/span&gt;&lt;span&gt; 2.56   104.    262.   1.60   198.     0
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;221&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;486.&lt;/span&gt;&lt;span&gt; 2.74    89.7   254.   1.95   197.     1
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;178&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;091.&lt;/span&gt;&lt;span&gt; 3.29    81.8   269.   2.30   194.     0
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 1,014 more rows&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+---
+
+# Make a scatterplot matrix
+
+
+```r
+ggpairs(t7)
+```
+
+&lt;img src="index_files/figure-html/unnamed-chunk-7-1.svg" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Fit a linear model using all main effects
+
+
+```r
+main_model &lt;- lm(Y ~ ., data=t7)
+
+summary(main_model)
+```
+
+```
+## 
+## Call:
+## lm(formula = Y ~ ., data = t7)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1665731   -72925    22740    95651   308517 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  3.273e+05  3.501e+04   9.350  &lt; 2e-16 ***
+## X1           3.291e+04  3.657e+03   8.999  &lt; 2e-16 ***
+## X2          -2.506e+02  3.055e+02  -0.821  0.41212    
+## X3           6.365e+00  2.014e+00   3.160  0.00162 ** 
+## X4          -3.312e+04  3.666e+03  -9.033  &lt; 2e-16 ***
+## X5          -7.394e+03  1.300e+02 -56.895  &lt; 2e-16 ***
+## X6          -1.696e+05  1.148e+04 -14.771  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 179700 on 1017 degrees of freedom
+## Multiple R-squared:  0.8604,	Adjusted R-squared:  0.8596 
+## F-statistic:  1045 on 6 and 1017 DF,  p-value: &lt; 2.2e-16
+```
+
+---
+
+# Report the AIC of the fitted model
+
+
+```r
+AIC(main_model)
+```
+
+```
+## [1] 27693.49
+```
+
+AIC is also reported by `broom::glance.lm()`:
+
+
+```r
+glance(main_model)
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 1 x 12&lt;/span&gt;&lt;span&gt;
+##   r.squared adj.r.squared   sigma statistic p.value    df  logLik    AIC    BIC deviance df.residual  nobs
+##       &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;         &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;     &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;       &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt;     0.860         0.860 &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;179&lt;/span&gt;&lt;span&gt;672.     &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;045.       0     6 -&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;13&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;839.&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;27&lt;/span&gt;&lt;span&gt;693. &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;27&lt;/span&gt;&lt;span&gt;733.  3.28&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span&gt;13        &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;017  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;024
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+---
+
+# Check model assumptions via diagnostic plots
+
+
+```r
+par(mfrow = c(2, 2)) # Create 2x2 grid
+plot(main_model, which=c(1, 2, 3, 5))
+```
+
+&lt;img src="index_files/figure-html/unnamed-chunk-11-1.svg" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Check model assumptions via diagnostic plots
+
+`performance::check_model()` makes it easier to read and interpret the diagnostic plots.
+
+- Plots are created using [ggplot2](https://ggplot2.tidyverse.org/)
+
+- Plots are labelled to tell you what to look for
+
+
+```r
+check_model(main_model)
+```
+
+---
+
+&lt;img src="index_files/figure-html/unnamed-chunk-13-1.svg" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Adding residuals to the scatterplot matrix
+
+
+```r
+main_model %&gt;%
+  augment() %&gt;%
+  select(Y, contains("X"), .resid) %&gt;%
+  ggpairs()
+```
+
+&lt;img src="index_files/figure-html/unnamed-chunk-14-1.svg" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Consider adding interaction effects
+
+We wish to consider interactions between all the main effects. For example, consider the interaction
+between variables `X1` and `X2`.
+
+
+```r
+model_X1X2 &lt;- lm(Y ~ . + X1:X2, data=t7)
+
+anova(main_model, model_X1X2)
+```
+
+```
+## Analysis of Variance Table
+## 
+## Model 1: Y ~ X1 + X2 + X3 + X4 + X5 + X6
+## Model 2: Y ~ X1 + X2 + X3 + X4 + X5 + X6 + X1:X2
+##   Res.Df        RSS Df  Sum of Sq      F Pr(&gt;F)
+## 1   1017 3.2831e+13                            
+## 2   1016 3.2800e+13  1 3.0461e+10 0.9435 0.3316
+```
+
+This interaction is not significant so we will not add it to our model. It remains to check all
+other two-way interactions. We do not want to build all these models manually and pass each one into
+`anova()` to compare with our main model.
+
+---
+
+# Consider adding interaction effects
+
+.pull-left[
+
+Instead, we will use the `add1()` function which adds single variables to the main model and
+gives the result of the usual `\(F\)`-test from comparing two models with `anova()`.
+
+
+```r
+add1(
+  main_model, 
+  ~ .^2,
+  test = "F"
+)
+```
+
+]
+
+.pull-right[
+
+
+```
+## Single term additions
+## 
+## Model:
+## Y ~ X1 + X2 + X3 + X4 + X5 + X6
+##        Df  Sum of Sq        RSS   AIC  F value    Pr(&gt;F)    
+## &lt;none&gt;               3.2831e+13 24786                       
+## X1:X2   1 3.0461e+10 3.2800e+13 24787   0.9435   0.33160    
+## X1:X3   1 7.8963e+10 3.2752e+13 24785   2.4495   0.11787    
+## X1:X4   1 2.7107e+12 3.0120e+13 24699  91.4374 &lt; 2.2e-16 ***
+## X1:X5   1 4.7530e+12 2.8078e+13 24627 171.9883 &lt; 2.2e-16 ***
+## X1:X6   1 4.0214e+12 2.8809e+13 24654 141.8184 &lt; 2.2e-16 ***
+## X2:X3   1 1.0099e+12 3.1821e+13 24756  32.2458 1.773e-08 ***
+## X2:X4   1 5.3209e+10 3.2778e+13 24786   1.6493   0.19935    
+## X2:X5   1 1.2772e+12 3.1554e+13 24747  41.1238 2.185e-10 ***
+## X2:X6   1 2.6245e+12 3.0206e+13 24702  88.2748 &lt; 2.2e-16 ***
+## X3:X4   1 9.8325e+10 3.2733e+13 24784   3.0520   0.08094 .  
+## X3:X5   1 7.3403e+12 2.5491e+13 24528 292.5696 &lt; 2.2e-16 ***
+## X3:X6   1 4.6462e+12 2.8185e+13 24631 167.4842 &lt; 2.2e-16 ***
+## X4:X5   1 4.8446e+12 2.7986e+13 24624 175.8765 &lt; 2.2e-16 ***
+## X4:X6   1 4.0482e+12 2.8783e+13 24653 142.8979 &lt; 2.2e-16 ***
+## X5:X6   1 4.7672e+12 2.8064e+13 24627 172.5890 &lt; 2.2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+]
+
+---
+count: false
+
+# Consider adding interaction effects
+
+.pull-left[
+
+Using a significance level of `\(\alpha = 0.05\)`, the interactions that are not significant are
+
+- `X1` with `X2`
+- `X1` with `X3`
+- `X2` with `X4`
+- `X3` with `X4`
+
+For this example, we will be adding all significant interactions into our main model.
+
+]
+
+.pull-right[
+
+
+```
+## Single term additions
+## 
+## Model:
+## Y ~ X1 + X2 + X3 + X4 + X5 + X6
+##        Df  Sum of Sq        RSS   AIC  F value    Pr(&gt;F)    
+## &lt;none&gt;               3.2831e+13 24786                       
+## X1:X2   1 3.0461e+10 3.2800e+13 24787   0.9435   0.33160    
+## X1:X3   1 7.8963e+10 3.2752e+13 24785   2.4495   0.11787    
+## X1:X4   1 2.7107e+12 3.0120e+13 24699  91.4374 &lt; 2.2e-16 ***
+## X1:X5   1 4.7530e+12 2.8078e+13 24627 171.9883 &lt; 2.2e-16 ***
+## X1:X6   1 4.0214e+12 2.8809e+13 24654 141.8184 &lt; 2.2e-16 ***
+## X2:X3   1 1.0099e+12 3.1821e+13 24756  32.2458 1.773e-08 ***
+## X2:X4   1 5.3209e+10 3.2778e+13 24786   1.6493   0.19935    
+## X2:X5   1 1.2772e+12 3.1554e+13 24747  41.1238 2.185e-10 ***
+## X2:X6   1 2.6245e+12 3.0206e+13 24702  88.2748 &lt; 2.2e-16 ***
+## X3:X4   1 9.8325e+10 3.2733e+13 24784   3.0520   0.08094 .  
+## X3:X5   1 7.3403e+12 2.5491e+13 24528 292.5696 &lt; 2.2e-16 ***
+## X3:X6   1 4.6462e+12 2.8185e+13 24631 167.4842 &lt; 2.2e-16 ***
+## X4:X5   1 4.8446e+12 2.7986e+13 24624 175.8765 &lt; 2.2e-16 ***
+## X4:X6   1 4.0482e+12 2.8783e+13 24653 142.8979 &lt; 2.2e-16 ***
+## X5:X6   1 4.7672e+12 2.8064e+13 24627 172.5890 &lt; 2.2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+]
+
+---
+
+# Consider quadratic effects
+
+.pull-left[
+
+Let us also consider quadratic effects, obtained by squaring the main predictors (can also be
+of as an interaction with oneself). We will not consider the square of `X6` since `X6` is a binary
+predictor (0-1) and squaring it would result in a variable that is identical.
+
+
+```r
+add1(
+  main_model,
+  ~ . + I(X1^2) + I(X2^2) + I(X3^2) + I(X4^2) + I(X5^2),
+  test = "F"
+)
+```
+
+We also need to wrap the squaring by `I()` to mean literal exponentiation as `^` has a different
+meaning when used in a formula. See `?formula` for details.
+
+]
+
+.pull-right[
+
+
+```
+## Single term additions
+## 
+## Model:
+## Y ~ X1 + X2 + X3 + X4 + X5 + X6
+##         Df  Sum of Sq        RSS   AIC  F value    Pr(&gt;F)    
+## &lt;none&gt;                3.2831e+13 24786                       
+## I(X1^2)  1 2.9689e+12 2.9862e+13 24690  101.012 &lt; 2.2e-16 ***
+## I(X2^2)  1 6.6248e+11 3.2168e+13 24767   20.924 5.369e-06 ***
+## I(X3^2)  1 1.2554e+12 3.1575e+13 24748   40.395 3.128e-10 ***
+## I(X4^2)  1 2.4475e+12 3.0383e+13 24708   81.844 &lt; 2.2e-16 ***
+## I(X5^2)  1 2.9071e+13 3.7596e+12 22568 7856.178 &lt; 2.2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+]
+
+---
+count: false
+
+# Consider quadratic effects
+
+.pull-left[
+
+Using a significance level of `\(\alpha = 0.05\)`, all quadratic terms are significant.
+
+For this example, we will be adding all quadratic terms into our main model.
+
+]
+
+.pull-right[
+
+
+```
+## Single term additions
+## 
+## Model:
+## Y ~ X1 + X2 + X3 + X4 + X5 + X6
+##         Df  Sum of Sq        RSS   AIC  F value    Pr(&gt;F)    
+## &lt;none&gt;                3.2831e+13 24786                       
+## I(X1^2)  1 2.9689e+12 2.9862e+13 24690  101.012 &lt; 2.2e-16 ***
+## I(X2^2)  1 6.6248e+11 3.2168e+13 24767   20.924 5.369e-06 ***
+## I(X3^2)  1 1.2554e+12 3.1575e+13 24748   40.395 3.128e-10 ***
+## I(X4^2)  1 2.4475e+12 3.0383e+13 24708   81.844 &lt; 2.2e-16 ***
+## I(X5^2)  1 2.9071e+13 3.7596e+12 22568 7856.178 &lt; 2.2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+]
+
+---
+
+# Fit the new model
+
+.pull-left[
+
+
+```r
+new_formula &lt;- Y ~ .^2 - X1:X2 - X1:X3 - X2:X4 - X3:X4 +
+  I(X1^2) + I(X2^2) + I(X3^2) + I(X4^2) + I(X5^2)
+
+new_model &lt;- lm(new_formula, data=t7)
+
+tidy(new_model) %&gt;%
+  print(n=23)
+```
+
+Let's use `tidy()` to print just the coefficient table.
+
+]
+
+.pull-right[
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 23 x 5&lt;/span&gt;&lt;span&gt;
+##    term             estimate    std.error  statistic   p.value
+##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;               &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;        &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;      &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;     &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; (Intercept) 177.          64.5              2.75  6.15&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  3&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; X1          128.           4.36            29.3   1.25&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-136&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; X2           32.8          0.907           36.2   8.09&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-184&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; X3            7.00         0.007&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;77&lt;/span&gt;&lt;span&gt;        901.    0   &lt;/span&gt;&lt;span style='color: #555555;'&gt; &lt;/span&gt;&lt;span&gt;    
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; X4          -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;49.6&lt;/span&gt;&lt;span&gt;          4.28           -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;11.6&lt;/span&gt;&lt;span&gt;   2.61&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;- 29&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; X5            2.69         0.479            5.62  2.54&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  8&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; X6            8.49        31.3              0.271 7.86&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; I(X1^2)       0.744        0.802            0.927 3.54&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; I(X2^2)      -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.003&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;81&lt;/span&gt;&lt;span&gt;      0.005&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;09&lt;/span&gt;&lt;span&gt;         -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.748&lt;/span&gt;&lt;span&gt; 4.55&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; I(X3^2)      -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.000&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;000&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;192&lt;/span&gt;&lt;span&gt;  0.000&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;000&lt;/span&gt;&lt;span&gt;166     -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1.16&lt;/span&gt;&lt;span&gt;  2.46&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;11&lt;/span&gt;&lt;span&gt; I(X4^2)       0.282        0.804            0.351 7.26&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;12&lt;/span&gt;&lt;span&gt; I(X5^2)     -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;32.0&lt;/span&gt;&lt;span&gt;          0.000&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;936&lt;/span&gt;&lt;span&gt;    -&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;34&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;168.&lt;/span&gt;&lt;span&gt;    0   &lt;/span&gt;&lt;span style='color: #555555;'&gt; &lt;/span&gt;&lt;span&gt;    
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;13&lt;/span&gt;&lt;span&gt; X1:X4        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1.02&lt;/span&gt;&lt;span&gt;         1.60            -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.636&lt;/span&gt;&lt;span&gt; 5.25&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;14&lt;/span&gt;&lt;span&gt; X1:X5         0.076&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;7&lt;/span&gt;&lt;span&gt;       0.047&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;           1.63  1.04&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;15&lt;/span&gt;&lt;span&gt; X1:X6         1.56         3.40             0.458 6.47&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;16&lt;/span&gt;&lt;span&gt; X2:X3         0.000&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;059&lt;/span&gt;&lt;span&gt;8    0.000&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;059&lt;/span&gt;&lt;span&gt;7        1.00  3.17&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;17&lt;/span&gt;&lt;span&gt; X2:X5         1.01         0.002&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;80&lt;/span&gt;&lt;span&gt;        359.    0   &lt;/span&gt;&lt;span style='color: #555555;'&gt; &lt;/span&gt;&lt;span&gt;    
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;18&lt;/span&gt;&lt;span&gt; X2:X6        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.040&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;6&lt;/span&gt;&lt;span&gt;       0.275           -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.147&lt;/span&gt;&lt;span&gt; 8.83&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;19&lt;/span&gt;&lt;span&gt; X3:X5        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.000&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;024&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0&lt;/span&gt;&lt;span&gt;    0.000&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;022&lt;/span&gt;&lt;span&gt;4       -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1.07&lt;/span&gt;&lt;span&gt;  2.84&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;20&lt;/span&gt;&lt;span&gt; X3:X6        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;8.00&lt;/span&gt;&lt;span&gt;         0.001&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;80&lt;/span&gt;&lt;span&gt;      -&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;4&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;436.&lt;/span&gt;&lt;span&gt;    0   &lt;/span&gt;&lt;span style='color: #555555;'&gt; &lt;/span&gt;&lt;span&gt;    
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;21&lt;/span&gt;&lt;span&gt; X4:X5        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.076&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;0&lt;/span&gt;&lt;span&gt;       0.047&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;          -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1.61&lt;/span&gt;&lt;span&gt;  1.08&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;22&lt;/span&gt;&lt;span&gt; X4:X6        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1.40&lt;/span&gt;&lt;span&gt;         3.41            -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.411&lt;/span&gt;&lt;span&gt; 6.81&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;23&lt;/span&gt;&lt;span&gt; X5:X6        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.042&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;       0.119           -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.355&lt;/span&gt;&lt;span&gt; 7.23&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+]
+
+---
+
+# Produce 95% confidence intervals for the betas
+
+.pull-left[
+
+We can obtain confidence intervals for the betas using `confint()` or as a tibble using `tidy()` and
+setting `conf.int=TRUE`
+
+
+```r
+# confint(new_model)
+
+tidy(new_model, conf.int=TRUE) %&gt;%
+  select(term, contains("conf")) %&gt;%
+  print(n=23)
+```
+
+]
+
+.pull-right[
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 23 x 3&lt;/span&gt;&lt;span&gt;
+##    term             conf.low     conf.high
+##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;               &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;         &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; (Intercept)  50.5         303.         
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; X1          119.          136.         
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; X2           31.0          34.6        
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; X3            6.99          7.02       
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; X4          -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;58.0&lt;/span&gt;&lt;span&gt;         -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;41.2&lt;/span&gt;&lt;span&gt;        
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; X5            1.75          3.63       
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; X6          -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;52.9&lt;/span&gt;&lt;span&gt;          69.9        
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; I(X1^2)      -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.830&lt;/span&gt;&lt;span&gt;         2.32       
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; I(X2^2)      -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.013&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;8&lt;/span&gt;&lt;span&gt;        0.006&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;&lt;span&gt;    
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; I(X3^2)      -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.000&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;000&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;518&lt;/span&gt;&lt;span&gt;   0.000&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;000&lt;/span&gt;&lt;span&gt;133
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;11&lt;/span&gt;&lt;span&gt; I(X4^2)      -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1.29&lt;/span&gt;&lt;span&gt;          1.86       
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;12&lt;/span&gt;&lt;span&gt; I(X5^2)     -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;32.0&lt;/span&gt;&lt;span&gt;         -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;32.0&lt;/span&gt;&lt;span&gt;        
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;13&lt;/span&gt;&lt;span&gt; X1:X4        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;4.17&lt;/span&gt;&lt;span&gt;          2.13       
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;14&lt;/span&gt;&lt;span&gt; X1:X5        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.015&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;8&lt;/span&gt;&lt;span&gt;        0.169      
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;15&lt;/span&gt;&lt;span&gt; X1:X6        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;5.11&lt;/span&gt;&lt;span&gt;          8.23       
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;16&lt;/span&gt;&lt;span&gt; X2:X3        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.000&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;057&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;4&lt;/span&gt;&lt;span&gt;     0.000&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;177&lt;/span&gt;&lt;span&gt;   
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;17&lt;/span&gt;&lt;span&gt; X2:X5         1.00          1.01       
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;18&lt;/span&gt;&lt;span&gt; X2:X6        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.581&lt;/span&gt;&lt;span&gt;         0.500      
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;19&lt;/span&gt;&lt;span&gt; X3:X5        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.000&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;067&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;9&lt;/span&gt;&lt;span&gt;     0.000&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;019&lt;/span&gt;&lt;span&gt;9  
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;20&lt;/span&gt;&lt;span&gt; X3:X6        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;8.00&lt;/span&gt;&lt;span&gt;         -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;8.00&lt;/span&gt;&lt;span&gt;       
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;21&lt;/span&gt;&lt;span&gt; X4:X5        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.169&lt;/span&gt;&lt;span&gt;         0.016&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;6&lt;/span&gt;&lt;span&gt;     
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;22&lt;/span&gt;&lt;span&gt; X4:X6        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;8.09&lt;/span&gt;&lt;span&gt;          5.29       
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;23&lt;/span&gt;&lt;span&gt; X5:X6        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.275&lt;/span&gt;&lt;span&gt;         0.191
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+]
+
+---
+
+# Creating the variables beforehand
+
+An advantage of creating the variables beforehand is that it simplifies the formula specification
+and your model output may look a bit cleaner. Consider the simple example:
+
+
+```r
+demo_data1 &lt;- t7 %&gt;%
+  select(Y, X3) %&gt;%
+  mutate(X3sq = X3^2)
+
+demo_model1 &lt;- lm(Y ~ ., data=demo_data1)
+
+summary(demo_model1)
+```
+
+```
+## 
+## Call:
+## lm(formula = Y ~ ., data = demo_data1)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -3736905   -51045    85325   169189   971743 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -3.413e+05  2.515e+04  -13.57   &lt;2e-16 ***
+## X3           3.388e+01  2.506e+00   13.52   &lt;2e-16 ***
+## X3sq        -9.323e-04  4.874e-05  -19.13   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 381900 on 1021 degrees of freedom
+## Multiple R-squared:  0.367,	Adjusted R-squared:  0.3658 
+## F-statistic:   296 on 2 and 1021 DF,  p-value: &lt; 2.2e-16
+```
+
+---
+
+# Creating the variables beforehand
+
+The disadvantage occurs when making predictions. When new variables are created beforehand, their
+relationships are not retained. To make a prediction with the model where I squared `X3` beforehand,
+I need to supply a value for `X3` and `X3sq`.
+
+
+```r
+predict(
+  demo_model1,
+  newdata = data.frame(X3=100, X3sq=100^2)
+)
+```
+
+```
+##         1 
+## -337875.1
+```
+
+Note that we could have used `broom::augment()` to obtain our predictions if we wanted our output to
+be a tibble.
+
+---
+
+# Creating the variables beforehand
+
+However, if I create the variables in the formula specification, the relationships between the
+variables are retained. When predicting, I only need to supply a value for `X3`. The value of
+`X3^2` is automatically calculated by squaring the value of `X3`.
+
+
+```r
+demo_model2 &lt;- lm(Y ~ X3 + I(X3^2), data=demo_data1)
+
+predict(
+  demo_model2,
+  newdata = data.frame(X3=100)
+)
+```
+
+```
+##         1 
+## -337875.1
+```
+
+Note that we could have used `broom::augment()` to obtain our predictions if we wanted our output to
+be a tibble.
+
+---
+
+# Creating training/testing splits
+
+Oftentimes, we may want to train our model on a portion of the available data, and evaluate its
+performance on the remaining unseen data. This can be accomplished in a tidy manner using the
+[rsample](https://rsample.tidymodels.org/) and [yardstick](https://yardstick.tidymodels.org/)
+packages from the [tidymodels](https://www.tidymodels.org/packages/) collection.
+
+An example workflow:
+
+
+```r
+set.seed(100) # For reproducibility
+
+# Create an 80/20 split
+t7_split &lt;- t7 %&gt;%
+  initial_split(prop=0.8)
+
+t7_train &lt;- t7_split %&gt;%
+  training()
+
+t7_test &lt;- t7_split %&gt;%
+  testing()
+
+main_model &lt;- lm(Y ~ ., data=t7_train)
+
+main_model %&gt;%
+  augment(newdata = t7_test) %&gt;%
+  metrics(truth=Y, estimate=.fitted)
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 3 x 3&lt;/span&gt;&lt;span&gt;
+##   .metric .estimator  .estimate
+##   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;           &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt; rmse    standard   &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;197&lt;/span&gt;&lt;span&gt;221.   
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;2&lt;/span&gt;&lt;span&gt; rsq     standard        0.860
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;3&lt;/span&gt;&lt;span&gt; mae     standard   &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;126&lt;/span&gt;&lt;span&gt;751.
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "atom-one-light",
+"countIncrementalSlides": false,
+"highlightLines": true,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
