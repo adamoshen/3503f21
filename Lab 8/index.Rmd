@@ -1,0 +1,420 @@
+---
+title: "Lab 8, Stat 3503 Fall 2021"
+output:
+  xaringan::moon_reader:
+    seal: false
+    lib_dir: libs
+    chakra: libs/remark-latest.min.js
+    css: [css/extra.css, css/xaringan-themer.css]
+    nature:
+      highlightStyle: atom-one-light
+      countIncrementalSlides: false
+      highlightLines: true
+      ratio: 16:9
+    includes:
+      after_body: utils/ionicons.html
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo=TRUE, message=FALSE, warning=FALSE,
+  fig.align="center", dev="svglite"
+)
+
+old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks)
+
+styles <- c(
+  getOption('fansi.style'),  # default style
+  "PRE.fansi CODE {background-color: transparent;}",
+  "PRE.fansi-error {background-color: #DD5555;}",
+  "PRE.fansi-warning {background-color: #DDDD55;}",
+  "PRE.fansi-message {background-color: #EEEEEE;}"
+)
+
+old.hooks <- c(
+  old_hooks,
+  fansi::set_knit_hooks(
+    knitr::knit_hooks,
+    which=c('warning', 'error', 'message'),
+    style=styles
+  )
+)
+
+options(crayon.enabled=TRUE)
+```
+
+```{r clipboard, include=FALSE}
+xaringanExtra::use_clipboard(
+  button_text = "<ion-icon name=\"clipboard-outline\"></ion-icon>",
+  success_text = "<ion-icon name=\"checkmark-outline\" style=\"color: #90BE6D\"></ion-icon>",
+  error_text = "<ion-icon name=\"close-outline\" style=\"color: #F94144\"></ion-icon>"
+)
+```
+
+```{r tile-view, include=FALSE}
+xaringanExtra::use_tile_view()
+```
+
+```{r xaringanthemer, eval=FALSE, include=FALSE}
+library(xaringanthemer)
+
+style_xaringan(
+  text_color = "#f8f8f2",
+  header_color = "#f8f8f2",
+  background_color = "#282a36",
+  link_color = "#ffb86c",
+  text_slide_number_color = "#f8f8f2",
+  code_inline_color = "#f8f8f2",
+  code_inline_background_color = "#282c34",
+  inverse_background_color = "#363428",
+  inverse_text_color = "#f8f8f2",
+  inverse_header_color = "#f8f8f2",
+  text_font_size = "0.9rem",
+  header_h1_font_size = "1.75rem",
+  header_h2_font_size = "1.50rem",
+  header_h3_font_size = "1.25rem",
+  text_font_google = google_font("IBM Plex Sans", "300", "300i"),
+  header_font_google = google_font("IBM Plex Sans", "300", "300i"),
+  code_font_google = google_font("IBM Plex Mono", "500"),
+  code_font_size = "0.6rem",
+  outfile = "css/xaringan-themer.css"
+)
+```
+
+# Lab 8 &mdash; November 29
+
+```{r, message=1:3}
+library(tidyverse)
+library(GGally)
+library(broom)
+library(performance)
+theme_set(theme_bw())
+```
+
+---
+
+# The `state` data set
+
+```{r, eval=FALSE}
+?state
+```
+
+- The `state` data set is divided into seven parts
+
+- The part that we are interested in is `state.x77`
+
+```{r}
+data(state)
+
+head(state.x77)
+
+class(state.x77)
+```
+
+- This data is in matrix format; we wish to convert it to a tibble before proceeding further
+
+- Note that the state names are the row names of the matrix, they aren't actually in a column
+
+---
+
+# Converting the matrix to a tibble
+
+- Though not shown in the documentation for
+[as_tibble()](https://tibble.tidyverse.org/reference/as_tibble.html), you can actually supply
+the `rownames` argument to the `as_tibble()` method for matrices
+(documented [here](https://github.com/tidyverse/tibble/issues/288#issuecomment-334244077))
+
+- The value that you would supply to the `rownames` argument is the name of the column that should
+contain the rownames
+
+- Since the row names are the states, let's use `state` as the name of the new column
+
+```{r}
+state2 <- state.x77 %>%
+  as_tibble(rownames="state")
+
+state2
+```
+
+---
+
+# Extra beautification
+
+- Let's also rename some of the columns...
+
+```{r}
+state2 <- state2 %>%
+  rename_with(~str_to_lower(str_replace_all(.x, pattern=" ", replacement="_")))
+
+state2
+```
+
+---
+
+# Fit a basic OLS model
+
+- We wish to fit a basic OLS model with life expectancy as the response and all other variables
+except `state` as predictors
+
+
+```{r}
+full_model <- lm(life_exp ~ . - state, data=state2)
+
+summary(full_model)
+```
+
+---
+
+# Perform backward stepwise selection using AIC
+
+- You can use the `step()` function to perform stepwise selection to see the effect of adding
+or removing a predictor from your model
+
+- However, I prefer to alternate between `add1()` and `drop1()` in order to keep track of what
+I'm doing at the current step
+
+- Starting with the full model, we look at single term deletions
+
+```{r}
+drop1(full_model, ~ .) %>%
+  tidy() %>%
+  slice_min(AIC)
+```
+
+- Remember: low AIC = good, hence the `slice_min()`
+
+- We drop `area` from our model
+
+```{r}
+step1 <- update(full_model, . ~ . - area)
+```
+
+---
+
+# Perform backward stepwise selection using AIC
+
+- Can we add anything back?
+
+```{r}
+add1(step1, ~ . + area) %>%
+  tidy() %>%
+  slice_min(AIC)
+```
+
+- We already saw that the model **without** `area` has a lower AIC, therefore we will continue to
+drop predictors
+
+```{r}
+drop1(step1, ~ .) %>%
+  tidy() %>%
+  slice_min(AIC)
+```
+
+- Let's drop `illiteracy` from our model
+
+```{r}
+step2 <- update(step1, . ~ . - illiteracy)
+```
+
+---
+
+# Perform backward stepwise selection using AIC
+
+- Can we add anything back?
+
+```{r}
+add1(step2, ~ . + area + illiteracy) %>%
+  tidy() %>%
+  slice_min(AIC)
+```
+
+- We cannot, so we continue with dropping
+
+```{r}
+drop1(step2, ~ .) %>%
+  tidy() %>%
+  slice_min(AIC)
+```
+
+```{r}
+step3 <- update(step2, . ~ . - income)
+```
+
+---
+
+# Perform backward stepwise selection using AIC
+
+- Can we add anything back?
+
+```{r}
+add1(step3, ~ . + area + illiteracy + income) %>%
+  tidy() %>%
+  slice_min(AIC)
+```
+
+- We cannot, so we continue with dropping
+
+```{r}
+drop1(step3, ~ .) %>%
+  tidy() %>%
+  slice_min(AIC)
+```
+
+- The model with the lowest AIC is the one that does not drop any more terms; `step3` is the
+final model
+
+---
+
+# Perform backward stepwise selection using AIC
+
+Our final model:
+
+```{r}
+summary(step3)
+```
+
+---
+
+# Check the linear model assumptions
+
+Recall that we can check the assumptions using
+
+```{r, eval=FALSE}
+par(mfrow = c(2, 2))
+plot(step3, which=c(1, 2, 3, 5))
+```
+
+or by using `performance::check_model()`
+
+```{r, eval=FALSE}
+check_model(step3)
+```
+
+---
+
+# Check the linear model assumptions
+
+```{r, echo=FALSE, fig.height=6, fig.width=12}
+check_model(step3)
+```
+
+---
+
+# Check the linear model assumptions
+
+- It appears there are some issues with the linearity assumption
+  - This line is not very flat &mdash; there is a slight dip around near $x \approx 71$
+  
+- There seems to be some issues with the constant variance assumption as well
+  - This line also does a dip near $x \approx 70.5$
+
+---
+
+# Make a scatterplot matrix
+
+- Let's make a scatterplot matrix containing the fitted values, the predictors, and the residuals
+
+```{r, eval=FALSE}
+step3 %>%
+  augment() %>%
+  select(.fitted, population, murder, hs_grad, frost, .resid) %>%
+  ggpairs()
+```
+
+---
+
+# Make a scatterplot matrix
+
+- Let's make a scatterplot matrix containing the fitted values, the predictors, and the residuals
+
+```{r, echo=FALSE, fig.height=5.25, fig.width=12}
+step3 %>%
+  augment() %>%
+  select(.fitted, population, murder, hs_grad, frost, .resid) %>%
+  ggpairs()
+```
+
+---
+
+# Make a scatterplot matrix
+
+- The behaviour of the residual vs fitted plot (row 6 column 1) and the residual vs murder plot
+(row 6 column 3) appear similar
+
+- Therefore, let us regress the residuals upon murder
+
+---
+
+# Linear model of residuals against murder
+
+```{r}
+resid_murder_data <- step3 %>%
+  augment() %>%
+  select(.resid, murder)
+
+resid_murder_model <- lm(abs(.resid) ~ murder, data=resid_murder_data)
+```
+
+---
+
+# Perform weighted least squares regression
+
+- To extend the linear model obtained via backward stepwise selection, we wish to perform weighted
+least squares
+
+- The previous model of fitting the absolute value of the residuals against the predictor murder
+provides an estimate of the standard deviation, $\sigma_{i}$
+
+- The weights are obtained by reciprocating the square of the fitted values obtain from this model
+
+```{r}
+w <- 1 / predict(resid_murder_model)^2
+
+head(w)
+```
+
+---
+
+# Perform weighted least squares regression
+
+- We can fit a weighted least squares model using the `lm()` function, and supplying the weights to
+the `weights` argument
+
+```{r}
+weighted_model <- lm(life_exp ~ population + murder + hs_grad + frost, data=state2, weights=w)
+
+summary(weighted_model)
+```
+
+---
+
+# Comparing the coefficients
+
+```{r}
+list(
+  OLS = tidy(step3),
+  WLS = tidy(weighted_model)
+)
+```
+
+---
+
+# Comparing the coefficients
+
+Computing the ratio of the coefficients between the two models,
+
+```{r}
+coef(step3) / coef(weighted_model)
+```
+
+- Since the ratio of the estimated coefficients do not differ substantially we do not need to
+consider iteratively reweighted least squares
+
+- From page 426 of the textbook:
+
+> *If the estimated coefficients differ substantially from the estimated regression coefficients
+obtained by ordinary least squares, it is usually advisable to iterate the weighted least squares
+process by using the residuals from the weighted least squares fit to re-estimate the variance or
+standard deviation function and then obtain revised weights: Often one or two iterations are
+sufficient to stabilize the estimated regression coefficients. This iteration process is often
+called iteratively reweighted least squares.*

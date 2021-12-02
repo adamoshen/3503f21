@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Lab 8, Stat 3503 Fall 2021</title>
+    <meta charset="utf-8" />
+    <script src="libs/header-attrs-2.9/header-attrs.js"></script>
+    <script src="libs/clipboard-2.0.6/clipboard.min.js"></script>
+    <link href="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
+    <script src="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
+    <script>window.xaringanExtraClipboard(null, {"button":"<ion-icon name=\"clipboard-outline\"><\/ion-icon>","success":"<ion-icon name=\"checkmark-outline\" style=\"color: #90BE6D\"><\/ion-icon>","error":"<ion-icon name=\"close-outline\" style=\"color: #F94144\"><\/ion-icon>"})</script>
+    <link href="libs/tile-view-0.2.6/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view-0.2.6/tile-view.js"></script>
+    <link rel="stylesheet" href="css/extra.css" type="text/css" />
+    <link rel="stylesheet" href="css/xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+
+
+
+
+
+
+# Lab 8 &amp;mdash; November 29
+
+
+```r
+library(tidyverse)
+```
+
+&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## -- &lt;span style='font-weight: bold;'&gt;Attaching packages&lt;/span&gt;&lt;span&gt; --------------------------------------- tidyverse 1.3.1 --
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;ggplot2&lt;/span&gt;&lt;span&gt; 3.3.5     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;purrr  &lt;/span&gt;&lt;span&gt; 0.3.4
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;tibble &lt;/span&gt;&lt;span&gt; 3.1.6     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;dplyr  &lt;/span&gt;&lt;span&gt; 1.0.7
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;tidyr  &lt;/span&gt;&lt;span&gt; 1.1.4     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;stringr&lt;/span&gt;&lt;span&gt; 1.4.0
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;readr  &lt;/span&gt;&lt;span&gt; 2.1.0     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;forcats&lt;/span&gt;&lt;span&gt; 0.5.1
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## -- &lt;span style='font-weight: bold;'&gt;Conflicts&lt;/span&gt;&lt;span&gt; ------------------------------------------ tidyverse_conflicts() --
+## &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;x&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;dplyr&lt;/span&gt;&lt;span&gt;::&lt;/span&gt;&lt;span style='color: #00BB00;'&gt;filter()&lt;/span&gt;&lt;span&gt; masks &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;stats&lt;/span&gt;&lt;span&gt;::filter()
+## &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;x&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;dplyr&lt;/span&gt;&lt;span&gt;::&lt;/span&gt;&lt;span style='color: #00BB00;'&gt;lag()&lt;/span&gt;&lt;span&gt;    masks &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;stats&lt;/span&gt;&lt;span&gt;::lag()
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+```r
+library(GGally)
+library(broom)
+library(performance)
+theme_set(theme_bw())
+```
+
+---
+
+# The `state` data set
+
+
+```r
+?state
+```
+
+- The `state` data set is divided into seven parts
+
+- The part that we are interested in is `state.x77`
+
+
+```r
+data(state)
+
+head(state.x77)
+```
+
+```
+##            Population Income Illiteracy Life Exp Murder HS Grad Frost   Area
+## Alabama          3615   3624        2.1    69.05   15.1    41.3    20  50708
+## Alaska            365   6315        1.5    69.31   11.3    66.7   152 566432
+## Arizona          2212   4530        1.8    70.55    7.8    58.1    15 113417
+## Arkansas         2110   3378        1.9    70.66   10.1    39.9    65  51945
+## California      21198   5114        1.1    71.71   10.3    62.6    20 156361
+## Colorado         2541   4884        0.7    72.06    6.8    63.9   166 103766
+```
+
+```r
+class(state.x77)
+```
+
+```
+## [1] "matrix" "array"
+```
+
+- This data is in matrix format; we wish to convert it to a tibble before proceeding further
+
+- Note that the state names are the row names of the matrix, they aren't actually in a column
+
+---
+
+# Converting the matrix to a tibble
+
+- Though not shown in the documentation for
+[as_tibble()](https://tibble.tidyverse.org/reference/as_tibble.html), you can actually supply
+the `rownames` argument to the `as_tibble()` method for matrices
+(documented [here](https://github.com/tidyverse/tibble/issues/288#issuecomment-334244077))
+
+- The value that you would supply to the `rownames` argument is the name of the column that should
+contain the rownames
+
+- Since the row names are the states, let's use `state` as the name of the new column
+
+
+```r
+state2 &lt;- state.x77 %&gt;%
+  as_tibble(rownames="state")
+
+state2
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 50 x 9&lt;/span&gt;&lt;span&gt;
+##    state   Population Income Illiteracy `Life Exp` Murder `HS Grad` Frost   Area
+##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;        &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;      &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;      &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;     &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; Alabama       &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;3&lt;/span&gt;&lt;span&gt;615   &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;3&lt;/span&gt;&lt;span&gt;624        2.1       69.0   15.1      41.3    20  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;50&lt;/span&gt;&lt;span&gt;708
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; Alaska         365   &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;6&lt;/span&gt;&lt;span&gt;315        1.5       69.3   11.3      66.7   152 &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;566&lt;/span&gt;&lt;span&gt;432
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; Arizona       &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;212   &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;4&lt;/span&gt;&lt;span&gt;530        1.8       70.6    7.8      58.1    15 &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;113&lt;/span&gt;&lt;span&gt;417
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; Arkans~       &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;110   &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;3&lt;/span&gt;&lt;span&gt;378        1.9       70.7   10.1      39.9    65  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;51&lt;/span&gt;&lt;span&gt;945
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; Califo~      &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;21&lt;/span&gt;&lt;span&gt;198   &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;5&lt;/span&gt;&lt;span&gt;114        1.1       71.7   10.3      62.6    20 &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;156&lt;/span&gt;&lt;span&gt;361
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; Colora~       &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;541   &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;4&lt;/span&gt;&lt;span&gt;884        0.7       72.1    6.8      63.9   166 &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;103&lt;/span&gt;&lt;span&gt;766
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; Connec~       &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;3&lt;/span&gt;&lt;span&gt;100   &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;5&lt;/span&gt;&lt;span&gt;348        1.1       72.5    3.1      56     139   &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;4&lt;/span&gt;&lt;span&gt;862
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; Delawa~        579   &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;4&lt;/span&gt;&lt;span&gt;809        0.9       70.1    6.2      54.6   103   &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;982
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; Florida       &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;8&lt;/span&gt;&lt;span&gt;277   &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;4&lt;/span&gt;&lt;span&gt;815        1.3       70.7   10.7      52.6    11  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;54&lt;/span&gt;&lt;span&gt;090
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; Georgia       &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;4&lt;/span&gt;&lt;span&gt;931   &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;4&lt;/span&gt;&lt;span&gt;091        2         68.5   13.9      40.6    60  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;58&lt;/span&gt;&lt;span&gt;073
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 40 more rows&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+---
+
+# Extra beautification
+
+- Let's also rename some of the columns...
+
+
+```r
+state2 &lt;- state2 %&gt;%
+  rename_with(~str_to_lower(str_replace_all(.x, pattern=" ", replacement="_")))
+
+state2
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 50 x 9&lt;/span&gt;&lt;span&gt;
+##    state       population income illiteracy life_exp murder hs_grad frost   area
+##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;            &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;      &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; Alabama           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;3&lt;/span&gt;&lt;span&gt;615   &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;3&lt;/span&gt;&lt;span&gt;624        2.1     69.0   15.1    41.3    20  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;50&lt;/span&gt;&lt;span&gt;708
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; Alaska             365   &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;6&lt;/span&gt;&lt;span&gt;315        1.5     69.3   11.3    66.7   152 &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;566&lt;/span&gt;&lt;span&gt;432
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; Arizona           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;212   &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;4&lt;/span&gt;&lt;span&gt;530        1.8     70.6    7.8    58.1    15 &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;113&lt;/span&gt;&lt;span&gt;417
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; Arkansas          &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;110   &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;3&lt;/span&gt;&lt;span&gt;378        1.9     70.7   10.1    39.9    65  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;51&lt;/span&gt;&lt;span&gt;945
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; California       &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;21&lt;/span&gt;&lt;span&gt;198   &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;5&lt;/span&gt;&lt;span&gt;114        1.1     71.7   10.3    62.6    20 &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;156&lt;/span&gt;&lt;span&gt;361
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; Colorado          &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;541   &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;4&lt;/span&gt;&lt;span&gt;884        0.7     72.1    6.8    63.9   166 &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;103&lt;/span&gt;&lt;span&gt;766
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; Connecticut       &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;3&lt;/span&gt;&lt;span&gt;100   &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;5&lt;/span&gt;&lt;span&gt;348        1.1     72.5    3.1    56     139   &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;4&lt;/span&gt;&lt;span&gt;862
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; Delaware           579   &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;4&lt;/span&gt;&lt;span&gt;809        0.9     70.1    6.2    54.6   103   &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;982
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; Florida           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;8&lt;/span&gt;&lt;span&gt;277   &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;4&lt;/span&gt;&lt;span&gt;815        1.3     70.7   10.7    52.6    11  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;54&lt;/span&gt;&lt;span&gt;090
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; Georgia           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;4&lt;/span&gt;&lt;span&gt;931   &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;4&lt;/span&gt;&lt;span&gt;091        2       68.5   13.9    40.6    60  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;58&lt;/span&gt;&lt;span&gt;073
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 40 more rows&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+---
+
+# Fit a basic OLS model
+
+- We wish to fit a basic OLS model with life expectancy as the response and all other variables
+except `state` as predictors
+
+
+
+```r
+full_model &lt;- lm(life_exp ~ . - state, data=state2)
+
+summary(full_model)
+```
+
+```
+## 
+## Call:
+## lm(formula = life_exp ~ . - state, data = state2)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1.48895 -0.51232 -0.02747  0.57002  1.49447 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  7.094e+01  1.748e+00  40.586  &lt; 2e-16 ***
+## population   5.180e-05  2.919e-05   1.775   0.0832 .  
+## income      -2.180e-05  2.444e-04  -0.089   0.9293    
+## illiteracy   3.382e-02  3.663e-01   0.092   0.9269    
+## murder      -3.011e-01  4.662e-02  -6.459 8.68e-08 ***
+## hs_grad      4.893e-02  2.332e-02   2.098   0.0420 *  
+## frost       -5.735e-03  3.143e-03  -1.825   0.0752 .  
+## area        -7.383e-08  1.668e-06  -0.044   0.9649    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.7448 on 42 degrees of freedom
+## Multiple R-squared:  0.7362,	Adjusted R-squared:  0.6922 
+## F-statistic: 16.74 on 7 and 42 DF,  p-value: 2.534e-10
+```
+
+---
+
+# Perform backward stepwise selection using AIC
+
+- You can use the `step()` function to perform stepwise selection to see the effect of adding
+or removing a predictor from your model
+
+- However, I prefer to alternate between `add1()` and `drop1()` in order to keep track of what
+I'm doing at the current step
+
+- Starting with the full model, we look at single term deletions
+
+
+```r
+drop1(full_model, ~ .) %&gt;%
+  tidy() %&gt;%
+  slice_min(AIC)
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 1 x 5&lt;/span&gt;&lt;span&gt;
+##   term     df   sumsq   rss   AIC
+##   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt; area      1 0.001&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;09&lt;/span&gt;&lt;span&gt;  23.3 -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;24.2&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+- Remember: low AIC = good, hence the `slice_min()`
+
+- We drop `area` from our model
+
+
+```r
+step1 &lt;- update(full_model, . ~ . - area)
+```
+
+---
+
+# Perform backward stepwise selection using AIC
+
+- Can we add anything back?
+
+
+```r
+add1(step1, ~ . + area) %&gt;%
+  tidy() %&gt;%
+  slice_min(AIC)
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 1 x 5&lt;/span&gt;&lt;span&gt;
+##   term      df sumsq   rss   AIC
+##   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt; &amp;lt;none&amp;gt;    &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;NA&lt;/span&gt;&lt;span&gt;    &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;NA&lt;/span&gt;&lt;span&gt;  23.3 -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;24.2&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+- We already saw that the model **without** `area` has a lower AIC, therefore we will continue to
+drop predictors
+
+
+```r
+drop1(step1, ~ .) %&gt;%
+  tidy() %&gt;%
+  slice_min(AIC)
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 1 x 5&lt;/span&gt;&lt;span&gt;
+##   term          df   sumsq   rss   AIC
+##   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;      &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt; illiteracy     1 0.003&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;76&lt;/span&gt;&lt;span&gt;  23.3 -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;26.2&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+- Let's drop `illiteracy` from our model
+
+
+```r
+step2 &lt;- update(step1, . ~ . - illiteracy)
+```
+
+---
+
+# Perform backward stepwise selection using AIC
+
+- Can we add anything back?
+
+
+```r
+add1(step2, ~ . + area + illiteracy) %&gt;%
+  tidy() %&gt;%
+  slice_min(AIC)
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 1 x 5&lt;/span&gt;&lt;span&gt;
+##   term      df sumsq   rss   AIC
+##   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt; &amp;lt;none&amp;gt;    &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;NA&lt;/span&gt;&lt;span&gt;    &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;NA&lt;/span&gt;&lt;span&gt;  23.3 -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;26.2&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+- We cannot, so we continue with dropping
+
+
+```r
+drop1(step2, ~ .) %&gt;%
+  tidy() %&gt;%
+  slice_min(AIC)
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 1 x 5&lt;/span&gt;&lt;span&gt;
+##   term      df   sumsq   rss   AIC
+##   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt; income     1 0.006&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;06&lt;/span&gt;&lt;span&gt;  23.3 -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;28.2&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+
+```r
+step3 &lt;- update(step2, . ~ . - income)
+```
+
+---
+
+# Perform backward stepwise selection using AIC
+
+- Can we add anything back?
+
+
+```r
+add1(step3, ~ . + area + illiteracy + income) %&gt;%
+  tidy() %&gt;%
+  slice_min(AIC)
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 1 x 5&lt;/span&gt;&lt;span&gt;
+##   term      df sumsq   rss   AIC
+##   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt; &amp;lt;none&amp;gt;    &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;NA&lt;/span&gt;&lt;span&gt;    &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;NA&lt;/span&gt;&lt;span&gt;  23.3 -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;28.2&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+- We cannot, so we continue with dropping
+
+
+```r
+drop1(step3, ~ .) %&gt;%
+  tidy() %&gt;%
+  slice_min(AIC)
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 1 x 5&lt;/span&gt;&lt;span&gt;
+##   term      df sumsq   rss   AIC
+##   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt; &amp;lt;none&amp;gt;    &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;NA&lt;/span&gt;&lt;span&gt;    &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;NA&lt;/span&gt;&lt;span&gt;  23.3 -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;28.2&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+- The model with the lowest AIC is the one that does not drop any more terms; `step3` is the
+final model
+
+---
+
+# Perform backward stepwise selection using AIC
+
+Our final model:
+
+
+```r
+summary(step3)
+```
+
+```
+## 
+## Call:
+## lm(formula = life_exp ~ population + murder + hs_grad + frost, 
+##     data = state2)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1.47095 -0.53464 -0.03701  0.57621  1.50683 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  7.103e+01  9.529e-01  74.542  &lt; 2e-16 ***
+## population   5.014e-05  2.512e-05   1.996  0.05201 .  
+## murder      -3.001e-01  3.661e-02  -8.199 1.77e-10 ***
+## hs_grad      4.658e-02  1.483e-02   3.142  0.00297 ** 
+## frost       -5.943e-03  2.421e-03  -2.455  0.01802 *  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.7197 on 45 degrees of freedom
+## Multiple R-squared:  0.736,	Adjusted R-squared:  0.7126 
+## F-statistic: 31.37 on 4 and 45 DF,  p-value: 1.696e-12
+```
+
+---
+
+# Check the linear model assumptions
+
+Recall that we can check the assumptions using
+
+
+```r
+par(mfrow = c(2, 2))
+plot(step3, which=c(1, 2, 3, 5))
+```
+
+or by using `performance::check_model()`
+
+
+```r
+check_model(step3)
+```
+
+---
+
+# Check the linear model assumptions
+
+&lt;img src="index_files/figure-html/unnamed-chunk-20-1.svg" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Check the linear model assumptions
+
+- It appears there are some issues with the linearity assumption
+  - This line is not very flat &amp;mdash; there is a slight dip around near `\(x \approx 71\)`
+  
+- There seems to be some issues with the constant variance assumption as well
+  - This line also does a dip near `\(x \approx 70.5\)`
+
+---
+
+# Make a scatterplot matrix
+
+- Let's make a scatterplot matrix containing the fitted values, the predictors, and the residuals
+
+
+```r
+step3 %&gt;%
+  augment() %&gt;%
+  select(.fitted, population, murder, hs_grad, frost, .resid) %&gt;%
+  ggpairs()
+```
+
+---
+
+# Make a scatterplot matrix
+
+- Let's make a scatterplot matrix containing the fitted values, the predictors, and the residuals
+
+&lt;img src="index_files/figure-html/unnamed-chunk-22-1.svg" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Make a scatterplot matrix
+
+- The behaviour of the residual vs fitted plot (row 6 column 1) and the residual vs murder plot
+(row 6 column 3) appear similar
+
+- Therefore, let us regress the residuals upon murder
+
+---
+
+# Linear model of residuals against murder
+
+
+```r
+resid_murder_data &lt;- step3 %&gt;%
+  augment() %&gt;%
+  select(.resid, murder)
+
+resid_murder_model &lt;- lm(abs(.resid) ~ murder, data=resid_murder_data)
+```
+
+---
+
+# Perform weighted least squares regression
+
+- To extend the linear model obtained via backward stepwise selection, we wish to perform weighted
+least squares
+
+- The previous model of fitting the absolute value of the residuals against the predictor murder
+provides an estimate of the standard deviation, `\(\sigma_{i}\)`
+
+- The weights are obtained by reciprocating the square of the fitted values obtain from this model
+
+
+```r
+w &lt;- 1 / predict(resid_murder_model)^2
+
+head(w)
+```
+
+```
+##        1        2        3        4        5        6 
+## 4.328989 3.630323 3.126332 3.444607 3.474556 3.001557
+```
+
+---
+
+# Perform weighted least squares regression
+
+- We can fit a weighted least squares model using the `lm()` function, and supplying the weights to
+the `weights` argument
+
+
+```r
+weighted_model &lt;- lm(life_exp ~ population + murder + hs_grad + frost, data=state2, weights=w)
+
+summary(weighted_model)
+```
+
+```
+## 
+## Call:
+## lm(formula = life_exp ~ population + murder + hs_grad + frost, 
+##     data = state2, weights = w)
+## 
+## Weighted Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -2.32866 -0.93775 -0.08347  1.04909  2.58497 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  7.109e+01  9.254e-01  76.824  &lt; 2e-16 ***
+## population   5.337e-05  2.400e-05   2.224   0.0312 *  
+## murder      -3.012e-01  3.594e-02  -8.383 9.62e-11 ***
+## hs_grad      4.554e-02  1.451e-02   3.137   0.0030 ** 
+## frost       -6.095e-03  2.406e-03  -2.533   0.0149 *  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.26 on 45 degrees of freedom
+## Multiple R-squared:  0.7463,	Adjusted R-squared:  0.7237 
+## F-statistic: 33.09 on 4 and 45 DF,  p-value: 7.067e-13
+```
+
+---
+
+# Comparing the coefficients
+
+
+```r
+list(
+  OLS = tidy(step3),
+  WLS = tidy(weighted_model)
+)
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## $OLS
+## &lt;span style='color: #555555;'&gt;# A tibble: 5 x 5&lt;/span&gt;&lt;span&gt;
+##   term          estimate std.error statistic  p.value
+##   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;            &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;     &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;     &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt; (Intercept) 71.0       0.953         74.5  8.61&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-49&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;2&lt;/span&gt;&lt;span&gt; population   0.000&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;050&lt;/span&gt;&lt;span&gt;1 0.000&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;025&lt;/span&gt;&lt;span&gt;1      2.00 5.20&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;- 2&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;3&lt;/span&gt;&lt;span&gt; murder      -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.300&lt;/span&gt;&lt;span&gt;     0.036&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;6&lt;/span&gt;&lt;span&gt;        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;8.20&lt;/span&gt;&lt;span&gt; 1.77&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-10&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;4&lt;/span&gt;&lt;span&gt; hs_grad      0.046&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;6&lt;/span&gt;&lt;span&gt;    0.014&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;8&lt;/span&gt;&lt;span&gt;         3.14 2.97&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;- 3&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;5&lt;/span&gt;&lt;span&gt; frost       -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.005&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;94&lt;/span&gt;&lt;span&gt;   0.002&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;42&lt;/span&gt;&lt;span&gt;       -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;2.46&lt;/span&gt;&lt;span&gt; 1.80&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;- 2&lt;/span&gt;&lt;span&gt;
+## 
+## $WLS
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# A tibble: 5 x 5&lt;/span&gt;&lt;span&gt;
+##   term          estimate std.error statistic  p.value
+##   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;            &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;     &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;     &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt; (Intercept) 71.1       0.925         76.8  2.24&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-49&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;2&lt;/span&gt;&lt;span&gt; population   0.000&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;053&lt;/span&gt;&lt;span&gt;4 0.000&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;024&lt;/span&gt;&lt;span&gt;0      2.22 3.12&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;- 2&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;3&lt;/span&gt;&lt;span&gt; murder      -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.301&lt;/span&gt;&lt;span&gt;     0.035&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;9&lt;/span&gt;&lt;span&gt;        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;8.38&lt;/span&gt;&lt;span&gt; 9.62&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-11&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;4&lt;/span&gt;&lt;span&gt; hs_grad      0.045&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;5&lt;/span&gt;&lt;span&gt;    0.014&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;5&lt;/span&gt;&lt;span&gt;         3.14 3.00&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;- 3&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='color: #555555;'&gt;5&lt;/span&gt;&lt;span&gt; frost       -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.006&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;10&lt;/span&gt;&lt;span&gt;   0.002&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;41&lt;/span&gt;&lt;span&gt;       -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;2.53&lt;/span&gt;&lt;span&gt; 1.49&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;- 2&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+---
+
+# Comparing the coefficients
+
+Computing the ratio of the coefficients between the two models,
+
+
+```r
+coef(step3) / coef(weighted_model)
+```
+
+```
+## (Intercept)  population      murder     hs_grad       frost 
+##   0.9990814   0.9394284   0.9963515   1.0229026   0.9750663
+```
+
+- Since the ratio of the estimated coefficients do not differ substantially we do not need to
+consider iteratively reweighted least squares
+
+- From page 426 of the textbook:
+
+&gt; *If the estimated coefficients differ substantially from the estimated regression coefficients
+obtained by ordinary least squares, it is usually advisable to iterate the weighted least squares
+process by using the residuals from the weighted least squares fit to re-estimate the variance or
+standard deviation function and then obtain revised weights: Often one or two iterations are
+sufficient to stabilize the estimated regression coefficients. This iteration process is often
+called iteratively reweighted least squares.*
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "atom-one-light",
+"countIncrementalSlides": false,
+"highlightLines": true,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
