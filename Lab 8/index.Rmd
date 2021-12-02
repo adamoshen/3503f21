@@ -303,7 +303,7 @@ check_model(step3)
 # Check the linear model assumptions
 
 - It appears there are some issues with the linearity assumption
-  - This line is not very flat &mdash; there is a slight dip around near $x \approx 71$
+  - This line is not very flat &mdash; there is a slight dip around $x \approx 71$
   
 - There seems to be some issues with the constant variance assumption as well
   - This line also does a dip near $x \approx 70.5$
@@ -360,12 +360,12 @@ resid_murder_model <- lm(abs(.resid) ~ murder, data=resid_murder_data)
 # Perform weighted least squares regression
 
 - To extend the linear model obtained via backward stepwise selection, we wish to perform weighted
-least squares
+least squares regression
 
-- The previous model of fitting the absolute value of the residuals against the predictor murder
+- The previous model of fitting the absolute value of the residuals against the predictor `murder`
 provides an estimate of the standard deviation, $\sigma_{i}$
 
-- The weights are obtained by reciprocating the square of the fitted values obtain from this model
+- The weights are obtained by reciprocating the square of the fitted values obtained from this model
 
 ```{r}
 w <- 1 / predict(resid_murder_model)^2
@@ -401,7 +401,7 @@ list(
 
 # Comparing the coefficients
 
-Computing the ratio of the coefficients between the two models,
+Computing the ratio of the coefficients between the two models:
 
 ```{r}
 coef(step3) / coef(weighted_model)
