@@ -7,12 +7,17 @@ output:
     chakra: libs/remark-latest.min.js
     css: [css/extra.css, css/xaringan-themer.css]
     nature:
-      highlightStyle: atom-one-light
+      highlightStyle: null
       countIncrementalSlides: false
       highlightLines: true
       ratio: 16:9
     includes:
       after_body: utils/ionicons.html
+---
+
+class: language-r
+layout: true
+
 ---
 
 ```{r setup, include=FALSE}
@@ -26,9 +31,9 @@ old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks)
 styles <- c(
   getOption('fansi.style'),  # default style
   "PRE.fansi CODE {background-color: transparent;}",
-  "PRE.fansi-error {background-color: #DD5555;}",
-  "PRE.fansi-warning {background-color: #DDDD55;}",
-  "PRE.fansi-message {background-color: #EEEEEE;}"
+  "PRE.fansi-error {background-color: transparent;}",
+  "PRE.fansi-warning {background-color: transparent;}",
+  "PRE.fansi-message {background-color: transparent;}"
 )
 
 old.hooks <- c(
@@ -41,6 +46,16 @@ old.hooks <- c(
 )
 
 options(crayon.enabled=TRUE)
+
+htmltools::tagList(
+  htmltools::htmlDependency(
+    name = "prismr",
+    version = "1.28.0",
+    src = "libs/prismr",
+    script = "prismr.js",
+    stylesheet = "adam-one-light.css"
+  )
+)
 ```
 
 ```{r clipboard, include=FALSE}
@@ -149,7 +164,9 @@ information
 augment(bears_lm)
 ```
 
---
+---
+
+# More on broom
 
 - `broom::glance()` returns general information on the model and goodness of fit measures
 

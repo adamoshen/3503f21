@@ -3,7 +3,9 @@
   <head>
     <title>Lab 4, Stat 3503 Fall 2021</title>
     <meta charset="utf-8" />
-    <script src="libs/header-attrs-2.9/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.14/header-attrs.js"></script>
+    <link href="libs/prismr-1.28.0/adam-one-light.css" rel="stylesheet" />
+    <script src="libs/prismr-1.28.0/prismr.js"></script>
     <script src="libs/clipboard-2.0.6/clipboard.min.js"></script>
     <link href="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
     <script src="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
@@ -16,6 +18,11 @@
   <body>
     <textarea id="source">
 
+
+class: language-r
+layout: true
+
+---
 
 
 
@@ -32,15 +39,15 @@
 library(tidyverse)
 ```
 
-&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## -- &lt;span style='font-weight: bold;'&gt;Attaching packages&lt;/span&gt;&lt;span&gt; --------------------------------------- tidyverse 1.3.0 --
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;ggplot2&lt;/span&gt;&lt;span&gt; 3.3.3     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;purrr  &lt;/span&gt;&lt;span&gt; 0.3.4
-## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;tibble &lt;/span&gt;&lt;span&gt; 3.1.0     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;dplyr  &lt;/span&gt;&lt;span&gt; 1.0.5
-## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;tidyr  &lt;/span&gt;&lt;span&gt; 1.1.3     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;stringr&lt;/span&gt;&lt;span&gt; 1.4.0
-## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;readr  &lt;/span&gt;&lt;span&gt; 2.0.1     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;forcats&lt;/span&gt;&lt;span&gt; 0.5.1
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## -- &lt;span style='font-weight: bold;'&gt;Conflicts&lt;/span&gt;&lt;span&gt; ------------------------------------------ tidyverse_conflicts() --
-## &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;x&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;dplyr&lt;/span&gt;&lt;span&gt;::&lt;/span&gt;&lt;span style='color: #00BB00;'&gt;filter()&lt;/span&gt;&lt;span&gt; masks &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;stats&lt;/span&gt;&lt;span&gt;::filter()
-## &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;x&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;dplyr&lt;/span&gt;&lt;span&gt;::&lt;/span&gt;&lt;span style='color: #00BB00;'&gt;lag()&lt;/span&gt;&lt;span&gt;    masks &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;stats&lt;/span&gt;&lt;span&gt;::lag()
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## -- &lt;span style='font-weight: bold;'&gt;Attaching packages&lt;/span&gt; --------------------------------------- tidyverse 1.3.1 --
+&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt; &lt;span style='color: #0000BB;'&gt;ggplot2&lt;/span&gt; 3.3.6     &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt; &lt;span style='color: #0000BB;'&gt;purrr  &lt;/span&gt; 0.3.4
+## &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt; &lt;span style='color: #0000BB;'&gt;tibble &lt;/span&gt; 3.1.6     &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt; &lt;span style='color: #0000BB;'&gt;dplyr  &lt;/span&gt; 1.0.9
+## &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt; &lt;span style='color: #0000BB;'&gt;tidyr  &lt;/span&gt; 1.2.0     &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt; &lt;span style='color: #0000BB;'&gt;stringr&lt;/span&gt; 1.4.0
+## &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt; &lt;span style='color: #0000BB;'&gt;readr  &lt;/span&gt; 2.1.2     &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt; &lt;span style='color: #0000BB;'&gt;forcats&lt;/span&gt; 0.5.1
+&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## -- &lt;span style='font-weight: bold;'&gt;Conflicts&lt;/span&gt; ------------------------------------------ tidyverse_conflicts() --
+## &lt;span style='color: #BB0000;'&gt;x&lt;/span&gt; &lt;span style='color: #0000BB;'&gt;dplyr&lt;/span&gt;::&lt;span style='color: #00BB00;'&gt;filter()&lt;/span&gt; masks &lt;span style='color: #0000BB;'&gt;stats&lt;/span&gt;::filter()
+## &lt;span style='color: #BB0000;'&gt;x&lt;/span&gt; &lt;span style='color: #0000BB;'&gt;dplyr&lt;/span&gt;::&lt;span style='color: #00BB00;'&gt;lag()&lt;/span&gt;    masks &lt;span style='color: #0000BB;'&gt;stats&lt;/span&gt;::lag()
+&lt;/CODE&gt;&lt;/PRE&gt;
 
 ```r
 library(fastDummies)
@@ -85,15 +92,15 @@ download.file(
 bears_full &lt;- read_csv("./data/bears.csv")
 ```
 
-&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='font-weight: bold;'&gt;Rows: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;801&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Columns: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;4&lt;/span&gt;&lt;span&gt;
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='color: #00BBBB;'&gt;--&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Column specification&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #00BBBB;'&gt;--------------------------------------------------------&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Delimiter:&lt;/span&gt;&lt;span&gt; ","
-## &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;chr&lt;/span&gt;&lt;span&gt; (1): WMU
-## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;dbl&lt;/span&gt;&lt;span&gt; (3): Year, Active Hunters, Harvest
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## 
-## &lt;span style='color: #00BBBB;'&gt;i&lt;/span&gt;&lt;span&gt; Use &lt;/span&gt;&lt;span style='color: #555555;background-color: #000000;'&gt;`spec()`&lt;/span&gt;&lt;span&gt; to retrieve the full column specification for this data.
-## &lt;/span&gt;&lt;span style='color: #00BBBB;'&gt;i&lt;/span&gt;&lt;span&gt; Specify the column types or set &lt;/span&gt;&lt;span style='color: #555555;background-color: #000000;'&gt;`show_col_types = FALSE`&lt;/span&gt;&lt;span&gt; to quiet this message.
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='font-weight: bold;'&gt;Rows: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;801&lt;/span&gt; &lt;span style='font-weight: bold;'&gt;Columns: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;4&lt;/span&gt;
+## &lt;span style='color: #00BBBB;'&gt;--&lt;/span&gt; &lt;span style='font-weight: bold;'&gt;Column specification&lt;/span&gt; &lt;span style='color: #00BBBB;'&gt;--------------------------------------------------------&lt;/span&gt;
+## &lt;span style='font-weight: bold;'&gt;Delimiter:&lt;/span&gt; &amp;quot;,&amp;quot;
+## &lt;span style='color: #BB0000;'&gt;chr&lt;/span&gt; (1): WMU
+## &lt;span style='color: #00BB00;'&gt;dbl&lt;/span&gt; (3): Year, Active Hunters, Harvest
+## 
+## &lt;span style='color: #00BBBB;'&gt;i&lt;/span&gt; Use `spec()` to retrieve the full column specification for this data.
+## &lt;span style='color: #00BBBB;'&gt;i&lt;/span&gt; Specify the column types or set `show_col_types = FALSE` to quiet this message.
+&lt;/CODE&gt;&lt;/PRE&gt;
 
 ---
 
@@ -104,16 +111,16 @@ bears_full &lt;- read_csv("./data/bears.csv")
 head(bears_full)
 ```
 
-&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 6 x 4&lt;/span&gt;&lt;span&gt;
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 6 x 4&lt;/span&gt;
 ##   WMU    Year `Active Hunters` Harvest
-##   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;            &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt; 01A    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;012                1       0
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;2&lt;/span&gt;&lt;span&gt; 01A    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;013                6       0
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;3&lt;/span&gt;&lt;span&gt; 01A    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;014                6       2
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;4&lt;/span&gt;&lt;span&gt; 01A    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;015                8       2
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;5&lt;/span&gt;&lt;span&gt; 01A    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;016                0       0
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;6&lt;/span&gt;&lt;span&gt; 01A    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;017                6       0
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+##   &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt; &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;            &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;   &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt;1&lt;/span&gt; 01A    &lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;012                1       0
+## &lt;span style='color: #555555;'&gt;2&lt;/span&gt; 01A    &lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;013                6       0
+## &lt;span style='color: #555555;'&gt;3&lt;/span&gt; 01A    &lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;014                6       2
+## &lt;span style='color: #555555;'&gt;4&lt;/span&gt; 01A    &lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;015                8       2
+## &lt;span style='color: #555555;'&gt;5&lt;/span&gt; 01A    &lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;016                0       0
+## &lt;span style='color: #555555;'&gt;6&lt;/span&gt; 01A    &lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;017                6       0
+&lt;/CODE&gt;&lt;/PRE&gt;
 
 
 ```r
@@ -144,16 +151,16 @@ bears_full %&gt;%
 tail(bears_full)
 ```
 
-&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 6 x 4&lt;/span&gt;&lt;span&gt;
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 6 x 4&lt;/span&gt;
 ##   WMU    Year `Active Hunters` Harvest
-##   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;            &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt; Total  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;015            &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;26&lt;/span&gt;&lt;span&gt;293    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;6&lt;/span&gt;&lt;span&gt;662
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;2&lt;/span&gt;&lt;span&gt; Total  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;016            &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;31&lt;/span&gt;&lt;span&gt;480    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;8&lt;/span&gt;&lt;span&gt;152
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;3&lt;/span&gt;&lt;span&gt; Total  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;017            &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;28&lt;/span&gt;&lt;span&gt;718    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;6&lt;/span&gt;&lt;span&gt;497
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;4&lt;/span&gt;&lt;span&gt; Total  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;018            &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;27&lt;/span&gt;&lt;span&gt;138    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;5&lt;/span&gt;&lt;span&gt;869
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;5&lt;/span&gt;&lt;span&gt; Total  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;019            &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;28&lt;/span&gt;&lt;span&gt;250    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;5&lt;/span&gt;&lt;span&gt;301
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;6&lt;/span&gt;&lt;span&gt; Total  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;020            &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;27&lt;/span&gt;&lt;span&gt;291    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;4&lt;/span&gt;&lt;span&gt;269
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+##   &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt; &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;            &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;   &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt;1&lt;/span&gt; Total  &lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;015            &lt;span style='text-decoration: underline;'&gt;26&lt;/span&gt;293    &lt;span style='text-decoration: underline;'&gt;6&lt;/span&gt;662
+## &lt;span style='color: #555555;'&gt;2&lt;/span&gt; Total  &lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;016            &lt;span style='text-decoration: underline;'&gt;31&lt;/span&gt;480    &lt;span style='text-decoration: underline;'&gt;8&lt;/span&gt;152
+## &lt;span style='color: #555555;'&gt;3&lt;/span&gt; Total  &lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;017            &lt;span style='text-decoration: underline;'&gt;28&lt;/span&gt;718    &lt;span style='text-decoration: underline;'&gt;6&lt;/span&gt;497
+## &lt;span style='color: #555555;'&gt;4&lt;/span&gt; Total  &lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;018            &lt;span style='text-decoration: underline;'&gt;27&lt;/span&gt;138    &lt;span style='text-decoration: underline;'&gt;5&lt;/span&gt;869
+## &lt;span style='color: #555555;'&gt;5&lt;/span&gt; Total  &lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;019            &lt;span style='text-decoration: underline;'&gt;28&lt;/span&gt;250    &lt;span style='text-decoration: underline;'&gt;5&lt;/span&gt;301
+## &lt;span style='color: #555555;'&gt;6&lt;/span&gt; Total  &lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;020            &lt;span style='text-decoration: underline;'&gt;27&lt;/span&gt;291    &lt;span style='text-decoration: underline;'&gt;4&lt;/span&gt;269
+&lt;/CODE&gt;&lt;/PRE&gt;
 
 - It looks like the end of the data set contains annual summaries
 
@@ -204,19 +211,19 @@ bears %&gt;%
   distinct(Year)
 ```
 
-&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 9 x 1&lt;/span&gt;&lt;span&gt;
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 9 x 1&lt;/span&gt;
 ##    Year
-##   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;012
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;2&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;013
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;3&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;014
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;4&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;015
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;5&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;016
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;6&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;017
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;7&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;018
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;8&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;019
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;9&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;020
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+##   &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt;1&lt;/span&gt;  &lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;012
+## &lt;span style='color: #555555;'&gt;2&lt;/span&gt;  &lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;013
+## &lt;span style='color: #555555;'&gt;3&lt;/span&gt;  &lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;014
+## &lt;span style='color: #555555;'&gt;4&lt;/span&gt;  &lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;015
+## &lt;span style='color: #555555;'&gt;5&lt;/span&gt;  &lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;016
+## &lt;span style='color: #555555;'&gt;6&lt;/span&gt;  &lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;017
+## &lt;span style='color: #555555;'&gt;7&lt;/span&gt;  &lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;018
+## &lt;span style='color: #555555;'&gt;8&lt;/span&gt;  &lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;019
+## &lt;span style='color: #555555;'&gt;9&lt;/span&gt;  &lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;020
+&lt;/CODE&gt;&lt;/PRE&gt;
 
 The data ranges from 2012 to 2020.
 
@@ -239,7 +246,7 @@ ggplot(bears, aes(x=active_hunters, y=Harvest))+
 
 .pull-right[
 
-&lt;img src="index_files/figure-html/unnamed-chunk-11-1.png" width="504" style="display: block; margin: auto;" /&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-11-1.svg" style="display: block; margin: auto;" /&gt;
 
 ]
 
@@ -270,7 +277,7 @@ using `theme(legend.position="none")`
 
 .pull-right[
 
-&lt;img src="index_files/figure-html/unnamed-chunk-13-1.png" width="504" style="display: block; margin: auto;" /&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-13-1.svg" style="display: block; margin: auto;" /&gt;
 
 ]
 
@@ -327,7 +334,7 @@ ggplot(bearsAB, aes(x=active_hunters, y=Harvest, colour=WMU))+
 
 .pull-right[
 
-&lt;img src="index_files/figure-html/unnamed-chunk-17-1.png" width="504" style="display: block; margin: auto;" /&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-17-1.svg" style="display: block; margin: auto;" /&gt;
 
 ]
 
@@ -430,21 +437,21 @@ involves adding rows/columns to data (e.g. `add_column`, `mutate`), the value is
 
 .pull-right[
 
-&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 216 x 3&lt;/span&gt;&lt;span&gt;
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 216 x 3&lt;/span&gt;
 ##    intercept active_hunters WMU  
-##        &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;          &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt;         1              1 01A  
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt;         1              6 01A  
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt;         1              6 01A  
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt;         1              8 01A  
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt;         1              0 01A  
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt;         1              6 01A  
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt;         1              8 01A  
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt;         1             17 01A  
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt;         1             22 01A  
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt;         1             13 07A  
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 206 more rows&lt;/span&gt;&lt;span&gt;
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+##        &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;          &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt; &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt; 1&lt;/span&gt;         1              1 01A  
+## &lt;span style='color: #555555;'&gt; 2&lt;/span&gt;         1              6 01A  
+## &lt;span style='color: #555555;'&gt; 3&lt;/span&gt;         1              6 01A  
+## &lt;span style='color: #555555;'&gt; 4&lt;/span&gt;         1              8 01A  
+## &lt;span style='color: #555555;'&gt; 5&lt;/span&gt;         1              0 01A  
+## &lt;span style='color: #555555;'&gt; 6&lt;/span&gt;         1              6 01A  
+## &lt;span style='color: #555555;'&gt; 7&lt;/span&gt;         1              8 01A  
+## &lt;span style='color: #555555;'&gt; 8&lt;/span&gt;         1             17 01A  
+## &lt;span style='color: #555555;'&gt; 9&lt;/span&gt;         1             22 01A  
+## &lt;span style='color: #555555;'&gt;10&lt;/span&gt;         1             13 07A  
+## &lt;span style='color: #555555;'&gt;# ... with 206 more rows&lt;/span&gt;
+&lt;/CODE&gt;&lt;/PRE&gt;
 
 ]
 
@@ -513,24 +520,24 @@ bearsAB %&gt;%
 
 .pull-right[
 
-&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 216 x 25&lt;/span&gt;&lt;span&gt;
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 216 x 25&lt;/span&gt;
 ##    intercept active_hunters WMU_07A WMU_07B WMU_09A WMU_09B WMU_11A WMU_11B
-##        &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;          &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt;         1              1       0       0       0       0       0       0
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt;         1              6       0       0       0       0       0       0
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt;         1              6       0       0       0       0       0       0
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt;         1              8       0       0       0       0       0       0
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt;         1              0       0       0       0       0       0       0
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt;         1              6       0       0       0       0       0       0
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt;         1              8       0       0       0       0       0       0
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt;         1             17       0       0       0       0       0       0
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt;         1             22       0       0       0       0       0       0
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt;         1             13       1       0       0       0       0       0
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 206 more rows, and 17 more variables: WMU_12A &amp;lt;int&amp;gt;, WMU_12B &amp;lt;int&amp;gt;,&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;#   WMU_15A &amp;lt;int&amp;gt;, WMU_15B &amp;lt;int&amp;gt;, WMU_16A &amp;lt;int&amp;gt;, WMU_16B &amp;lt;int&amp;gt;, WMU_18A &amp;lt;int&amp;gt;,&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;#   WMU_18B &amp;lt;int&amp;gt;, WMU_21A &amp;lt;int&amp;gt;, WMU_21B &amp;lt;int&amp;gt;, WMU_43A &amp;lt;int&amp;gt;, WMU_43B &amp;lt;int&amp;gt;,&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;#   WMU_55A &amp;lt;int&amp;gt;, WMU_55B &amp;lt;int&amp;gt;, WMU_69A &amp;lt;int&amp;gt;, WMU_69B &amp;lt;int&amp;gt;, WMU_82A &amp;lt;int&amp;gt;&lt;/span&gt;&lt;span&gt;
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+##        &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;          &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;   &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt;   &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt;   &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt;   &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt;   &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt;   &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt; 1&lt;/span&gt;         1              1       0       0       0       0       0       0
+## &lt;span style='color: #555555;'&gt; 2&lt;/span&gt;         1              6       0       0       0       0       0       0
+## &lt;span style='color: #555555;'&gt; 3&lt;/span&gt;         1              6       0       0       0       0       0       0
+## &lt;span style='color: #555555;'&gt; 4&lt;/span&gt;         1              8       0       0       0       0       0       0
+## &lt;span style='color: #555555;'&gt; 5&lt;/span&gt;         1              0       0       0       0       0       0       0
+## &lt;span style='color: #555555;'&gt; 6&lt;/span&gt;         1              6       0       0       0       0       0       0
+## &lt;span style='color: #555555;'&gt; 7&lt;/span&gt;         1              8       0       0       0       0       0       0
+## &lt;span style='color: #555555;'&gt; 8&lt;/span&gt;         1             17       0       0       0       0       0       0
+## &lt;span style='color: #555555;'&gt; 9&lt;/span&gt;         1             22       0       0       0       0       0       0
+## &lt;span style='color: #555555;'&gt;10&lt;/span&gt;         1             13       1       0       0       0       0       0
+## &lt;span style='color: #555555;'&gt;# ... with 206 more rows, and 17 more variables: WMU_12A &amp;lt;int&amp;gt;, WMU_12B &amp;lt;int&amp;gt;,&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt;#   WMU_15A &amp;lt;int&amp;gt;, WMU_15B &amp;lt;int&amp;gt;, WMU_16A &amp;lt;int&amp;gt;, WMU_16B &amp;lt;int&amp;gt;, WMU_18A &amp;lt;int&amp;gt;,&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt;#   WMU_18B &amp;lt;int&amp;gt;, WMU_21A &amp;lt;int&amp;gt;, WMU_21B &amp;lt;int&amp;gt;, WMU_43A &amp;lt;int&amp;gt;, WMU_43B &amp;lt;int&amp;gt;,&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt;#   WMU_55A &amp;lt;int&amp;gt;, WMU_55B &amp;lt;int&amp;gt;, WMU_69A &amp;lt;int&amp;gt;, WMU_69B &amp;lt;int&amp;gt;, WMU_82A &amp;lt;int&amp;gt;&lt;/span&gt;
+&lt;/CODE&gt;&lt;/PRE&gt;
 
 ]
 
@@ -675,21 +682,21 @@ beta_tibble &lt;- beta %&gt;%
 beta_tibble
 ```
 
-&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 25 x 2&lt;/span&gt;&lt;span&gt;
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 25 x 2&lt;/span&gt;
 ##    term           estimate
-##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;             &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; intercept        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;2.75&lt;/span&gt;&lt;span&gt; 
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; active_hunters    0.402
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; WMU_07A           3.84 
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; WMU_07B          14.8  
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; WMU_09A          13.1  
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; WMU_09B          12.2  
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; WMU_11A           4.46 
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; WMU_11B          -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;7.34&lt;/span&gt;&lt;span&gt; 
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; WMU_12A          -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1.10&lt;/span&gt;&lt;span&gt; 
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; WMU_12B          -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;7.21&lt;/span&gt;&lt;span&gt; 
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 15 more rows&lt;/span&gt;&lt;span&gt;
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+##    &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;             &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt; 1&lt;/span&gt; intercept        -&lt;span style='color: #BB0000;'&gt;2.75&lt;/span&gt; 
+## &lt;span style='color: #555555;'&gt; 2&lt;/span&gt; active_hunters    0.402
+## &lt;span style='color: #555555;'&gt; 3&lt;/span&gt; WMU_07A           3.84 
+## &lt;span style='color: #555555;'&gt; 4&lt;/span&gt; WMU_07B          14.8  
+## &lt;span style='color: #555555;'&gt; 5&lt;/span&gt; WMU_09A          13.1  
+## &lt;span style='color: #555555;'&gt; 6&lt;/span&gt; WMU_09B          12.2  
+## &lt;span style='color: #555555;'&gt; 7&lt;/span&gt; WMU_11A           4.46 
+## &lt;span style='color: #555555;'&gt; 8&lt;/span&gt; WMU_11B          -&lt;span style='color: #BB0000;'&gt;7.34&lt;/span&gt; 
+## &lt;span style='color: #555555;'&gt; 9&lt;/span&gt; WMU_12A          -&lt;span style='color: #BB0000;'&gt;1.10&lt;/span&gt; 
+## &lt;span style='color: #555555;'&gt;10&lt;/span&gt; WMU_12B          -&lt;span style='color: #BB0000;'&gt;7.21&lt;/span&gt; 
+## &lt;span style='color: #555555;'&gt;# ... with 15 more rows&lt;/span&gt;
+&lt;/CODE&gt;&lt;/PRE&gt;
 
 ---
 
@@ -712,21 +719,21 @@ bearsAB_lm_coef &lt;- bearsAB_lm %&gt;%
 bearsAB_lm_coef
 ```
 
-&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 25 x 2&lt;/span&gt;&lt;span&gt;
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 25 x 2&lt;/span&gt;
 ##    term           estimate
-##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;             &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; (Intercept)      -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;2.75&lt;/span&gt;&lt;span&gt; 
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; active_hunters    0.402
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; WMU07A            3.84 
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; WMU07B           14.8  
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; WMU09A           13.1  
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; WMU09B           12.2  
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; WMU11A            4.46 
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; WMU11B           -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;7.34&lt;/span&gt;&lt;span&gt; 
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; WMU12A           -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1.10&lt;/span&gt;&lt;span&gt; 
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; WMU12B           -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;7.21&lt;/span&gt;&lt;span&gt; 
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 15 more rows&lt;/span&gt;&lt;span&gt;
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+##    &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;             &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt; 1&lt;/span&gt; (Intercept)      -&lt;span style='color: #BB0000;'&gt;2.75&lt;/span&gt; 
+## &lt;span style='color: #555555;'&gt; 2&lt;/span&gt; active_hunters    0.402
+## &lt;span style='color: #555555;'&gt; 3&lt;/span&gt; WMU07A            3.84 
+## &lt;span style='color: #555555;'&gt; 4&lt;/span&gt; WMU07B           14.8  
+## &lt;span style='color: #555555;'&gt; 5&lt;/span&gt; WMU09A           13.1  
+## &lt;span style='color: #555555;'&gt; 6&lt;/span&gt; WMU09B           12.2  
+## &lt;span style='color: #555555;'&gt; 7&lt;/span&gt; WMU11A            4.46 
+## &lt;span style='color: #555555;'&gt; 8&lt;/span&gt; WMU11B           -&lt;span style='color: #BB0000;'&gt;7.34&lt;/span&gt; 
+## &lt;span style='color: #555555;'&gt; 9&lt;/span&gt; WMU12A           -&lt;span style='color: #BB0000;'&gt;1.10&lt;/span&gt; 
+## &lt;span style='color: #555555;'&gt;10&lt;/span&gt; WMU12B           -&lt;span style='color: #BB0000;'&gt;7.21&lt;/span&gt; 
+## &lt;span style='color: #555555;'&gt;# ... with 15 more rows&lt;/span&gt;
+&lt;/CODE&gt;&lt;/PRE&gt;
 
 ---
 
@@ -749,37 +756,37 @@ They are identical!
 .pull-right[
 
 &lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## $with_matrices
-## &lt;span style='color: #555555;'&gt;# A tibble: 25 x 2&lt;/span&gt;&lt;span&gt;
+## &lt;span style='color: #555555;'&gt;# A tibble: 25 x 2&lt;/span&gt;
 ##    term           estimate
-##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;             &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; intercept        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;2.75&lt;/span&gt;&lt;span&gt; 
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; active_hunters    0.402
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; WMU_07A           3.84 
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; WMU_07B          14.8  
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; WMU_09A          13.1  
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; WMU_09B          12.2  
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; WMU_11A           4.46 
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; WMU_11B          -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;7.34&lt;/span&gt;&lt;span&gt; 
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; WMU_12A          -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1.10&lt;/span&gt;&lt;span&gt; 
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; WMU_12B          -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;7.21&lt;/span&gt;&lt;span&gt; 
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 15 more rows&lt;/span&gt;&lt;span&gt;
+##    &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;             &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt; 1&lt;/span&gt; intercept        -&lt;span style='color: #BB0000;'&gt;2.75&lt;/span&gt; 
+## &lt;span style='color: #555555;'&gt; 2&lt;/span&gt; active_hunters    0.402
+## &lt;span style='color: #555555;'&gt; 3&lt;/span&gt; WMU_07A           3.84 
+## &lt;span style='color: #555555;'&gt; 4&lt;/span&gt; WMU_07B          14.8  
+## &lt;span style='color: #555555;'&gt; 5&lt;/span&gt; WMU_09A          13.1  
+## &lt;span style='color: #555555;'&gt; 6&lt;/span&gt; WMU_09B          12.2  
+## &lt;span style='color: #555555;'&gt; 7&lt;/span&gt; WMU_11A           4.46 
+## &lt;span style='color: #555555;'&gt; 8&lt;/span&gt; WMU_11B          -&lt;span style='color: #BB0000;'&gt;7.34&lt;/span&gt; 
+## &lt;span style='color: #555555;'&gt; 9&lt;/span&gt; WMU_12A          -&lt;span style='color: #BB0000;'&gt;1.10&lt;/span&gt; 
+## &lt;span style='color: #555555;'&gt;10&lt;/span&gt; WMU_12B          -&lt;span style='color: #BB0000;'&gt;7.21&lt;/span&gt; 
+## &lt;span style='color: #555555;'&gt;# ... with 15 more rows&lt;/span&gt;
 ## 
 ## $with_lm
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# A tibble: 25 x 2&lt;/span&gt;&lt;span&gt;
+## &lt;span style='color: #555555;'&gt;# A tibble: 25 x 2&lt;/span&gt;
 ##    term           estimate
-##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;             &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; (Intercept)      -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;2.75&lt;/span&gt;&lt;span&gt; 
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; active_hunters    0.402
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; WMU07A            3.84 
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; WMU07B           14.8  
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; WMU09A           13.1  
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; WMU09B           12.2  
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; WMU11A            4.46 
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; WMU11B           -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;7.34&lt;/span&gt;&lt;span&gt; 
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; WMU12A           -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1.10&lt;/span&gt;&lt;span&gt; 
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; WMU12B           -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;7.21&lt;/span&gt;&lt;span&gt; 
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 15 more rows&lt;/span&gt;&lt;span&gt;
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+##    &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;             &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt; 1&lt;/span&gt; (Intercept)      -&lt;span style='color: #BB0000;'&gt;2.75&lt;/span&gt; 
+## &lt;span style='color: #555555;'&gt; 2&lt;/span&gt; active_hunters    0.402
+## &lt;span style='color: #555555;'&gt; 3&lt;/span&gt; WMU07A            3.84 
+## &lt;span style='color: #555555;'&gt; 4&lt;/span&gt; WMU07B           14.8  
+## &lt;span style='color: #555555;'&gt; 5&lt;/span&gt; WMU09A           13.1  
+## &lt;span style='color: #555555;'&gt; 6&lt;/span&gt; WMU09B           12.2  
+## &lt;span style='color: #555555;'&gt; 7&lt;/span&gt; WMU11A            4.46 
+## &lt;span style='color: #555555;'&gt; 8&lt;/span&gt; WMU11B           -&lt;span style='color: #BB0000;'&gt;7.34&lt;/span&gt; 
+## &lt;span style='color: #555555;'&gt; 9&lt;/span&gt; WMU12A           -&lt;span style='color: #BB0000;'&gt;1.10&lt;/span&gt; 
+## &lt;span style='color: #555555;'&gt;10&lt;/span&gt; WMU12B           -&lt;span style='color: #BB0000;'&gt;7.21&lt;/span&gt; 
+## &lt;span style='color: #555555;'&gt;# ... with 15 more rows&lt;/span&gt;
+&lt;/CODE&gt;&lt;/PRE&gt;
 
 ]
 
@@ -797,21 +804,21 @@ bearsB &lt;- bears %&gt;%
 bearsB
 ```
 
-&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 99 x 4&lt;/span&gt;&lt;span&gt;
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 99 x 4&lt;/span&gt;
 ##    WMU    Year active_hunters Harvest
-##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;          &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; 07B    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;012            198     121
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; 07B    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;013            148      66
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; 07B    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;014            131      50
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; 07B    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;015            148      56
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; 07B    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;016            172      73
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; 07B    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;017            148      81
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; 07B    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;018            157      87
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; 07B    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;019            189     102
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; 07B    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;020             71      20
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; 09B    &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;012            105      58
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 89 more rows&lt;/span&gt;&lt;span&gt;
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+##    &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt; &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;          &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;   &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt; 1&lt;/span&gt; 07B    &lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;012            198     121
+## &lt;span style='color: #555555;'&gt; 2&lt;/span&gt; 07B    &lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;013            148      66
+## &lt;span style='color: #555555;'&gt; 3&lt;/span&gt; 07B    &lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;014            131      50
+## &lt;span style='color: #555555;'&gt; 4&lt;/span&gt; 07B    &lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;015            148      56
+## &lt;span style='color: #555555;'&gt; 5&lt;/span&gt; 07B    &lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;016            172      73
+## &lt;span style='color: #555555;'&gt; 6&lt;/span&gt; 07B    &lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;017            148      81
+## &lt;span style='color: #555555;'&gt; 7&lt;/span&gt; 07B    &lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;018            157      87
+## &lt;span style='color: #555555;'&gt; 8&lt;/span&gt; 07B    &lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;019            189     102
+## &lt;span style='color: #555555;'&gt; 9&lt;/span&gt; 07B    &lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;020             71      20
+## &lt;span style='color: #555555;'&gt;10&lt;/span&gt; 09B    &lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;012            105      58
+## &lt;span style='color: #555555;'&gt;# ... with 89 more rows&lt;/span&gt;
+&lt;/CODE&gt;&lt;/PRE&gt;
 
 ---
 
@@ -947,12 +954,12 @@ Alternatively, we can extract the value of `\(\widehat{\sigma}\)` using `broom::
 glance(bearsB_lm)
 ```
 
-&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 1 x 12&lt;/span&gt;&lt;span&gt;
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 1 x 12&lt;/span&gt;
 ##   r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC
-##       &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;         &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;     &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt;     0.771         0.768  24.6      326. 8.75&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-33&lt;/span&gt;&lt;span&gt;     1  -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;456.&lt;/span&gt;&lt;span&gt;  919.  927.
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 3 more variables: deviance &amp;lt;dbl&amp;gt;, df.residual &amp;lt;int&amp;gt;, nobs &amp;lt;int&amp;gt;&lt;/span&gt;&lt;span&gt;
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+##       &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;         &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt; &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;     &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;    &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt; &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;  &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt; &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt; &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt;1&lt;/span&gt;     0.771         0.768  24.6      326. 8.75&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-33&lt;/span&gt;     1  -&lt;span style='color: #BB0000;'&gt;456.&lt;/span&gt;  919.  927.
+## &lt;span style='color: #555555;'&gt;# ... with 3 more variables: deviance &amp;lt;dbl&amp;gt;, df.residual &amp;lt;int&amp;gt;, nobs &amp;lt;int&amp;gt;&lt;/span&gt;
+&lt;/CODE&gt;&lt;/PRE&gt;
 
 
 ```r
@@ -1019,11 +1026,11 @@ interval %&gt;%
 interval
 ```
 
-&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 1 x 3&lt;/span&gt;&lt;span&gt;
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 1 x 3&lt;/span&gt;
 ##     fit lower upper
-##   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt;  2.88 -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;29.2&lt;/span&gt;&lt;span&gt;  34.9
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+##   &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt; &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt; &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt;1&lt;/span&gt;  2.88 -&lt;span style='color: #BB0000;'&gt;29.2&lt;/span&gt;  34.9
+&lt;/CODE&gt;&lt;/PRE&gt;
 
 ```r
 predict(
@@ -1044,7 +1051,7 @@ They're the same!
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
-"highlightStyle": "atom-one-light",
+"highlightStyle": null,
 "countIncrementalSlides": false,
 "ratio": "16:9"
 });
@@ -1087,6 +1094,19 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
 (function() {
   "use strict"
   // Replace <script> tags in slides area to make them executable

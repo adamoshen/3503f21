@@ -3,7 +3,9 @@
   <head>
     <title>Lab 3, Stat 3503 Fall 2021</title>
     <meta charset="utf-8" />
-    <script src="libs/header-attrs-2.9/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.14/header-attrs.js"></script>
+    <link href="libs/prismr-1.28.0/adam-one-light.css" rel="stylesheet" />
+    <script src="libs/prismr-1.28.0/prismr.js"></script>
     <script src="libs/clipboard-2.0.6/clipboard.min.js"></script>
     <link href="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
     <script src="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
@@ -16,6 +18,11 @@
   <body>
     <textarea id="source">
 
+
+class: language-r
+layout: true
+
+---
 
 
 
@@ -32,15 +39,15 @@
 library(tidyverse)
 ```
 
-&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## -- &lt;span style='font-weight: bold;'&gt;Attaching packages&lt;/span&gt;&lt;span&gt; --------------------------------------- tidyverse 1.3.0 --
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;ggplot2&lt;/span&gt;&lt;span&gt; 3.3.3     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;purrr  &lt;/span&gt;&lt;span&gt; 0.3.4
-## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;tibble &lt;/span&gt;&lt;span&gt; 3.1.0     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;dplyr  &lt;/span&gt;&lt;span&gt; 1.0.5
-## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;tidyr  &lt;/span&gt;&lt;span&gt; 1.1.3     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;stringr&lt;/span&gt;&lt;span&gt; 1.4.0
-## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;readr  &lt;/span&gt;&lt;span&gt; 2.0.1     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;forcats&lt;/span&gt;&lt;span&gt; 0.5.1
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## -- &lt;span style='font-weight: bold;'&gt;Conflicts&lt;/span&gt;&lt;span&gt; ------------------------------------------ tidyverse_conflicts() --
-## &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;x&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;dplyr&lt;/span&gt;&lt;span&gt;::&lt;/span&gt;&lt;span style='color: #00BB00;'&gt;filter()&lt;/span&gt;&lt;span&gt; masks &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;stats&lt;/span&gt;&lt;span&gt;::filter()
-## &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;x&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;dplyr&lt;/span&gt;&lt;span&gt;::&lt;/span&gt;&lt;span style='color: #00BB00;'&gt;lag()&lt;/span&gt;&lt;span&gt;    masks &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;stats&lt;/span&gt;&lt;span&gt;::lag()
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## -- &lt;span style='font-weight: bold;'&gt;Attaching packages&lt;/span&gt; --------------------------------------- tidyverse 1.3.1 --
+&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt; &lt;span style='color: #0000BB;'&gt;ggplot2&lt;/span&gt; 3.3.6     &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt; &lt;span style='color: #0000BB;'&gt;purrr  &lt;/span&gt; 0.3.4
+## &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt; &lt;span style='color: #0000BB;'&gt;tibble &lt;/span&gt; 3.1.6     &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt; &lt;span style='color: #0000BB;'&gt;dplyr  &lt;/span&gt; 1.0.9
+## &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt; &lt;span style='color: #0000BB;'&gt;tidyr  &lt;/span&gt; 1.2.0     &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt; &lt;span style='color: #0000BB;'&gt;stringr&lt;/span&gt; 1.4.0
+## &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt; &lt;span style='color: #0000BB;'&gt;readr  &lt;/span&gt; 2.1.2     &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt; &lt;span style='color: #0000BB;'&gt;forcats&lt;/span&gt; 0.5.1
+&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## -- &lt;span style='font-weight: bold;'&gt;Conflicts&lt;/span&gt; ------------------------------------------ tidyverse_conflicts() --
+## &lt;span style='color: #BB0000;'&gt;x&lt;/span&gt; &lt;span style='color: #0000BB;'&gt;dplyr&lt;/span&gt;::&lt;span style='color: #00BB00;'&gt;filter()&lt;/span&gt; masks &lt;span style='color: #0000BB;'&gt;stats&lt;/span&gt;::filter()
+## &lt;span style='color: #BB0000;'&gt;x&lt;/span&gt; &lt;span style='color: #0000BB;'&gt;dplyr&lt;/span&gt;::&lt;span style='color: #00BB00;'&gt;lag()&lt;/span&gt;    masks &lt;span style='color: #0000BB;'&gt;stats&lt;/span&gt;::lag()
+&lt;/CODE&gt;&lt;/PRE&gt;
 
 ```r
 library(lubridate)
@@ -92,16 +99,16 @@ file.rename("./data/16100100.csv", "./data/qdrinks.csv")
 qdrinks &lt;- read_csv("./data/qdrinks.csv")
 ```
 
-&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='font-weight: bold;'&gt;Rows: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;112&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Columns: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;15&lt;/span&gt;&lt;span&gt;
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='color: #00BBBB;'&gt;--&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Column specification&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #00BBBB;'&gt;--------------------------------------------------------&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Delimiter:&lt;/span&gt;&lt;span&gt; ","
-## &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;chr&lt;/span&gt;&lt;span&gt; (6): REF_DATE, GEO, Standard Classification of Goods (SCG), UOM, SCALAR_...
-## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;dbl&lt;/span&gt;&lt;span&gt; (5): UOM_ID, SCALAR_ID, COORDINATE, VALUE, DECIMALS
-## &lt;/span&gt;&lt;span style='color: #BBBB00;'&gt;lgl&lt;/span&gt;&lt;span&gt; (4): DGUID, STATUS, SYMBOL, TERMINATED
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## 
-## &lt;span style='color: #00BBBB;'&gt;i&lt;/span&gt;&lt;span&gt; Use &lt;/span&gt;&lt;span style='color: #555555;background-color: #000000;'&gt;`spec()`&lt;/span&gt;&lt;span&gt; to retrieve the full column specification for this data.
-## &lt;/span&gt;&lt;span style='color: #00BBBB;'&gt;i&lt;/span&gt;&lt;span&gt; Specify the column types or set &lt;/span&gt;&lt;span style='color: #555555;background-color: #000000;'&gt;`show_col_types = FALSE`&lt;/span&gt;&lt;span&gt; to quiet this message.
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='font-weight: bold;'&gt;Rows: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;112&lt;/span&gt; &lt;span style='font-weight: bold;'&gt;Columns: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;15&lt;/span&gt;
+## &lt;span style='color: #00BBBB;'&gt;--&lt;/span&gt; &lt;span style='font-weight: bold;'&gt;Column specification&lt;/span&gt; &lt;span style='color: #00BBBB;'&gt;--------------------------------------------------------&lt;/span&gt;
+## &lt;span style='font-weight: bold;'&gt;Delimiter:&lt;/span&gt; &amp;quot;,&amp;quot;
+## &lt;span style='color: #BB0000;'&gt;chr&lt;/span&gt; (6): REF_DATE, GEO, Standard Classification of Goods (SCG), UOM, SCALAR_...
+## &lt;span style='color: #00BB00;'&gt;dbl&lt;/span&gt; (5): UOM_ID, SCALAR_ID, COORDINATE, VALUE, DECIMALS
+## &lt;span style='color: #BBBB00;'&gt;lgl&lt;/span&gt; (4): DGUID, STATUS, SYMBOL, TERMINATED
+## 
+## &lt;span style='color: #00BBBB;'&gt;i&lt;/span&gt; Use `spec()` to retrieve the full column specification for this data.
+## &lt;span style='color: #00BBBB;'&gt;i&lt;/span&gt; Specify the column types or set `show_col_types = FALSE` to quiet this message.
+&lt;/CODE&gt;&lt;/PRE&gt;
 
 ---
 
@@ -113,21 +120,21 @@ qdrinks %&gt;%
   select(REF_DATE, VALUE)
 ```
 
-&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 112 x 2&lt;/span&gt;&lt;span&gt;
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 112 x 2&lt;/span&gt;
 ##    REF_DATE VALUE
-##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; 1950-01  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;&lt;span&gt;349
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; 1950-04  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;29&lt;/span&gt;&lt;span&gt;730
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; 1950-07  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;31&lt;/span&gt;&lt;span&gt;721
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; 1950-10  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;20&lt;/span&gt;&lt;span&gt;045
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; 1951-01  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;17&lt;/span&gt;&lt;span&gt;398
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; 1951-04  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;25&lt;/span&gt;&lt;span&gt;893
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; 1951-07  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;28&lt;/span&gt;&lt;span&gt;477
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; 1951-10  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;&lt;span&gt;923
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; 1952-01  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;&lt;span&gt;248
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; 1952-04  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;26&lt;/span&gt;&lt;span&gt;232
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 102 more rows&lt;/span&gt;&lt;span&gt;
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+##    &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;    &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt; 1&lt;/span&gt; 1950-01  &lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;349
+## &lt;span style='color: #555555;'&gt; 2&lt;/span&gt; 1950-04  &lt;span style='text-decoration: underline;'&gt;29&lt;/span&gt;730
+## &lt;span style='color: #555555;'&gt; 3&lt;/span&gt; 1950-07  &lt;span style='text-decoration: underline;'&gt;31&lt;/span&gt;721
+## &lt;span style='color: #555555;'&gt; 4&lt;/span&gt; 1950-10  &lt;span style='text-decoration: underline;'&gt;20&lt;/span&gt;045
+## &lt;span style='color: #555555;'&gt; 5&lt;/span&gt; 1951-01  &lt;span style='text-decoration: underline;'&gt;17&lt;/span&gt;398
+## &lt;span style='color: #555555;'&gt; 6&lt;/span&gt; 1951-04  &lt;span style='text-decoration: underline;'&gt;25&lt;/span&gt;893
+## &lt;span style='color: #555555;'&gt; 7&lt;/span&gt; 1951-07  &lt;span style='text-decoration: underline;'&gt;28&lt;/span&gt;477
+## &lt;span style='color: #555555;'&gt; 8&lt;/span&gt; 1951-10  &lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;923
+## &lt;span style='color: #555555;'&gt; 9&lt;/span&gt; 1952-01  &lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;248
+## &lt;span style='color: #555555;'&gt;10&lt;/span&gt; 1952-04  &lt;span style='text-decoration: underline;'&gt;26&lt;/span&gt;232
+## &lt;span style='color: #555555;'&gt;# ... with 102 more rows&lt;/span&gt;
+&lt;/CODE&gt;&lt;/PRE&gt;
 
 - The `REF_DATE` column is in the format yyyy-mm
 - We want to convert it to a full date format, yyyy-mm-dd
@@ -148,21 +155,21 @@ quarterly &lt;- qdrinks %&gt;%
 quarterly
 ```
 
-&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 112 x 2&lt;/span&gt;&lt;span&gt;
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 112 x 2&lt;/span&gt;
 ##    date       quarterly_value
-##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;date&amp;gt;&lt;/span&gt;&lt;span&gt;               &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; 1950-01-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;&lt;span&gt;349
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; 1950-04-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;29&lt;/span&gt;&lt;span&gt;730
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; 1950-07-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;31&lt;/span&gt;&lt;span&gt;721
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; 1950-10-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;20&lt;/span&gt;&lt;span&gt;045
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; 1951-01-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;17&lt;/span&gt;&lt;span&gt;398
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; 1951-04-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;25&lt;/span&gt;&lt;span&gt;893
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; 1951-07-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;28&lt;/span&gt;&lt;span&gt;477
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; 1951-10-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;&lt;span&gt;923
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; 1952-01-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;&lt;span&gt;248
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; 1952-04-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;26&lt;/span&gt;&lt;span&gt;232
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 102 more rows&lt;/span&gt;&lt;span&gt;
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+##    &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;date&amp;gt;&lt;/span&gt;               &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt; 1&lt;/span&gt; 1950-01-01           &lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;349
+## &lt;span style='color: #555555;'&gt; 2&lt;/span&gt; 1950-04-01           &lt;span style='text-decoration: underline;'&gt;29&lt;/span&gt;730
+## &lt;span style='color: #555555;'&gt; 3&lt;/span&gt; 1950-07-01           &lt;span style='text-decoration: underline;'&gt;31&lt;/span&gt;721
+## &lt;span style='color: #555555;'&gt; 4&lt;/span&gt; 1950-10-01           &lt;span style='text-decoration: underline;'&gt;20&lt;/span&gt;045
+## &lt;span style='color: #555555;'&gt; 5&lt;/span&gt; 1951-01-01           &lt;span style='text-decoration: underline;'&gt;17&lt;/span&gt;398
+## &lt;span style='color: #555555;'&gt; 6&lt;/span&gt; 1951-04-01           &lt;span style='text-decoration: underline;'&gt;25&lt;/span&gt;893
+## &lt;span style='color: #555555;'&gt; 7&lt;/span&gt; 1951-07-01           &lt;span style='text-decoration: underline;'&gt;28&lt;/span&gt;477
+## &lt;span style='color: #555555;'&gt; 8&lt;/span&gt; 1951-10-01           &lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;923
+## &lt;span style='color: #555555;'&gt; 9&lt;/span&gt; 1952-01-01           &lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;248
+## &lt;span style='color: #555555;'&gt;10&lt;/span&gt; 1952-04-01           &lt;span style='text-decoration: underline;'&gt;26&lt;/span&gt;232
+## &lt;span style='color: #555555;'&gt;# ... with 102 more rows&lt;/span&gt;
+&lt;/CODE&gt;&lt;/PRE&gt;
 
 ---
 
@@ -184,16 +191,16 @@ file.rename("./data/16100099.csv", "./data/mdrinks.csv")
 mdrinks &lt;- read_csv("./data/mdrinks.csv")
 ```
 
-&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='font-weight: bold;'&gt;Rows: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;240&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Columns: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;15&lt;/span&gt;&lt;span&gt;
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='color: #00BBBB;'&gt;--&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Column specification&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #00BBBB;'&gt;--------------------------------------------------------&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Delimiter:&lt;/span&gt;&lt;span&gt; ","
-## &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;chr&lt;/span&gt;&lt;span&gt; (6): REF_DATE, GEO, Standard Classification of Goods (SCG), UOM, SCALAR_...
-## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;dbl&lt;/span&gt;&lt;span&gt; (5): UOM_ID, SCALAR_ID, COORDINATE, VALUE, DECIMALS
-## &lt;/span&gt;&lt;span style='color: #BBBB00;'&gt;lgl&lt;/span&gt;&lt;span&gt; (4): DGUID, STATUS, SYMBOL, TERMINATED
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## 
-## &lt;span style='color: #00BBBB;'&gt;i&lt;/span&gt;&lt;span&gt; Use &lt;/span&gt;&lt;span style='color: #555555;background-color: #000000;'&gt;`spec()`&lt;/span&gt;&lt;span&gt; to retrieve the full column specification for this data.
-## &lt;/span&gt;&lt;span style='color: #00BBBB;'&gt;i&lt;/span&gt;&lt;span&gt; Specify the column types or set &lt;/span&gt;&lt;span style='color: #555555;background-color: #000000;'&gt;`show_col_types = FALSE`&lt;/span&gt;&lt;span&gt; to quiet this message.
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='font-weight: bold;'&gt;Rows: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;240&lt;/span&gt; &lt;span style='font-weight: bold;'&gt;Columns: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;15&lt;/span&gt;
+## &lt;span style='color: #00BBBB;'&gt;--&lt;/span&gt; &lt;span style='font-weight: bold;'&gt;Column specification&lt;/span&gt; &lt;span style='color: #00BBBB;'&gt;--------------------------------------------------------&lt;/span&gt;
+## &lt;span style='font-weight: bold;'&gt;Delimiter:&lt;/span&gt; &amp;quot;,&amp;quot;
+## &lt;span style='color: #BB0000;'&gt;chr&lt;/span&gt; (6): REF_DATE, GEO, Standard Classification of Goods (SCG), UOM, SCALAR_...
+## &lt;span style='color: #00BB00;'&gt;dbl&lt;/span&gt; (5): UOM_ID, SCALAR_ID, COORDINATE, VALUE, DECIMALS
+## &lt;span style='color: #BBBB00;'&gt;lgl&lt;/span&gt; (4): DGUID, STATUS, SYMBOL, TERMINATED
+## 
+## &lt;span style='color: #00BBBB;'&gt;i&lt;/span&gt; Use `spec()` to retrieve the full column specification for this data.
+## &lt;span style='color: #00BBBB;'&gt;i&lt;/span&gt; Specify the column types or set `show_col_types = FALSE` to quiet this message.
+&lt;/CODE&gt;&lt;/PRE&gt;
 
 ---
 
@@ -205,21 +212,21 @@ mdrinks %&gt;%
   select(REF_DATE, VALUE)
 ```
 
-&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 240 x 2&lt;/span&gt;&lt;span&gt;
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 240 x 2&lt;/span&gt;
 ##    REF_DATE VALUE
-##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; 1976-01  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;20&lt;/span&gt;&lt;span&gt;680
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; 1976-02  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;23&lt;/span&gt;&lt;span&gt;392
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; 1976-03  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;21&lt;/span&gt;&lt;span&gt;553
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; 1976-04  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;24&lt;/span&gt;&lt;span&gt;304
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; 1976-05  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;27&lt;/span&gt;&lt;span&gt;791
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; 1976-06  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;32&lt;/span&gt;&lt;span&gt;838
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; 1976-07  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;32&lt;/span&gt;&lt;span&gt;475
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; 1976-08  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;32&lt;/span&gt;&lt;span&gt;503
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; 1976-09  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;28&lt;/span&gt;&lt;span&gt;990
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; 1976-10  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;23&lt;/span&gt;&lt;span&gt;988
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 230 more rows&lt;/span&gt;&lt;span&gt;
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+##    &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;    &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt; 1&lt;/span&gt; 1976-01  &lt;span style='text-decoration: underline;'&gt;20&lt;/span&gt;680
+## &lt;span style='color: #555555;'&gt; 2&lt;/span&gt; 1976-02  &lt;span style='text-decoration: underline;'&gt;23&lt;/span&gt;392
+## &lt;span style='color: #555555;'&gt; 3&lt;/span&gt; 1976-03  &lt;span style='text-decoration: underline;'&gt;21&lt;/span&gt;553
+## &lt;span style='color: #555555;'&gt; 4&lt;/span&gt; 1976-04  &lt;span style='text-decoration: underline;'&gt;24&lt;/span&gt;304
+## &lt;span style='color: #555555;'&gt; 5&lt;/span&gt; 1976-05  &lt;span style='text-decoration: underline;'&gt;27&lt;/span&gt;791
+## &lt;span style='color: #555555;'&gt; 6&lt;/span&gt; 1976-06  &lt;span style='text-decoration: underline;'&gt;32&lt;/span&gt;838
+## &lt;span style='color: #555555;'&gt; 7&lt;/span&gt; 1976-07  &lt;span style='text-decoration: underline;'&gt;32&lt;/span&gt;475
+## &lt;span style='color: #555555;'&gt; 8&lt;/span&gt; 1976-08  &lt;span style='text-decoration: underline;'&gt;32&lt;/span&gt;503
+## &lt;span style='color: #555555;'&gt; 9&lt;/span&gt; 1976-09  &lt;span style='text-decoration: underline;'&gt;28&lt;/span&gt;990
+## &lt;span style='color: #555555;'&gt;10&lt;/span&gt; 1976-10  &lt;span style='text-decoration: underline;'&gt;23&lt;/span&gt;988
+## &lt;span style='color: #555555;'&gt;# ... with 230 more rows&lt;/span&gt;
+&lt;/CODE&gt;&lt;/PRE&gt;
 
 - The `REF_DATE` column is in the format yyyy-mm
 - We want to convert it to a full date format, yyyy-mm-dd
@@ -240,21 +247,21 @@ monthly &lt;- mdrinks %&gt;%
 monthly
 ```
 
-&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 240 x 2&lt;/span&gt;&lt;span&gt;
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 240 x 2&lt;/span&gt;
 ##    date       monthly_value
-##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;date&amp;gt;&lt;/span&gt;&lt;span&gt;             &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; 1976-01-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;20&lt;/span&gt;&lt;span&gt;680
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; 1976-02-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;23&lt;/span&gt;&lt;span&gt;392
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; 1976-03-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;21&lt;/span&gt;&lt;span&gt;553
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; 1976-04-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;24&lt;/span&gt;&lt;span&gt;304
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; 1976-05-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;27&lt;/span&gt;&lt;span&gt;791
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; 1976-06-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;32&lt;/span&gt;&lt;span&gt;838
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; 1976-07-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;32&lt;/span&gt;&lt;span&gt;475
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; 1976-08-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;32&lt;/span&gt;&lt;span&gt;503
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; 1976-09-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;28&lt;/span&gt;&lt;span&gt;990
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; 1976-10-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;23&lt;/span&gt;&lt;span&gt;988
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 230 more rows&lt;/span&gt;&lt;span&gt;
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+##    &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;date&amp;gt;&lt;/span&gt;             &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt; 1&lt;/span&gt; 1976-01-01         &lt;span style='text-decoration: underline;'&gt;20&lt;/span&gt;680
+## &lt;span style='color: #555555;'&gt; 2&lt;/span&gt; 1976-02-01         &lt;span style='text-decoration: underline;'&gt;23&lt;/span&gt;392
+## &lt;span style='color: #555555;'&gt; 3&lt;/span&gt; 1976-03-01         &lt;span style='text-decoration: underline;'&gt;21&lt;/span&gt;553
+## &lt;span style='color: #555555;'&gt; 4&lt;/span&gt; 1976-04-01         &lt;span style='text-decoration: underline;'&gt;24&lt;/span&gt;304
+## &lt;span style='color: #555555;'&gt; 5&lt;/span&gt; 1976-05-01         &lt;span style='text-decoration: underline;'&gt;27&lt;/span&gt;791
+## &lt;span style='color: #555555;'&gt; 6&lt;/span&gt; 1976-06-01         &lt;span style='text-decoration: underline;'&gt;32&lt;/span&gt;838
+## &lt;span style='color: #555555;'&gt; 7&lt;/span&gt; 1976-07-01         &lt;span style='text-decoration: underline;'&gt;32&lt;/span&gt;475
+## &lt;span style='color: #555555;'&gt; 8&lt;/span&gt; 1976-08-01         &lt;span style='text-decoration: underline;'&gt;32&lt;/span&gt;503
+## &lt;span style='color: #555555;'&gt; 9&lt;/span&gt; 1976-09-01         &lt;span style='text-decoration: underline;'&gt;28&lt;/span&gt;990
+## &lt;span style='color: #555555;'&gt;10&lt;/span&gt; 1976-10-01         &lt;span style='text-decoration: underline;'&gt;23&lt;/span&gt;988
+## &lt;span style='color: #555555;'&gt;# ... with 230 more rows&lt;/span&gt;
+&lt;/CODE&gt;&lt;/PRE&gt;
 
 ---
 
@@ -269,21 +276,21 @@ monthly %&gt;%
   mutate(qdate = quarter(date, with_year = TRUE))
 ```
 
-&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 240 x 3&lt;/span&gt;&lt;span&gt;
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 240 x 3&lt;/span&gt;
 ##    date       monthly_value qdate
-##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;date&amp;gt;&lt;/span&gt;&lt;span&gt;             &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; 1976-01-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;20&lt;/span&gt;&lt;span&gt;680 &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;976.
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; 1976-02-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;23&lt;/span&gt;&lt;span&gt;392 &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;976.
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; 1976-03-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;21&lt;/span&gt;&lt;span&gt;553 &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;976.
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; 1976-04-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;24&lt;/span&gt;&lt;span&gt;304 &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;976.
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; 1976-05-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;27&lt;/span&gt;&lt;span&gt;791 &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;976.
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; 1976-06-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;32&lt;/span&gt;&lt;span&gt;838 &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;976.
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; 1976-07-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;32&lt;/span&gt;&lt;span&gt;475 &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;976.
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; 1976-08-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;32&lt;/span&gt;&lt;span&gt;503 &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;976.
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; 1976-09-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;28&lt;/span&gt;&lt;span&gt;990 &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;976.
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; 1976-10-01         &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;23&lt;/span&gt;&lt;span&gt;988 &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;976.
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 230 more rows&lt;/span&gt;&lt;span&gt;
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+##    &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;date&amp;gt;&lt;/span&gt;             &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt; &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt; 1&lt;/span&gt; 1976-01-01         &lt;span style='text-decoration: underline;'&gt;20&lt;/span&gt;680 &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;976.
+## &lt;span style='color: #555555;'&gt; 2&lt;/span&gt; 1976-02-01         &lt;span style='text-decoration: underline;'&gt;23&lt;/span&gt;392 &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;976.
+## &lt;span style='color: #555555;'&gt; 3&lt;/span&gt; 1976-03-01         &lt;span style='text-decoration: underline;'&gt;21&lt;/span&gt;553 &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;976.
+## &lt;span style='color: #555555;'&gt; 4&lt;/span&gt; 1976-04-01         &lt;span style='text-decoration: underline;'&gt;24&lt;/span&gt;304 &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;976.
+## &lt;span style='color: #555555;'&gt; 5&lt;/span&gt; 1976-05-01         &lt;span style='text-decoration: underline;'&gt;27&lt;/span&gt;791 &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;976.
+## &lt;span style='color: #555555;'&gt; 6&lt;/span&gt; 1976-06-01         &lt;span style='text-decoration: underline;'&gt;32&lt;/span&gt;838 &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;976.
+## &lt;span style='color: #555555;'&gt; 7&lt;/span&gt; 1976-07-01         &lt;span style='text-decoration: underline;'&gt;32&lt;/span&gt;475 &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;976.
+## &lt;span style='color: #555555;'&gt; 8&lt;/span&gt; 1976-08-01         &lt;span style='text-decoration: underline;'&gt;32&lt;/span&gt;503 &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;976.
+## &lt;span style='color: #555555;'&gt; 9&lt;/span&gt; 1976-09-01         &lt;span style='text-decoration: underline;'&gt;28&lt;/span&gt;990 &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;976.
+## &lt;span style='color: #555555;'&gt;10&lt;/span&gt; 1976-10-01         &lt;span style='text-decoration: underline;'&gt;23&lt;/span&gt;988 &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;976.
+## &lt;span style='color: #555555;'&gt;# ... with 230 more rows&lt;/span&gt;
+&lt;/CODE&gt;&lt;/PRE&gt;
 
 ---
 count: false
@@ -301,21 +308,50 @@ monthly %&gt;%
   summarise(quarterly_value = sum(monthly_value))
 ```
 
-&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 80 x 2&lt;/span&gt;&lt;span&gt;
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 80 x 2&lt;/span&gt;
 ##    qdate quarterly_value
-##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;           &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;976.           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;65&lt;/span&gt;&lt;span&gt;625
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;976.           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;84&lt;/span&gt;&lt;span&gt;933
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;976.           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;93&lt;/span&gt;&lt;span&gt;968
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;976.           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;78&lt;/span&gt;&lt;span&gt;708
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;977.           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;73&lt;/span&gt;&lt;span&gt;865
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;977.           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;92&lt;/span&gt;&lt;span&gt;938
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;977.           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;91&lt;/span&gt;&lt;span&gt;812
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;977.           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;76&lt;/span&gt;&lt;span&gt;821
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;978.           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;71&lt;/span&gt;&lt;span&gt;130
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;978.           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;92&lt;/span&gt;&lt;span&gt;965
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 70 more rows&lt;/span&gt;&lt;span&gt;
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+##    &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;           &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt; 1&lt;/span&gt; &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;976.           &lt;span style='text-decoration: underline;'&gt;65&lt;/span&gt;625
+## &lt;span style='color: #555555;'&gt; 2&lt;/span&gt; &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;976.           &lt;span style='text-decoration: underline;'&gt;84&lt;/span&gt;933
+## &lt;span style='color: #555555;'&gt; 3&lt;/span&gt; &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;976.           &lt;span style='text-decoration: underline;'&gt;93&lt;/span&gt;968
+## &lt;span style='color: #555555;'&gt; 4&lt;/span&gt; &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;976.           &lt;span style='text-decoration: underline;'&gt;78&lt;/span&gt;708
+## &lt;span style='color: #555555;'&gt; 5&lt;/span&gt; &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;977.           &lt;span style='text-decoration: underline;'&gt;73&lt;/span&gt;865
+## &lt;span style='color: #555555;'&gt; 6&lt;/span&gt; &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;977.           &lt;span style='text-decoration: underline;'&gt;92&lt;/span&gt;938
+## &lt;span style='color: #555555;'&gt; 7&lt;/span&gt; &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;977.           &lt;span style='text-decoration: underline;'&gt;91&lt;/span&gt;812
+## &lt;span style='color: #555555;'&gt; 8&lt;/span&gt; &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;977.           &lt;span style='text-decoration: underline;'&gt;76&lt;/span&gt;821
+## &lt;span style='color: #555555;'&gt; 9&lt;/span&gt; &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;978.           &lt;span style='text-decoration: underline;'&gt;71&lt;/span&gt;130
+## &lt;span style='color: #555555;'&gt;10&lt;/span&gt; &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;978.           &lt;span style='text-decoration: underline;'&gt;92&lt;/span&gt;965
+## &lt;span style='color: #555555;'&gt;# ... with 70 more rows&lt;/span&gt;
+&lt;/CODE&gt;&lt;/PRE&gt;
+
+---
+count: false
+
+# Convert monthly data to quarterly data
+
+
+```r
+monthly %&gt;%
+  mutate(qdate = quarter(date, with_year = TRUE)) %&gt;%
+  group_by(qdate) %&gt;%
+  summarise(quarterly_value = sum(monthly_value))
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 80 x 2&lt;/span&gt;
+##    qdate quarterly_value
+##    &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;           &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt; 1&lt;/span&gt; &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;976.           &lt;span style='text-decoration: underline;'&gt;65&lt;/span&gt;625
+## &lt;span style='color: #555555;'&gt; 2&lt;/span&gt; &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;976.           &lt;span style='text-decoration: underline;'&gt;84&lt;/span&gt;933
+## &lt;span style='color: #555555;'&gt; 3&lt;/span&gt; &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;976.           &lt;span style='text-decoration: underline;'&gt;93&lt;/span&gt;968
+## &lt;span style='color: #555555;'&gt; 4&lt;/span&gt; &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;976.           &lt;span style='text-decoration: underline;'&gt;78&lt;/span&gt;708
+## &lt;span style='color: #555555;'&gt; 5&lt;/span&gt; &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;977.           &lt;span style='text-decoration: underline;'&gt;73&lt;/span&gt;865
+## &lt;span style='color: #555555;'&gt; 6&lt;/span&gt; &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;977.           &lt;span style='text-decoration: underline;'&gt;92&lt;/span&gt;938
+## &lt;span style='color: #555555;'&gt; 7&lt;/span&gt; &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;977.           &lt;span style='text-decoration: underline;'&gt;91&lt;/span&gt;812
+## &lt;span style='color: #555555;'&gt; 8&lt;/span&gt; &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;977.           &lt;span style='text-decoration: underline;'&gt;76&lt;/span&gt;821
+## &lt;span style='color: #555555;'&gt; 9&lt;/span&gt; &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;978.           &lt;span style='text-decoration: underline;'&gt;71&lt;/span&gt;130
+## &lt;span style='color: #555555;'&gt;10&lt;/span&gt; &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;978.           &lt;span style='text-decoration: underline;'&gt;92&lt;/span&gt;965
+## &lt;span style='color: #555555;'&gt;# ... with 70 more rows&lt;/span&gt;
+&lt;/CODE&gt;&lt;/PRE&gt;
 
 We now have one row for each quarter for each year.
 
@@ -342,21 +378,21 @@ monthly_to_quarterly &lt;- monthly %&gt;%
 monthly_to_quarterly
 ```
 
-&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 80 x 2&lt;/span&gt;&lt;span&gt;
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 80 x 2&lt;/span&gt;
 ##    date       quarterly_value
-##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;date&amp;gt;&lt;/span&gt;&lt;span&gt;               &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; 1976-01-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;65&lt;/span&gt;&lt;span&gt;625
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; 1976-04-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;84&lt;/span&gt;&lt;span&gt;933
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; 1976-07-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;93&lt;/span&gt;&lt;span&gt;968
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; 1976-10-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;78&lt;/span&gt;&lt;span&gt;708
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; 1977-01-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;73&lt;/span&gt;&lt;span&gt;865
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; 1977-04-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;92&lt;/span&gt;&lt;span&gt;938
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; 1977-07-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;91&lt;/span&gt;&lt;span&gt;812
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; 1977-10-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;76&lt;/span&gt;&lt;span&gt;821
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; 1978-01-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;71&lt;/span&gt;&lt;span&gt;130
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; 1978-04-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;92&lt;/span&gt;&lt;span&gt;965
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 70 more rows&lt;/span&gt;&lt;span&gt;
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+##    &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;date&amp;gt;&lt;/span&gt;               &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt; 1&lt;/span&gt; 1976-01-01           &lt;span style='text-decoration: underline;'&gt;65&lt;/span&gt;625
+## &lt;span style='color: #555555;'&gt; 2&lt;/span&gt; 1976-04-01           &lt;span style='text-decoration: underline;'&gt;84&lt;/span&gt;933
+## &lt;span style='color: #555555;'&gt; 3&lt;/span&gt; 1976-07-01           &lt;span style='text-decoration: underline;'&gt;93&lt;/span&gt;968
+## &lt;span style='color: #555555;'&gt; 4&lt;/span&gt; 1976-10-01           &lt;span style='text-decoration: underline;'&gt;78&lt;/span&gt;708
+## &lt;span style='color: #555555;'&gt; 5&lt;/span&gt; 1977-01-01           &lt;span style='text-decoration: underline;'&gt;73&lt;/span&gt;865
+## &lt;span style='color: #555555;'&gt; 6&lt;/span&gt; 1977-04-01           &lt;span style='text-decoration: underline;'&gt;92&lt;/span&gt;938
+## &lt;span style='color: #555555;'&gt; 7&lt;/span&gt; 1977-07-01           &lt;span style='text-decoration: underline;'&gt;91&lt;/span&gt;812
+## &lt;span style='color: #555555;'&gt; 8&lt;/span&gt; 1977-10-01           &lt;span style='text-decoration: underline;'&gt;76&lt;/span&gt;821
+## &lt;span style='color: #555555;'&gt; 9&lt;/span&gt; 1978-01-01           &lt;span style='text-decoration: underline;'&gt;71&lt;/span&gt;130
+## &lt;span style='color: #555555;'&gt;10&lt;/span&gt; 1978-04-01           &lt;span style='text-decoration: underline;'&gt;92&lt;/span&gt;965
+## &lt;span style='color: #555555;'&gt;# ... with 70 more rows&lt;/span&gt;
+&lt;/CODE&gt;&lt;/PRE&gt;
 
 ---
 
@@ -382,21 +418,21 @@ full_quarterly &lt;- bind_rows(quarterly, monthly_to_quarterly)
 full_quarterly
 ```
 
-&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 184 x 2&lt;/span&gt;&lt;span&gt;
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 184 x 2&lt;/span&gt;
 ##    date       quarterly_value
-##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;date&amp;gt;&lt;/span&gt;&lt;span&gt;               &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; 1950-01-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;&lt;span&gt;349
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; 1950-04-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;29&lt;/span&gt;&lt;span&gt;730
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; 1950-07-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;31&lt;/span&gt;&lt;span&gt;721
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; 1950-10-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;20&lt;/span&gt;&lt;span&gt;045
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; 1951-01-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;17&lt;/span&gt;&lt;span&gt;398
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; 1951-04-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;25&lt;/span&gt;&lt;span&gt;893
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; 1951-07-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;28&lt;/span&gt;&lt;span&gt;477
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; 1951-10-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;&lt;span&gt;923
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; 1952-01-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;&lt;span&gt;248
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; 1952-04-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;26&lt;/span&gt;&lt;span&gt;232
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 174 more rows&lt;/span&gt;&lt;span&gt;
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+##    &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;date&amp;gt;&lt;/span&gt;               &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt; 1&lt;/span&gt; 1950-01-01           &lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;349
+## &lt;span style='color: #555555;'&gt; 2&lt;/span&gt; 1950-04-01           &lt;span style='text-decoration: underline;'&gt;29&lt;/span&gt;730
+## &lt;span style='color: #555555;'&gt; 3&lt;/span&gt; 1950-07-01           &lt;span style='text-decoration: underline;'&gt;31&lt;/span&gt;721
+## &lt;span style='color: #555555;'&gt; 4&lt;/span&gt; 1950-10-01           &lt;span style='text-decoration: underline;'&gt;20&lt;/span&gt;045
+## &lt;span style='color: #555555;'&gt; 5&lt;/span&gt; 1951-01-01           &lt;span style='text-decoration: underline;'&gt;17&lt;/span&gt;398
+## &lt;span style='color: #555555;'&gt; 6&lt;/span&gt; 1951-04-01           &lt;span style='text-decoration: underline;'&gt;25&lt;/span&gt;893
+## &lt;span style='color: #555555;'&gt; 7&lt;/span&gt; 1951-07-01           &lt;span style='text-decoration: underline;'&gt;28&lt;/span&gt;477
+## &lt;span style='color: #555555;'&gt; 8&lt;/span&gt; 1951-10-01           &lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;923
+## &lt;span style='color: #555555;'&gt; 9&lt;/span&gt; 1952-01-01           &lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;248
+## &lt;span style='color: #555555;'&gt;10&lt;/span&gt; 1952-04-01           &lt;span style='text-decoration: underline;'&gt;26&lt;/span&gt;232
+## &lt;span style='color: #555555;'&gt;# ... with 174 more rows&lt;/span&gt;
+&lt;/CODE&gt;&lt;/PRE&gt;
 
 ---
 
@@ -411,22 +447,22 @@ full_quarterly %&gt;%
   slice_min(date)
 ```
 
-&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 1 x 2&lt;/span&gt;&lt;span&gt;
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 1 x 2&lt;/span&gt;
 ##   date       quarterly_value
-##   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;date&amp;gt;&lt;/span&gt;&lt;span&gt;               &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt; 1950-01-01           &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;&lt;span&gt;349
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+##   &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;date&amp;gt;&lt;/span&gt;               &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt;1&lt;/span&gt; 1950-01-01           &lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;349
+&lt;/CODE&gt;&lt;/PRE&gt;
 
 ```r
 full_quarterly %&gt;%
   slice_max(date)
 ```
 
-&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 1 x 2&lt;/span&gt;&lt;span&gt;
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 1 x 2&lt;/span&gt;
 ##   date       quarterly_value
-##   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;date&amp;gt;&lt;/span&gt;&lt;span&gt;               &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt; 1995-10-01          &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;110&lt;/span&gt;&lt;span&gt;997
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+##   &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;date&amp;gt;&lt;/span&gt;               &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt;1&lt;/span&gt; 1995-10-01          &lt;span style='text-decoration: underline;'&gt;110&lt;/span&gt;997
+&lt;/CODE&gt;&lt;/PRE&gt;
 
 ```r
 full_quarterly %&gt;%
@@ -649,7 +685,7 @@ The 95% confidence interval for `\(\beta_{1}\)` is `\((7.108,\, 7.974)\)`.
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
-"highlightStyle": "atom-one-light",
+"highlightStyle": null,
 "countIncrementalSlides": false,
 "ratio": "16:9"
 });
@@ -692,6 +728,19 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
 (function() {
   "use strict"
   // Replace <script> tags in slides area to make them executable

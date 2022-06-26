@@ -3,7 +3,9 @@
   <head>
     <title>Lab 7, Stat 3503 Fall 2021</title>
     <meta charset="utf-8" />
-    <script src="libs/header-attrs-2.9/header-attrs.js"></script>
+    <script src="libs/header-attrs-2.14/header-attrs.js"></script>
+    <link href="libs/prismr-1.28.0/adam-one-light.css" rel="stylesheet" />
+    <script src="libs/prismr-1.28.0/prismr.js"></script>
     <script src="libs/clipboard-2.0.6/clipboard.min.js"></script>
     <link href="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.css" rel="stylesheet" />
     <script src="libs/xaringanExtra-clipboard-0.2.6/xaringanExtra-clipboard.js"></script>
@@ -16,6 +18,11 @@
   <body>
     <textarea id="source">
 
+
+class: language-r
+layout: true
+
+---
 
 
 
@@ -32,15 +39,15 @@
 library(tidyverse)
 ```
 
-&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## -- &lt;span style='font-weight: bold;'&gt;Attaching packages&lt;/span&gt;&lt;span&gt; --------------------------------------- tidyverse 1.3.1 --
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;ggplot2&lt;/span&gt;&lt;span&gt; 3.3.5     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;purrr  &lt;/span&gt;&lt;span&gt; 0.3.4
-## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;tibble &lt;/span&gt;&lt;span&gt; 3.1.6     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;dplyr  &lt;/span&gt;&lt;span&gt; 1.0.7
-## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;tidyr  &lt;/span&gt;&lt;span&gt; 1.1.4     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;stringr&lt;/span&gt;&lt;span&gt; 1.4.0
-## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;readr  &lt;/span&gt;&lt;span&gt; 2.1.0     &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;v&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;forcats&lt;/span&gt;&lt;span&gt; 0.5.1
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## -- &lt;span style='font-weight: bold;'&gt;Conflicts&lt;/span&gt;&lt;span&gt; ------------------------------------------ tidyverse_conflicts() --
-## &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;x&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;dplyr&lt;/span&gt;&lt;span&gt;::&lt;/span&gt;&lt;span style='color: #00BB00;'&gt;filter()&lt;/span&gt;&lt;span&gt; masks &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;stats&lt;/span&gt;&lt;span&gt;::filter()
-## &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;x&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;dplyr&lt;/span&gt;&lt;span&gt;::&lt;/span&gt;&lt;span style='color: #00BB00;'&gt;lag()&lt;/span&gt;&lt;span&gt;    masks &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;stats&lt;/span&gt;&lt;span&gt;::lag()
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## -- &lt;span style='font-weight: bold;'&gt;Attaching packages&lt;/span&gt; --------------------------------------- tidyverse 1.3.1 --
+&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt; &lt;span style='color: #0000BB;'&gt;ggplot2&lt;/span&gt; 3.3.6     &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt; &lt;span style='color: #0000BB;'&gt;purrr  &lt;/span&gt; 0.3.4
+## &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt; &lt;span style='color: #0000BB;'&gt;tibble &lt;/span&gt; 3.1.6     &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt; &lt;span style='color: #0000BB;'&gt;dplyr  &lt;/span&gt; 1.0.9
+## &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt; &lt;span style='color: #0000BB;'&gt;tidyr  &lt;/span&gt; 1.2.0     &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt; &lt;span style='color: #0000BB;'&gt;stringr&lt;/span&gt; 1.4.0
+## &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt; &lt;span style='color: #0000BB;'&gt;readr  &lt;/span&gt; 2.1.2     &lt;span style='color: #00BB00;'&gt;v&lt;/span&gt; &lt;span style='color: #0000BB;'&gt;forcats&lt;/span&gt; 0.5.1
+&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## -- &lt;span style='font-weight: bold;'&gt;Conflicts&lt;/span&gt; ------------------------------------------ tidyverse_conflicts() --
+## &lt;span style='color: #BB0000;'&gt;x&lt;/span&gt; &lt;span style='color: #0000BB;'&gt;dplyr&lt;/span&gt;::&lt;span style='color: #00BB00;'&gt;filter()&lt;/span&gt; masks &lt;span style='color: #0000BB;'&gt;stats&lt;/span&gt;::filter()
+## &lt;span style='color: #BB0000;'&gt;x&lt;/span&gt; &lt;span style='color: #0000BB;'&gt;dplyr&lt;/span&gt;::&lt;span style='color: #00BB00;'&gt;lag()&lt;/span&gt;    masks &lt;span style='color: #0000BB;'&gt;stats&lt;/span&gt;::lag()
+&lt;/CODE&gt;&lt;/PRE&gt;
 
 ```r
 library(GGally)
@@ -112,34 +119,34 @@ library(yardstick)
 t7 &lt;- read_csv("./data/tutorial7.csv")
 ```
 
-&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='font-weight: bold;'&gt;Rows: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;1024&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Columns: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;7&lt;/span&gt;&lt;span&gt;
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='color: #00BBBB;'&gt;--&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Column specification&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #00BBBB;'&gt;--------------------------------------------------------&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Delimiter:&lt;/span&gt;&lt;span&gt; ","
-## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;dbl&lt;/span&gt;&lt;span&gt; (7): Y, X1, X2, X3, X4, X5, X6
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## 
-## &lt;span style='color: #00BBBB;'&gt;i&lt;/span&gt;&lt;span&gt; Use &lt;/span&gt;&lt;span style='color: #555555;background-color: #000000;'&gt;`spec()`&lt;/span&gt;&lt;span&gt; to retrieve the full column specification for this data.
-## &lt;/span&gt;&lt;span style='color: #00BBBB;'&gt;i&lt;/span&gt;&lt;span&gt; Specify the column types or set &lt;/span&gt;&lt;span style='color: #555555;background-color: #000000;'&gt;`show_col_types = FALSE`&lt;/span&gt;&lt;span&gt; to quiet this message.
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+&lt;PRE class="fansi fansi-message"&gt;&lt;CODE&gt;## &lt;span style='font-weight: bold;'&gt;Rows: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;1024&lt;/span&gt; &lt;span style='font-weight: bold;'&gt;Columns: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;7&lt;/span&gt;
+## &lt;span style='color: #00BBBB;'&gt;--&lt;/span&gt; &lt;span style='font-weight: bold;'&gt;Column specification&lt;/span&gt; &lt;span style='color: #00BBBB;'&gt;--------------------------------------------------------&lt;/span&gt;
+## &lt;span style='font-weight: bold;'&gt;Delimiter:&lt;/span&gt; &amp;quot;,&amp;quot;
+## &lt;span style='color: #00BB00;'&gt;dbl&lt;/span&gt; (7): Y, X1, X2, X3, X4, X5, X6
+## 
+## &lt;span style='color: #00BBBB;'&gt;i&lt;/span&gt; Use `spec()` to retrieve the full column specification for this data.
+## &lt;span style='color: #00BBBB;'&gt;i&lt;/span&gt; Specify the column types or set `show_col_types = FALSE` to quiet this message.
+&lt;/CODE&gt;&lt;/PRE&gt;
 
 ```r
 t7
 ```
 
-&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 1,024 x 7&lt;/span&gt;&lt;span&gt;
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 1,024 x 7&lt;/span&gt;
 ##            Y     X1      X2     X3    X4    X5    X6
-##        &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;4&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;078&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;113.&lt;/span&gt;&lt;span&gt; 0.072&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;7&lt;/span&gt;&lt;span&gt;   2.91    1.35 0.224  357.     1
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;3&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;100&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;124.&lt;/span&gt;&lt;span&gt; 0.181    8.08    2.57 0.848  311.     1
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;2&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;282&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;073.&lt;/span&gt;&lt;span&gt; 0.659  115.     77.4  1.06   269.     0
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;993&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;606.&lt;/span&gt;&lt;span&gt; 0.807   47.4    42.3  1.35   251.     0
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;569&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;783.&lt;/span&gt;&lt;span&gt; 1.24     0.785  -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1.61&lt;/span&gt;&lt;span&gt; 1.36   222.     1
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;467&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;620.&lt;/span&gt;&lt;span&gt; 2.46   103.    258.   1.55   216.     1
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;248&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;135.&lt;/span&gt;&lt;span&gt; 2.50    22.4    67.7  1.59   198.     1
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;223&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;299.&lt;/span&gt;&lt;span&gt; 2.56   104.    262.   1.60   198.     0
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;221&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;486.&lt;/span&gt;&lt;span&gt; 2.74    89.7   254.   1.95   197.     1
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;178&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;091.&lt;/span&gt;&lt;span&gt; 3.29    81.8   269.   2.30   194.     0
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;# ... with 1,014 more rows&lt;/span&gt;&lt;span&gt;
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+##        &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;  &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;   &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;  &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt; &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt; &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt; &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt; 1&lt;/span&gt; -&lt;span style='color: #BB0000;'&gt;4&lt;/span&gt;&lt;span style='color: #BB0000; text-decoration: underline;'&gt;078&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;113.&lt;/span&gt; 0.072&lt;span style='text-decoration: underline;'&gt;7&lt;/span&gt;   2.91    1.35 0.224  357.     1
+## &lt;span style='color: #555555;'&gt; 2&lt;/span&gt; -&lt;span style='color: #BB0000;'&gt;3&lt;/span&gt;&lt;span style='color: #BB0000; text-decoration: underline;'&gt;100&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;124.&lt;/span&gt; 0.181    8.08    2.57 0.848  311.     1
+## &lt;span style='color: #555555;'&gt; 3&lt;/span&gt; -&lt;span style='color: #BB0000;'&gt;2&lt;/span&gt;&lt;span style='color: #BB0000; text-decoration: underline;'&gt;282&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;073.&lt;/span&gt; 0.659  115.     77.4  1.06   269.     0
+## &lt;span style='color: #555555;'&gt; 4&lt;/span&gt; -&lt;span style='color: #BB0000;'&gt;1&lt;/span&gt;&lt;span style='color: #BB0000; text-decoration: underline;'&gt;993&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;606.&lt;/span&gt; 0.807   47.4    42.3  1.35   251.     0
+## &lt;span style='color: #555555;'&gt; 5&lt;/span&gt; -&lt;span style='color: #BB0000;'&gt;1&lt;/span&gt;&lt;span style='color: #BB0000; text-decoration: underline;'&gt;569&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;783.&lt;/span&gt; 1.24     0.785  -&lt;span style='color: #BB0000;'&gt;1.61&lt;/span&gt; 1.36   222.     1
+## &lt;span style='color: #555555;'&gt; 6&lt;/span&gt; -&lt;span style='color: #BB0000;'&gt;1&lt;/span&gt;&lt;span style='color: #BB0000; text-decoration: underline;'&gt;467&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;620.&lt;/span&gt; 2.46   103.    258.   1.55   216.     1
+## &lt;span style='color: #555555;'&gt; 7&lt;/span&gt; -&lt;span style='color: #BB0000;'&gt;1&lt;/span&gt;&lt;span style='color: #BB0000; text-decoration: underline;'&gt;248&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;135.&lt;/span&gt; 2.50    22.4    67.7  1.59   198.     1
+## &lt;span style='color: #555555;'&gt; 8&lt;/span&gt; -&lt;span style='color: #BB0000;'&gt;1&lt;/span&gt;&lt;span style='color: #BB0000; text-decoration: underline;'&gt;223&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;299.&lt;/span&gt; 2.56   104.    262.   1.60   198.     0
+## &lt;span style='color: #555555;'&gt; 9&lt;/span&gt; -&lt;span style='color: #BB0000;'&gt;1&lt;/span&gt;&lt;span style='color: #BB0000; text-decoration: underline;'&gt;221&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;486.&lt;/span&gt; 2.74    89.7   254.   1.95   197.     1
+## &lt;span style='color: #555555;'&gt;10&lt;/span&gt; -&lt;span style='color: #BB0000;'&gt;1&lt;/span&gt;&lt;span style='color: #BB0000; text-decoration: underline;'&gt;178&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;091.&lt;/span&gt; 3.29    81.8   269.   2.30   194.     0
+## &lt;span style='color: #555555;'&gt;# ... with 1,014 more rows&lt;/span&gt;
+&lt;/CODE&gt;&lt;/PRE&gt;
 
 ---
 
@@ -209,11 +216,11 @@ AIC is also reported by `broom::glance.lm()`:
 glance(main_model)
 ```
 
-&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 1 x 12&lt;/span&gt;&lt;span&gt;
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 1 x 12&lt;/span&gt;
 ##   r.squared adj.r.squared   sigma statistic p.value    df  logLik    AIC    BIC deviance df.residual  nobs
-##       &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;         &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;     &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;  &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;       &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt;     0.860         0.860 &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;179&lt;/span&gt;&lt;span&gt;672.     &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;045.       0     6 -&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;13&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;839.&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;27&lt;/span&gt;&lt;span&gt;693. &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;27&lt;/span&gt;&lt;span&gt;733.  3.28&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span&gt;13        &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;017  &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;024
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+##       &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;         &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;   &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;     &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;   &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt; &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;   &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;  &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;  &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;    &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;       &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt; &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;int&amp;gt;&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt;1&lt;/span&gt;     0.860         0.860 &lt;span style='text-decoration: underline;'&gt;179&lt;/span&gt;672.     &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;045.       0     6 -&lt;span style='color: #BB0000; text-decoration: underline;'&gt;13&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;839.&lt;/span&gt; &lt;span style='text-decoration: underline;'&gt;27&lt;/span&gt;693. &lt;span style='text-decoration: underline;'&gt;27&lt;/span&gt;733.  3.28&lt;span style='color: #555555;'&gt;e&lt;/span&gt;13        &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;017  &lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;024
+&lt;/CODE&gt;&lt;/PRE&gt;
 
 ---
 
@@ -490,33 +497,33 @@ Let's use `tidy()` to print just the coefficient table.
 
 .pull-right[
 
-&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 23 x 5&lt;/span&gt;&lt;span&gt;
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 23 x 5&lt;/span&gt;
 ##    term             estimate    std.error  statistic   p.value
-##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;               &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;        &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;      &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;     &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; (Intercept) 177.          64.5              2.75  6.15&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  3&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; X1          128.           4.36            29.3   1.25&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-136&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; X2           32.8          0.907           36.2   8.09&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-184&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; X3            7.00         0.007&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;77&lt;/span&gt;&lt;span&gt;        901.    0   &lt;/span&gt;&lt;span style='color: #555555;'&gt; &lt;/span&gt;&lt;span&gt;    
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; X4          -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;49.6&lt;/span&gt;&lt;span&gt;          4.28           -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;11.6&lt;/span&gt;&lt;span&gt;   2.61&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;- 29&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; X5            2.69         0.479            5.62  2.54&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  8&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; X6            8.49        31.3              0.271 7.86&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; I(X1^2)       0.744        0.802            0.927 3.54&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; I(X2^2)      -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.003&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;81&lt;/span&gt;&lt;span&gt;      0.005&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;09&lt;/span&gt;&lt;span&gt;         -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.748&lt;/span&gt;&lt;span&gt; 4.55&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; I(X3^2)      -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.000&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;000&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;192&lt;/span&gt;&lt;span&gt;  0.000&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;000&lt;/span&gt;&lt;span&gt;166     -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1.16&lt;/span&gt;&lt;span&gt;  2.46&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;11&lt;/span&gt;&lt;span&gt; I(X4^2)       0.282        0.804            0.351 7.26&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;12&lt;/span&gt;&lt;span&gt; I(X5^2)     -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;32.0&lt;/span&gt;&lt;span&gt;          0.000&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;936&lt;/span&gt;&lt;span&gt;    -&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;34&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;168.&lt;/span&gt;&lt;span&gt;    0   &lt;/span&gt;&lt;span style='color: #555555;'&gt; &lt;/span&gt;&lt;span&gt;    
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;13&lt;/span&gt;&lt;span&gt; X1:X4        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1.02&lt;/span&gt;&lt;span&gt;         1.60            -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.636&lt;/span&gt;&lt;span&gt; 5.25&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;14&lt;/span&gt;&lt;span&gt; X1:X5         0.076&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;7&lt;/span&gt;&lt;span&gt;       0.047&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;           1.63  1.04&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;15&lt;/span&gt;&lt;span&gt; X1:X6         1.56         3.40             0.458 6.47&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;16&lt;/span&gt;&lt;span&gt; X2:X3         0.000&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;059&lt;/span&gt;&lt;span&gt;8    0.000&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;059&lt;/span&gt;&lt;span&gt;7        1.00  3.17&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;17&lt;/span&gt;&lt;span&gt; X2:X5         1.01         0.002&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;80&lt;/span&gt;&lt;span&gt;        359.    0   &lt;/span&gt;&lt;span style='color: #555555;'&gt; &lt;/span&gt;&lt;span&gt;    
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;18&lt;/span&gt;&lt;span&gt; X2:X6        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.040&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;6&lt;/span&gt;&lt;span&gt;       0.275           -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.147&lt;/span&gt;&lt;span&gt; 8.83&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;19&lt;/span&gt;&lt;span&gt; X3:X5        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.000&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;024&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0&lt;/span&gt;&lt;span&gt;    0.000&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;022&lt;/span&gt;&lt;span&gt;4       -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1.07&lt;/span&gt;&lt;span&gt;  2.84&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;20&lt;/span&gt;&lt;span&gt; X3:X6        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;8.00&lt;/span&gt;&lt;span&gt;         0.001&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;80&lt;/span&gt;&lt;span&gt;      -&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;4&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;436.&lt;/span&gt;&lt;span&gt;    0   &lt;/span&gt;&lt;span style='color: #555555;'&gt; &lt;/span&gt;&lt;span&gt;    
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;21&lt;/span&gt;&lt;span&gt; X4:X5        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.076&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;0&lt;/span&gt;&lt;span&gt;       0.047&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;&lt;span&gt;          -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1.61&lt;/span&gt;&lt;span&gt;  1.08&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;22&lt;/span&gt;&lt;span&gt; X4:X6        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1.40&lt;/span&gt;&lt;span&gt;         3.41            -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.411&lt;/span&gt;&lt;span&gt; 6.81&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;23&lt;/span&gt;&lt;span&gt; X5:X6        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.042&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;1&lt;/span&gt;&lt;span&gt;       0.119           -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.355&lt;/span&gt;&lt;span&gt; 7.23&lt;/span&gt;&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;&lt;span&gt;
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+##    &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;               &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;        &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;      &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;     &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt; 1&lt;/span&gt; (Intercept) 177.          64.5              2.75  6.15&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  3&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt; 2&lt;/span&gt; X1          128.           4.36            29.3   1.25&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-136&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt; 3&lt;/span&gt; X2           32.8          0.907           36.2   8.09&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-184&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt; 4&lt;/span&gt; X3            7.00         0.007&lt;span style='text-decoration: underline;'&gt;77&lt;/span&gt;        901.    0   &lt;span style='color: #555555;'&gt; &lt;/span&gt;    
+## &lt;span style='color: #555555;'&gt; 5&lt;/span&gt; X4          -&lt;span style='color: #BB0000;'&gt;49.6&lt;/span&gt;          4.28           -&lt;span style='color: #BB0000;'&gt;11.6&lt;/span&gt;   2.61&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;- 29&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt; 6&lt;/span&gt; X5            2.69         0.479            5.62  2.54&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  8&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt; 7&lt;/span&gt; X6            8.49        31.3              0.271 7.86&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt; 8&lt;/span&gt; I(X1^2)       0.744        0.802            0.927 3.54&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt; 9&lt;/span&gt; I(X2^2)      -&lt;span style='color: #BB0000;'&gt;0.003&lt;/span&gt;&lt;span style='color: #BB0000; text-decoration: underline;'&gt;81&lt;/span&gt;      0.005&lt;span style='text-decoration: underline;'&gt;09&lt;/span&gt;         -&lt;span style='color: #BB0000;'&gt;0.748&lt;/span&gt; 4.55&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt;10&lt;/span&gt; I(X3^2)      -&lt;span style='color: #BB0000;'&gt;0.000&lt;/span&gt;&lt;span style='color: #BB0000; text-decoration: underline;'&gt;000&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;192&lt;/span&gt;  0.000&lt;span style='text-decoration: underline;'&gt;000&lt;/span&gt;166     -&lt;span style='color: #BB0000;'&gt;1.16&lt;/span&gt;  2.46&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt;11&lt;/span&gt; I(X4^2)       0.282        0.804            0.351 7.26&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt;12&lt;/span&gt; I(X5^2)     -&lt;span style='color: #BB0000;'&gt;32.0&lt;/span&gt;          0.000&lt;span style='text-decoration: underline;'&gt;936&lt;/span&gt;    -&lt;span style='color: #BB0000; text-decoration: underline;'&gt;34&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;168.&lt;/span&gt;    0   &lt;span style='color: #555555;'&gt; &lt;/span&gt;    
+## &lt;span style='color: #555555;'&gt;13&lt;/span&gt; X1:X4        -&lt;span style='color: #BB0000;'&gt;1.02&lt;/span&gt;         1.60            -&lt;span style='color: #BB0000;'&gt;0.636&lt;/span&gt; 5.25&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt;14&lt;/span&gt; X1:X5         0.076&lt;span style='text-decoration: underline;'&gt;7&lt;/span&gt;       0.047&lt;span style='text-decoration: underline;'&gt;1&lt;/span&gt;           1.63  1.04&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt;15&lt;/span&gt; X1:X6         1.56         3.40             0.458 6.47&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt;16&lt;/span&gt; X2:X3         0.000&lt;span style='text-decoration: underline;'&gt;059&lt;/span&gt;8    0.000&lt;span style='text-decoration: underline;'&gt;059&lt;/span&gt;7        1.00  3.17&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt;17&lt;/span&gt; X2:X5         1.01         0.002&lt;span style='text-decoration: underline;'&gt;80&lt;/span&gt;        359.    0   &lt;span style='color: #555555;'&gt; &lt;/span&gt;    
+## &lt;span style='color: #555555;'&gt;18&lt;/span&gt; X2:X6        -&lt;span style='color: #BB0000;'&gt;0.040&lt;/span&gt;&lt;span style='color: #BB0000; text-decoration: underline;'&gt;6&lt;/span&gt;       0.275           -&lt;span style='color: #BB0000;'&gt;0.147&lt;/span&gt; 8.83&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt;19&lt;/span&gt; X3:X5        -&lt;span style='color: #BB0000;'&gt;0.000&lt;/span&gt;&lt;span style='color: #BB0000; text-decoration: underline;'&gt;024&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0&lt;/span&gt;    0.000&lt;span style='text-decoration: underline;'&gt;022&lt;/span&gt;4       -&lt;span style='color: #BB0000;'&gt;1.07&lt;/span&gt;  2.84&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt;20&lt;/span&gt; X3:X6        -&lt;span style='color: #BB0000;'&gt;8.00&lt;/span&gt;         0.001&lt;span style='text-decoration: underline;'&gt;80&lt;/span&gt;      -&lt;span style='color: #BB0000; text-decoration: underline;'&gt;4&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;436.&lt;/span&gt;    0   &lt;span style='color: #555555;'&gt; &lt;/span&gt;    
+## &lt;span style='color: #555555;'&gt;21&lt;/span&gt; X4:X5        -&lt;span style='color: #BB0000;'&gt;0.076&lt;/span&gt;&lt;span style='color: #BB0000; text-decoration: underline;'&gt;0&lt;/span&gt;       0.047&lt;span style='text-decoration: underline;'&gt;2&lt;/span&gt;          -&lt;span style='color: #BB0000;'&gt;1.61&lt;/span&gt;  1.08&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt;22&lt;/span&gt; X4:X6        -&lt;span style='color: #BB0000;'&gt;1.40&lt;/span&gt;         3.41            -&lt;span style='color: #BB0000;'&gt;0.411&lt;/span&gt; 6.81&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt;23&lt;/span&gt; X5:X6        -&lt;span style='color: #BB0000;'&gt;0.042&lt;/span&gt;&lt;span style='color: #BB0000; text-decoration: underline;'&gt;1&lt;/span&gt;       0.119           -&lt;span style='color: #BB0000;'&gt;0.355&lt;/span&gt; 7.23&lt;span style='color: #555555;'&gt;e&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;-  1&lt;/span&gt;
+&lt;/CODE&gt;&lt;/PRE&gt;
 ]
 
 ---
@@ -541,33 +548,33 @@ tidy(new_model, conf.int=TRUE) %&gt;%
 
 .pull-right[
 
-&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 23 x 3&lt;/span&gt;&lt;span&gt;
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 23 x 3&lt;/span&gt;
 ##    term             conf.low     conf.high
-##    &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;               &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;         &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 1&lt;/span&gt;&lt;span&gt; (Intercept)  50.5         303.         
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 2&lt;/span&gt;&lt;span&gt; X1          119.          136.         
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 3&lt;/span&gt;&lt;span&gt; X2           31.0          34.6        
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 4&lt;/span&gt;&lt;span&gt; X3            6.99          7.02       
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 5&lt;/span&gt;&lt;span&gt; X4          -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;58.0&lt;/span&gt;&lt;span&gt;         -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;41.2&lt;/span&gt;&lt;span&gt;        
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 6&lt;/span&gt;&lt;span&gt; X5            1.75          3.63       
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 7&lt;/span&gt;&lt;span&gt; X6          -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;52.9&lt;/span&gt;&lt;span&gt;          69.9        
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 8&lt;/span&gt;&lt;span&gt; I(X1^2)      -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.830&lt;/span&gt;&lt;span&gt;         2.32       
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt; 9&lt;/span&gt;&lt;span&gt; I(X2^2)      -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.013&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;8&lt;/span&gt;&lt;span&gt;        0.006&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;&lt;span&gt;    
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;10&lt;/span&gt;&lt;span&gt; I(X3^2)      -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.000&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;000&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;518&lt;/span&gt;&lt;span&gt;   0.000&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;000&lt;/span&gt;&lt;span&gt;133
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;11&lt;/span&gt;&lt;span&gt; I(X4^2)      -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;1.29&lt;/span&gt;&lt;span&gt;          1.86       
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;12&lt;/span&gt;&lt;span&gt; I(X5^2)     -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;32.0&lt;/span&gt;&lt;span&gt;         -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;32.0&lt;/span&gt;&lt;span&gt;        
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;13&lt;/span&gt;&lt;span&gt; X1:X4        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;4.17&lt;/span&gt;&lt;span&gt;          2.13       
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;14&lt;/span&gt;&lt;span&gt; X1:X5        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.015&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;8&lt;/span&gt;&lt;span&gt;        0.169      
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;15&lt;/span&gt;&lt;span&gt; X1:X6        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;5.11&lt;/span&gt;&lt;span&gt;          8.23       
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;16&lt;/span&gt;&lt;span&gt; X2:X3        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.000&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;057&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;4&lt;/span&gt;&lt;span&gt;     0.000&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;177&lt;/span&gt;&lt;span&gt;   
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;17&lt;/span&gt;&lt;span&gt; X2:X5         1.00          1.01       
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;18&lt;/span&gt;&lt;span&gt; X2:X6        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.581&lt;/span&gt;&lt;span&gt;         0.500      
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;19&lt;/span&gt;&lt;span&gt; X3:X5        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.000&lt;/span&gt;&lt;span style='color: #BB0000;text-decoration: underline;'&gt;067&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;9&lt;/span&gt;&lt;span&gt;     0.000&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;019&lt;/span&gt;&lt;span&gt;9  
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;20&lt;/span&gt;&lt;span&gt; X3:X6        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;8.00&lt;/span&gt;&lt;span&gt;         -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;8.00&lt;/span&gt;&lt;span&gt;       
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;21&lt;/span&gt;&lt;span&gt; X4:X5        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.169&lt;/span&gt;&lt;span&gt;         0.016&lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;6&lt;/span&gt;&lt;span&gt;     
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;22&lt;/span&gt;&lt;span&gt; X4:X6        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;8.09&lt;/span&gt;&lt;span&gt;          5.29       
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;23&lt;/span&gt;&lt;span&gt; X5:X6        -&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;0.275&lt;/span&gt;&lt;span&gt;         0.191
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+##    &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;               &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;         &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt; 1&lt;/span&gt; (Intercept)  50.5         303.         
+## &lt;span style='color: #555555;'&gt; 2&lt;/span&gt; X1          119.          136.         
+## &lt;span style='color: #555555;'&gt; 3&lt;/span&gt; X2           31.0          34.6        
+## &lt;span style='color: #555555;'&gt; 4&lt;/span&gt; X3            6.99          7.02       
+## &lt;span style='color: #555555;'&gt; 5&lt;/span&gt; X4          -&lt;span style='color: #BB0000;'&gt;58.0&lt;/span&gt;         -&lt;span style='color: #BB0000;'&gt;41.2&lt;/span&gt;        
+## &lt;span style='color: #555555;'&gt; 6&lt;/span&gt; X5            1.75          3.63       
+## &lt;span style='color: #555555;'&gt; 7&lt;/span&gt; X6          -&lt;span style='color: #BB0000;'&gt;52.9&lt;/span&gt;          69.9        
+## &lt;span style='color: #555555;'&gt; 8&lt;/span&gt; I(X1^2)      -&lt;span style='color: #BB0000;'&gt;0.830&lt;/span&gt;         2.32       
+## &lt;span style='color: #555555;'&gt; 9&lt;/span&gt; I(X2^2)      -&lt;span style='color: #BB0000;'&gt;0.013&lt;/span&gt;&lt;span style='color: #BB0000; text-decoration: underline;'&gt;8&lt;/span&gt;        0.006&lt;span style='text-decoration: underline;'&gt;19&lt;/span&gt;    
+## &lt;span style='color: #555555;'&gt;10&lt;/span&gt; I(X3^2)      -&lt;span style='color: #BB0000;'&gt;0.000&lt;/span&gt;&lt;span style='color: #BB0000; text-decoration: underline;'&gt;000&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;518&lt;/span&gt;   0.000&lt;span style='text-decoration: underline;'&gt;000&lt;/span&gt;133
+## &lt;span style='color: #555555;'&gt;11&lt;/span&gt; I(X4^2)      -&lt;span style='color: #BB0000;'&gt;1.29&lt;/span&gt;          1.86       
+## &lt;span style='color: #555555;'&gt;12&lt;/span&gt; I(X5^2)     -&lt;span style='color: #BB0000;'&gt;32.0&lt;/span&gt;         -&lt;span style='color: #BB0000;'&gt;32.0&lt;/span&gt;        
+## &lt;span style='color: #555555;'&gt;13&lt;/span&gt; X1:X4        -&lt;span style='color: #BB0000;'&gt;4.17&lt;/span&gt;          2.13       
+## &lt;span style='color: #555555;'&gt;14&lt;/span&gt; X1:X5        -&lt;span style='color: #BB0000;'&gt;0.015&lt;/span&gt;&lt;span style='color: #BB0000; text-decoration: underline;'&gt;8&lt;/span&gt;        0.169      
+## &lt;span style='color: #555555;'&gt;15&lt;/span&gt; X1:X6        -&lt;span style='color: #BB0000;'&gt;5.11&lt;/span&gt;          8.23       
+## &lt;span style='color: #555555;'&gt;16&lt;/span&gt; X2:X3        -&lt;span style='color: #BB0000;'&gt;0.000&lt;/span&gt;&lt;span style='color: #BB0000; text-decoration: underline;'&gt;057&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;4&lt;/span&gt;     0.000&lt;span style='text-decoration: underline;'&gt;177&lt;/span&gt;   
+## &lt;span style='color: #555555;'&gt;17&lt;/span&gt; X2:X5         1.00          1.01       
+## &lt;span style='color: #555555;'&gt;18&lt;/span&gt; X2:X6        -&lt;span style='color: #BB0000;'&gt;0.581&lt;/span&gt;         0.500      
+## &lt;span style='color: #555555;'&gt;19&lt;/span&gt; X3:X5        -&lt;span style='color: #BB0000;'&gt;0.000&lt;/span&gt;&lt;span style='color: #BB0000; text-decoration: underline;'&gt;067&lt;/span&gt;&lt;span style='color: #BB0000;'&gt;9&lt;/span&gt;     0.000&lt;span style='text-decoration: underline;'&gt;019&lt;/span&gt;9  
+## &lt;span style='color: #555555;'&gt;20&lt;/span&gt; X3:X6        -&lt;span style='color: #BB0000;'&gt;8.00&lt;/span&gt;         -&lt;span style='color: #BB0000;'&gt;8.00&lt;/span&gt;       
+## &lt;span style='color: #555555;'&gt;21&lt;/span&gt; X4:X5        -&lt;span style='color: #BB0000;'&gt;0.169&lt;/span&gt;         0.016&lt;span style='text-decoration: underline;'&gt;6&lt;/span&gt;     
+## &lt;span style='color: #555555;'&gt;22&lt;/span&gt; X4:X6        -&lt;span style='color: #BB0000;'&gt;8.09&lt;/span&gt;          5.29       
+## &lt;span style='color: #555555;'&gt;23&lt;/span&gt; X5:X6        -&lt;span style='color: #BB0000;'&gt;0.275&lt;/span&gt;         0.191
+&lt;/CODE&gt;&lt;/PRE&gt;
 
 ]
 
@@ -693,18 +700,18 @@ main_model %&gt;%
   metrics(truth=Y, estimate=.fitted)
 ```
 
-&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 3 x 3&lt;/span&gt;&lt;span&gt;
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #555555;'&gt;# A tibble: 3 x 3&lt;/span&gt;
 ##   .metric .estimator  .estimate
-##   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;   &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;           &lt;/span&gt;&lt;span style='color: #555555;font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;&lt;span&gt;
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;1&lt;/span&gt;&lt;span&gt; rmse    standard   &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;197&lt;/span&gt;&lt;span&gt;221.   
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;2&lt;/span&gt;&lt;span&gt; rsq     standard        0.860
-## &lt;/span&gt;&lt;span style='color: #555555;'&gt;3&lt;/span&gt;&lt;span&gt; mae     standard   &lt;/span&gt;&lt;span style='text-decoration: underline;'&gt;126&lt;/span&gt;&lt;span&gt;751.
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+##   &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;   &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;           &lt;span style='color: #555555; font-style: italic;'&gt;&amp;lt;dbl&amp;gt;&lt;/span&gt;
+## &lt;span style='color: #555555;'&gt;1&lt;/span&gt; rmse    standard   &lt;span style='text-decoration: underline;'&gt;197&lt;/span&gt;221.   
+## &lt;span style='color: #555555;'&gt;2&lt;/span&gt; rsq     standard        0.860
+## &lt;span style='color: #555555;'&gt;3&lt;/span&gt; mae     standard   &lt;span style='text-decoration: underline;'&gt;126&lt;/span&gt;751.
+&lt;/CODE&gt;&lt;/PRE&gt;
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="libs/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
-"highlightStyle": "atom-one-light",
+"highlightStyle": "none",
 "countIncrementalSlides": false,
 "highlightLines": true,
 "ratio": "16:9"
@@ -748,6 +755,19 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
 (function() {
   "use strict"
   // Replace <script> tags in slides area to make them executable

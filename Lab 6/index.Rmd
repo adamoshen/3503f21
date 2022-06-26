@@ -7,12 +7,17 @@ output:
     chakra: libs/remark-latest.min.js
     css: [css/extra.css, css/xaringan-themer.css]
     nature:
-      highlightStyle: atom-one-light
+      highlightStyle: null
       countIncrementalSlides: false
       highlightLines: true
       ratio: 16:9
     includes:
       after_body: utils/ionicons.html
+---
+
+class: language-r
+layout: true
+
 ---
 
 ```{r setup, include=FALSE}
@@ -26,9 +31,9 @@ old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks)
 styles <- c(
   getOption('fansi.style'),  # default style
   "PRE.fansi CODE {background-color: transparent;}",
-  "PRE.fansi-error {background-color: #DD5555;}",
-  "PRE.fansi-warning {background-color: #DDDD55;}",
-  "PRE.fansi-message {background-color: #EEEEEE;}"
+  "PRE.fansi-error {background-color: transparent;}",
+  "PRE.fansi-warning {background-color: transparent;}",
+  "PRE.fansi-message {background-color: transparent;}"
 )
 
 old.hooks <- c(
@@ -41,6 +46,16 @@ old.hooks <- c(
 )
 
 options(crayon.enabled=TRUE)
+
+htmltools::tagList(
+  htmltools::htmlDependency(
+    name = "prismr",
+    version = "1.28.0",
+    src = "libs/prismr",
+    script = "prismr.js",
+    stylesheet = "adam-one-light.css"
+  )
+)
 ```
 
 ```{r clipboard, include=FALSE}
@@ -123,12 +138,18 @@ diamonds <- diamonds %>%
 
 # One diamond has a suspiciously high volume
 
-This is one observation with an extremely large volume.
+There is one observation with an extremely large volume.
 
 ```{r}
 diamonds %>%
   arrange(desc(volume))
 ```
+
+---
+
+# One diamond has a suspiciously high volume
+
+There is one observation with an extremely large volume.
 
 We can extract this row using:
 
@@ -315,23 +336,23 @@ $$H_{0}: \beta_{1} \,=\, 0, \quad H_{A}: \beta_{1} \neq 0$$
 We could have actually read the results of the $F$-test from the model summary.
 
 ```{r, eval=FALSE}
-Call:
-lm(formula = carat ~ volume, data = diamonds)
-
-Residuals:
-    Min      1Q  Median      3Q     Max 
--4.6600 -0.0081 -0.0016  0.0056  1.0073 
-
-Coefficients:
-              Estimate Std. Error t value Pr(>|t|)    
-(Intercept) -3.324e-03  3.037e-04  -10.95   <2e-16 ***
-volume       6.170e-03  2.015e-06 3062.32   <2e-16 ***
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-Residual standard error: 0.03582 on 53917 degrees of freedom
-Multiple R-squared:  0.9943,	Adjusted R-squared:  0.9943 
-F-statistic: 9.378e+06 on 1 and 53917 DF,  p-value: < 2.2e-16 #<<
+## Call:
+## lm(formula = carat ~ volume, data = diamonds)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -4.6600 -0.0081 -0.0016  0.0056  1.0073 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(>|t|)    
+## (Intercept) -3.324e-03  3.037e-04  -10.95   <2e-16 ***
+## volume       6.170e-03  2.015e-06 3062.32   <2e-16 ***
+## ---
+## Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+## 
+## Residual standard error: 0.03582 on 53917 degrees of freedom
+## Multiple R-squared:  0.9943,	Adjusted R-squared:  0.9943 
+## F-statistic: 9.378e+06 on 1 and 53917 DF,  p-value: < 2.2e-16 #<<
 ```
 
 ---
