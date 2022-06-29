@@ -419,7 +419,7 @@ or by using `performance::check_model()`
 
 
 ```r
-check_model(step3)
+check_model(step3, check=c("vif", "qq", "normality", "linearity", "homogeneity", "outliers"))
 ```
 
 ---

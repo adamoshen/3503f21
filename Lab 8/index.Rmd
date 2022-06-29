@@ -26,23 +26,9 @@ knitr::opts_chunk$set(
   fig.align="center", dev="svglite"
 )
 
-old_hooks <- fansi::set_knit_hooks(knitr::knit_hooks)
-
-styles <- c(
-  getOption('fansi.style'),  # default style
-  "PRE.fansi CODE {background-color: transparent;}",
-  "PRE.fansi-error {background-color: transparent;}",
-  "PRE.fansi-warning {background-color: transparent;}",
-  "PRE.fansi-message {background-color: transparent;}"
-)
-
-old.hooks <- c(
-  old_hooks,
-  fansi::set_knit_hooks(
-    knitr::knit_hooks,
-    which=c('warning', 'error', 'message'),
-    style=styles
-  )
+old_hooks <- fansi::set_knit_hooks(
+  knitr::knit_hooks,
+  which = c("output", "message", "warning", "error")
 )
 
 options(crayon.enabled=TRUE)
@@ -308,7 +294,7 @@ plot(step3, which=c(1, 2, 3, 5))
 or by using `performance::check_model()`
 
 ```{r, eval=FALSE}
-check_model(step3)
+check_model(step3, check=c("vif", "qq", "normality", "linearity", "homogeneity", "outliers"))
 ```
 
 ---
@@ -316,7 +302,7 @@ check_model(step3)
 # Check the linear model assumptions
 
 ```{r, echo=FALSE, fig.height=6, fig.width=12}
-check_model(step3)
+check_model(step3, check=c("vif", "qq", "normality", "linearity", "homogeneity", "outliers"))
 ```
 
 ---
